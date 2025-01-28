@@ -1,0 +1,20 @@
+.colorized {
+    animation: hue-rotation 5s infinite linear;
+}
+
+.colorized-fast {
+    animation: hue-rotation 3s infinite linear;
+}
+
+.colorized-slow {
+    animation: hue-rotation 8s infinite linear;
+}
+
+@keyframes hue-rotation {
+    0% {
+        filter: hue-rotate(0deg);
+    }
+    100% {
+        filter: hue-rotate(360deg);
+    }
+}

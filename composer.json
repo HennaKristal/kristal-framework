@@ -1,0 +1,24 @@
+{
+    "name": "kristalframework/setup",
+    "description": "Kristal Framework Setup",
+    "type": "project",
+    "license": "GPL",
+    "authors": [
+        {
+            "name": "Henna Kristal Timonen",
+            "email": "hennakristal@outlook.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "scssphp/scssphp": "1.6.0",
+        "patchwork/jsqueeze": "2.0.5",
+        "phpmailer/phpmailer": "6.5.3",
+        "voku/html-min": "3.1.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Backend\\": "./App/Backend"
+        }
+    }
+}

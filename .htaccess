@@ -1,0 +1,115 @@
+RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+RewriteBase /
+
+
+#===========================#
+# Disable directory listing #
+#===========================#
+Options -Indexes
+
+
+#==========================================================================#
+# Force HTTPS connection (activate when you have htaccess for you website) #
+#==========================================================================#
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{SERVER_PORT} 80
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+
+#====================#
+# Routing controller #
+#====================#
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+
+
+#=========================#
+# Protect file extensions #
+#=========================#
+<FilesMatch "\.(htaccess|htpasswd|env|ini|php|sql|bak|bk|tmp|swp|yml|yaml|json|lock|log|xml|txt|md|gitignore)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+
+#===================================================#
+# Allow key files that would otherwise be protected #
+#===================================================#
+<FilesMatch "index.php|robots.txt|sitemap.xml|translations.json">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+
+#===============================#
+# Hide IDE directories and GIT  #
+#===============================#
+RedirectMatch 404 /\.git
+RedirectMatch 404 /\.vscode
+RedirectMatch 404 /\.vs
+RedirectMatch 404 /\.idea
+
+
+#==================#
+# Security headers #
+#==================#
+<IfModule mod_headers.c>
+
+    # Prevent Clickjacking attacks
+    # Header always append X-Frame-Options DENY
+
+    # Enable browser based XSS filtering
+    Header set X-XSS-Protection "1; mode=block"
+
+    # Enforce secure connections to the server
+    Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+
+    # MIME type sniffing security protection
+    Header set X-Content-Type-Options nosniff
+
+    # Referrer Policy
+    Header set Referrer-Policy "no-referrer-when-downgrade"
+
+    # Content Security Policy
+    # Header set Content-Security-Policy "default-src 'self'; script-src 'self'; object-src 'none';"
+
+</IfModule>
+
+
+#========#
+# Cache  #
+#========#
+# <IfModule mod_headers.c>
+# 
+#     # Enable cache for images, CSS, JavaScript, and web fonts
+#     <FilesMatch "\.(jpg|jpeg|png|gif|webp|svg|css|js|woff|woff2|ttf|otf|eot)$">
+#         Header set Cache-Control "max-age=31536000, public"
+#     </FilesMatch>
+# 
+#     # Disable cache for dynamic content
+#     <FilesMatch "\.(php|cgi|pl|htm)$">
+#         Header set Cache-Control "no-cache, no-store, must-revalidate"
+#         Header set Pragma "no-cache"
+#         Header set Expires "0"
+#     </FilesMatch>
+# 
+# </IfModule>
+
+
+#================#
+# Authentication #
+#================#
+# AuthType Basic
+# AuthName "Restricted Access"
+# AuthUserFile /home/c2dzk9yu/public_html/hennakristal.com/.htpasswd
+# Require valid-user
+
+
+#=============#
+# PHP Values  #
+#=============#
+php_value upload_max_filesize 10M
+php_value post_max_size 10M
