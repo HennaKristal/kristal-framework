@@ -1,3 +1,43 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+body {
+    background-color: $body_background_color;
+
+    .main-content {
+        padding-top: 80px;
+
+        /* Theme Page */
+        .theme-selection-div {
+            display: flex;
+        }
+        @media (max-width: 800px) {
+            .theme-selection-div {
+                display: block;
+            }
+        }
+        
+        .theme-selection-div form:first-of-type {
+            margin-right: 20px;
+            margin-bottom: 20px;
+        }
+    }
+}
+
+
+
 .navbar {
 
     background-color: $navbar_backgorund_color;
