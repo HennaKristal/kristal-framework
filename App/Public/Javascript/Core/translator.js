@@ -39,6 +39,8 @@ $(document).ready(function()
     kristal_language = localStorage.getItem(KRISTAL_LANGUAGE_KEY) || getVariable("language") || "en";
     kristal_translation_url = getVariable("baseURL") + "/App/Public/Translations/translations.json";
 
+    $("html").attr("translation", "language-" + kristal_language);
+
     // Force browsers to get latest version when not in production
     if (getVariable("production_mode") === "false")
     {
@@ -74,6 +76,8 @@ function kristal_initTranslations()
 function kristal_updateTranslations()
 {
     $("#" + kristal_language + "-button").addClass("active");
+
+    $("html").attr("translation", "language-" + kristal_language);
 
     $("[translationKey]").each(function()
     {
