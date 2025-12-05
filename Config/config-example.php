@@ -62,7 +62,7 @@ define("DEBUG_IGNORE_DEPRECATED", false);
 define("DEBUG_IGNORE_STRICT", false);
 
 // Defines the file path for logging debug messages (please keep this outside of html root)
-define("DEBUG_LOG_PATH", "/debug.log");
+define("DEBUG_LOG_PATH", "./debug.log");
 
 
 
@@ -268,6 +268,7 @@ define("JS_BUNDLES", serialize([
         "Core/form.js",
         "Core/tooltips.js",
         "Core/translator.js",
+        "Core/animator.js",
     ],
     "maintenance.js" => [
         "Scripts/maintenance.js",

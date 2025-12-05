@@ -1,9 +1,9 @@
 .animation-raise {
     transform: translate3d(0, 10vw, 0);
     opacity: 0;
-    transition: transform 1000ms ease, opacity 2500ms ease;
+    transition: transform 1000ms ease, opacity 2500ms ease !important;
 }
-.fp-section.active .fp-slide.active .animation-raise {
+.animation-raise.animated {
     transform: translate3d(0, 0, 0);
     opacity: 1;
 }
@@ -11,18 +11,18 @@
 
 .animation-fade {
     opacity: 0;
-    transition: opacity 2500ms ease;
+    transition: opacity 2500ms ease !important;
 }
-.fp-section.active .fp-slide.active .animation-fade {
+.animation-fade.animated {
     opacity: 1;
 }
 
 
 .animation-scale {
     transform: scale(0.5);
-    transition: transform 1000ms ease-in-out;
+    transition: transform 1000ms ease-in-out !important;
 }
-.fp-section.active .fp-slide.active .animation-scale {
+.animation-scale.animated {
     transform: scale(1);
 }
 
@@ -30,9 +30,9 @@
 .animation-move-left {
     transform: translate3d(-10vw, 0, 0);
     opacity: 0;
-    transition: transform 2500ms ease, opacity 2500ms ease;
+    transition: transform 2500ms ease, opacity 2500ms ease !important;
 }
-.fp-section.active .fp-slide.active .animation-move-left {
+.animation-move-left.animated {
     transform: translate3d(0, 0, 0);
     opacity: 1;
 }
@@ -41,9 +41,9 @@
 .animation-move-right {
     transform: translate3d(10vw, 0, 0);
     opacity: 0;
-    transition: transform 2500ms ease, opacity 2500ms ease;
+    transition: transform 2500ms ease, opacity 2500ms ease !important;
 }
-.fp-section.active .fp-slide.active .animation-move-right {
+.animation-move-right.animated {
     transform: translate3d(0, 0, 0);
     opacity: 1;
 }
@@ -52,9 +52,9 @@
 .animation-move-up {
     transform: translate3d(0, 7vw, 0);
     opacity: 0;
-    transition: transform 2500ms ease, opacity 2500ms ease;
+    transition: transform 2500ms ease, opacity 2500ms ease !important;
 }
-.fp-section.active .fp-slide.active .animation-move-up {
+.animation-move-up.animated {
     transform: translate3d(0, 0, 0);
     opacity: 1;
 }
@@ -63,9 +63,9 @@
 .animation-move-down {
     transform: translate3d(0, -7vw, 0);
     opacity: 0;
-    transition: transform 2500ms ease, opacity 2500ms ease;
+    transition: transform 2500ms ease, opacity 2500ms ease !important;
 }
-.fp-section.active .fp-slide.active .animation-move-down {
+.animation-move-down.animated {
     transform: translate3d(0, 0, 0);
     opacity: 1;
 }

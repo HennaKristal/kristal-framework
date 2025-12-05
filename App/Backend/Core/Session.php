@@ -70,6 +70,10 @@ class Session
 
     public static function startSession($visitor_identity)
     {
+        if (SESSION_NAME == "________") {
+            Die("Please change your session key from '________' to a real value in Config/config.php");
+        }
+        
         session_name(SESSION_NAME);
 
         ini_set('session.cookie_secure', PRODUCTION_MODE ? '1' : '0');

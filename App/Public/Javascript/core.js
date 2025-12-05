@@ -2,6 +2,6 @@
 else if($(this).is("img")){$(this).attr("alt",kristal_translations[t][kristal_language])}
 else{$(this).html(kristal_translations[t][kristal_language])}}
 else{console.warn("Translator was not able to translate value '"+t+"'!")}};jQuery.fn.tooltipTranslate=function(t){if(!kristal_translations){return};t=t||$(this).attr("tooltipTranslationKey");if(kristal_translations.hasOwnProperty(t)){$(this).attr("data-bs-title",kristal_translations[t][kristal_language]);kristal_reinitializeTooltip(this.get(0))}
-else{console.warn("Translator was not able to translate tooltip value '"+t+"'!")}};function kristal_reinitializeTooltip(t){const bsTooltip=bootstrap.Tooltip.getInstance(t);if(bsTooltip){bsTooltip.dispose()};new bootstrap.Tooltip(t)};
+else{console.warn("Translator was not able to translate tooltip value '"+t+"'!")}};function kristal_reinitializeTooltip(t){const bsTooltip=bootstrap.Tooltip.getInstance(t);if(bsTooltip){bsTooltip.dispose()};new bootstrap.Tooltip(t)};;$(document).ready(function(){const animatedElements=document.querySelectorAll('.animation-raise, .animation-fade, .animation-scale, .animation-move-left, .animation-move-right, .animation-move-up, .animation-move-down');const observer=new IntersectionObserver((entries)=>{entries.forEach(entry=>{if(entry.isIntersecting){requestAnimationFrame(()=>{entry.target.classList.add('animated')})}})},{threshold:0.25});animatedElements.forEach(element=>observer.observe(element))});
 
-/* Generated at: 30.10.2025 13:59:51 */
+/* Generated at: 5.12.2025 02:05:38 */

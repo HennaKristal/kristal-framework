@@ -500,15 +500,20 @@ class Database
         return $statement;
     }
 
-
     public function get($type = "array")
     {
         $statement = $this->baseGet();
-        if (!$statement) return false;
-        return ($type !== "array") ? (object) $statement->fetch(\PDO::FETCH_OBJ) : $statement->fetch(\PDO::FETCH_ASSOC);
+        if (!$statement) {
+            return ($type === "array") ? [] : (object)[];
+        }
+
+        if ($type === "array") {
+            return $statement->fetch(\PDO::FETCH_ASSOC) ?: [];
+        }
+
+        return $statement->fetch(\PDO::FETCH_OBJ) ?: (object)[];
     }
-
-
+    
     public function getAll($type = "array")
     {
         $statement = $this->baseGet();
