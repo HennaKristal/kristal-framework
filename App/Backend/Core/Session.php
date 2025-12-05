@@ -78,7 +78,7 @@ class Session
 
         ini_set('session.cookie_secure', PRODUCTION_MODE ? '1' : '0');
         ini_set('session.cookie_httponly', '1');
-        ini_set('session.cookie_samesite', 'Strict');
+        ini_set('session.cookie_samesite', 'Lax');
 
         session_start();
 
@@ -165,12 +165,12 @@ class Session
 
 
     // Get variables from session
-    public static function get($key, $return_object = true)
+    public static function get($key, $return_object = true, $default_value = null)
     {
         // Return single variable
         if (!is_array($key))
         {
-            return (isset($_SESSION[$key])) ? $_SESSION[$key] : null;
+            return (isset($_SESSION[$key])) ? $_SESSION[$key] : $default_value;
         }
 
         // Return array of variables
