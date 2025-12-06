@@ -23,6 +23,10 @@ $kristal_mandatory_constants = [
     "MAILER_NAME",
     "MAILER_PROTOCOL",
     "MAILER_PORT",
+    // "RECAPTCHA_V2_SITE_KEY",
+    // "RECAPTCHA_V2_SITE_SECRET",
+    // "RECAPTCHA_V3_SITE_KEY",
+    // "RECAPTCHA_V3_SITE_SECRET",
     "SESSION_NAME",
     "SESSION_LIFETIME",
     "SESSION_AFK_TIMEOUT",
@@ -54,14 +58,14 @@ foreach ($kristal_mandatory_constants as $constant)
 {
     if (!defined($constant))
     {
-        throw new Exception("Mandatory configuration variable $constant is not set, please create this constant to the project's config.php file!");
+        die("Mandatory configuration variable $constant is not set, please create this constant to the project's config.php file!");
     }
 }
 
 // Make sure default language is within available languages
 if (!in_array(DEFAULT_LANGUAGE, unserialize(AVAILABLE_LANGUAGES)))
 {
-    throw new Exception("Default language " . DEFAULT_LANGUAGE . " is not within the available languages!");
+    die("Default language '" . DEFAULT_LANGUAGE . "' is not within the available languages!");
 }
 
 // Set default timezone

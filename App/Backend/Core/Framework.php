@@ -12,6 +12,7 @@ if (!file_exists(WEBSITE_ROOT . "/vendor/autoload.php")) {
 require_once WEBSITE_ROOT . "/vendor/autoload.php";
 require_once WEBSITE_ROOT . "/Config/config.php";
 require_once WEBSITE_ROOT . "/App/Backend/Core/Functions/config.php";
+require_once WEBSITE_ROOT . "/App/Backend/Core/Functions/errors.php";
 require_once WEBSITE_ROOT . "/App/Backend/Core/Functions/debug.php";
 require_once WEBSITE_ROOT . "/App/Backend/Core/Functions/utilities.php";
 require_once WEBSITE_ROOT . "/App/Backend/Core/Functions/cookies.php";

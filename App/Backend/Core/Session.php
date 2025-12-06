@@ -79,7 +79,7 @@ class Session
         ini_set('session.cookie_lifetime', SESSION_LIFETIME);
         ini_set('session.cookie_path', '/');
         ini_set('session.cookie_domain', DOMAIN);
-        ini_set('session.cookie_secure', PRODUCTION_MODE ? '1' : '0');
+        ini_set('session.cookie_secure', '1');
         ini_set('session.cookie_httponly', '1');
         ini_set('session.cookie_samesite', COOKIE_SAMESITE);
 

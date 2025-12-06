@@ -15,34 +15,28 @@ function getAppLocale()
     return Session::has("language") ? Session::get("language") : DEFAULT_LANGUAGE;
 }
 
-// Output translation
-function ts($key, $variables = [])
-{
-    return translate($key, $variables);
-}
-
-// Return translation
+// Translate
 function translate($key, $variables = [])
 {
     // Get translations
-    global $translations;
+    static $translations = null;
 
-    if (!isset($translations))
+    if ($translations === null)
     {
         $path = WEBSITE_ROOT . '/App/Public/Translations/translations.php';
     
         if (!file_exists($path))
         {
-            throw new Exception("Missing translation file at App/Public/Translations/translations.php");
+            die("Missing translation file at App/Public/Translations/translations.php");
         }
 
         $translations = include $path;
-    }
-    
-    // Return original string if no translation was found
-    if (!array_key_exists($key, $translations))
-    {
-        return $key;
+
+        // Make sure translations are in an array
+        if (!is_array($translations))
+        {
+            $translations = [];
+        }
     }
 
     // Make sure $variables is an array
@@ -53,18 +47,21 @@ function translate($key, $variables = [])
 
     // Get translation language
     $language = getAppLocale();
-
-    // Get valid languages
-    foreach ($translations[$key] as $lang => $value)
+    
+    // Return original string if no translation was found
+    if (!array_key_exists($key, $translations))
     {
-        $valid_languages[$lang] = $lang;
+        debugLog("Translation for text '$key' failed because text was not found in App/Public/Translations/translations.php file");
+        return vsprintf($key, $variables);
     }
 
-    // Check if given language is found from translation
-    if (isset($loadedTranslations[$key][$language]))
-        {
-            return vsprintf($loadedTranslations[$key][$language], $variables);
-        }
-    
-        return vsprintf($key, $variables);
+    // return translated string if key and language were found
+    if (isset($translations[$key][$language]))
+    {
+        return vsprintf($translations[$key][$language], $variables);
+    }
+
+    // Return original string if no translation was found
+    debugLog("Translation for text '$key' failed because it did not have translation for language '$language'");
+    return vsprintf($key, $variables);
 }
