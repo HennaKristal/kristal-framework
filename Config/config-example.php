@@ -8,6 +8,8 @@
 // Optimizes your application for production (disable for development, enable for production)
 define("PRODUCTION_MODE", false);
 
+// Website domain name
+define("DOMAIN", "example.com");
 
 // Base URL of your website (ensure to append a "/" at the end of the URL)
 define("BASE_URL", "https://example.com/");
@@ -24,7 +26,7 @@ define("BASE_URL", "https://example.com/");
 define("MAINTENANCE_MODE", false);
 
 // Substitute with a robust password (use sha256 for hashing the password)
-define("MAINTENANCE_PASSWORD", hash('sha256', "________"));
+define("MAINTENANCE_PASSWORD", password_hash("________", PASSWORD_DEFAULT));
 
 // Maintenance login attempts are limited to a specified number
 define("MAINTENANCE_LOCKOUT_LIMIT", 5);
@@ -146,10 +148,13 @@ define("RECAPTCHA_V3_SITE_SECRET", "xxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 define("SESSION_NAME", "________");
 
 // Session expires after x seconds
-define("SESSION_TIMEOUT", 18000);
+define("SESSION_LIFETIME", 0);
 
 // Session expires after x seconds if user doesn't perform any actions
 define("SESSION_AFK_TIMEOUT", 1800);
+
+// Control cross-site session behavior. Recommended values: "Strict" or "Lax"
+define("SESSION_SAMESITE", "Strict");
 
 // Regenerate CSRF tokens on each page request for heightened security rather than solely on form submission
 define("REGENERATE_CSRF_ON_PAGE_REFRESH", false);
@@ -166,7 +171,10 @@ define("REGENERATE_CSRF_ON_PAGE_REFRESH", false);
 define("COOKIE_NAME", "________");
 
 // Cookies are set to expire after a specified number of seconds
-define("COOKIE_EXPIRE_TIME", 86400);
+define("COOKIE_LIFETIME", 86400);
+
+// Control cross-site cookie behavior. Recommended values: "Strict" or "Lax"
+define("COOKIE_SAMESITE", "Strict");
 
 
 

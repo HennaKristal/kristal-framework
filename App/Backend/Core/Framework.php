@@ -1,40 +1,33 @@
 <?php
 
-
 // Grant access to php files
 define("ACCESS", "Granted");
 
-
 // Load composer autoload.php
-if (!file_exists("vendor/autoload.php")) {
-    exit("The Composer autoload file was not found! It should be located in the vendor folder at the root of the framework (vendor/autoload.php).<br>Go to the root folder and run the command 'composer install --prefer-dist --optimize-autoloader'. If this does not fix the issue, run 'composer dump-autoload --optimize' to regenerate the autoload.php file.");
+if (!file_exists(WEBSITE_ROOT . "/vendor/autoload.php")) {
+    exit("Composer autoload file is missing. Run 'composer install --prefer-dist --optimize-autoloader'. If this does not fix the issue, run 'composer dump-autoload --optimize' to regenerate the autoload.php file.");
 }
 
-
 // Load core files
-require_once "vendor/autoload.php";
-require_once "Config/config.php";
-require_once "App/Backend/Core/Functions/config.php";
-require_once "App/Backend/Core/Functions/debug.php";
-require_once "App/Backend/Core/Functions/utilities.php";
-require_once "App/Backend/Core/Functions/cookies.php";
-require_once "App/Backend/Core/Functions/translator.php";
-require_once "App/Backend/Cron/cron.php";
-
+require_once WEBSITE_ROOT . "/vendor/autoload.php";
+require_once WEBSITE_ROOT . "/Config/config.php";
+require_once WEBSITE_ROOT . "/App/Backend/Core/Functions/config.php";
+require_once WEBSITE_ROOT . "/App/Backend/Core/Functions/debug.php";
+require_once WEBSITE_ROOT . "/App/Backend/Core/Functions/utilities.php";
+require_once WEBSITE_ROOT . "/App/Backend/Core/Functions/cookies.php";
+require_once WEBSITE_ROOT . "/App/Backend/Core/Functions/translator.php";
+require_once WEBSITE_ROOT . "/App/Backend/Cron/cron.php";
 
 // Initialize session
 class_alias("Backend\Core\Session", "Session");
 Session::initialize();
 
-
 // Include cross-site request forgery protection
 class_alias("Backend\Core\CSRF", "CSRF");
-
 
 // Initialize Blocks
 class_alias("Backend\Core\Block", "Block");
 Block::initialize();
-
 
 // Compile SCSS and JavaScript
 if (!PRODUCTION_MODE)
@@ -52,6 +45,5 @@ if (!PRODUCTION_MODE)
     }
 }
 
-
 // Load routes
-require_once "Routes/routes.php";
+require_once WEBSITE_ROOT . "/Routes/routes.php";

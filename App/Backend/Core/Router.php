@@ -279,9 +279,8 @@ class Router
                 $kristal_time_difference = MAINTENANCE_LOCKOUT_CLEAR_TIME - (time() - filemtime($kristal_rate_limit_file));
                 $kristal_authentication_lockout_duration = $kristal_time_difference > 60 ? floor($kristal_time_difference / 60) . ' min' : $kristal_time_difference . ' s';
             }
-            elseif (hash('sha256', $_POST["maintenance-password"]) === MAINTENANCE_PASSWORD)
+            elseif (password_verify($_POST["maintenance-password"], MAINTENANCE_PASSWORD))
             {
-                // Successful authentication
                 Session::add("maintenance_access_granted", "Granted");
             }
             else

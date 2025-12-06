@@ -1,248 +1,299 @@
 <?php defined("ACCESS") or exit("Access Denied");
 
+// ------------------------------------------------------------------------------------------------
+// Debug output for variables
+// ------------------------------------------------------------------------------------------------
 
-function debug($variable, $name = null)
+function debug($value, $name = null)
 {
-    if (PRODUCTION_MODE) { return; }
+    if (PRODUCTION_MODE)
+    {
+        return;
+    }
 
     ?>
     <style>
-        .kristal-debug-div {
+        .kristal-debug-block {
             font-family: Helvetica, Arial, sans-serif !important;
             background-color: #f1f1f1 !important;
             color: black !important;
-            margin: 10px !important;
-            padding: 15px 25px !important;
-            border: 2px solid lightblue !important;
+            margin: 14px !important;
+            padding: 18px 26px !important;
+            border: 2px solid #87c1f5 !important;
             line-height: 25px !important;
+            white-space: pre-wrap !important;
+        }
+        .kristal-debug-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
         }
     </style>
     <?php
 
-    echo "<pre class='kristal-debug-div'>";
+    echo "<div class='kristal-debug-block'>";
 
-    if (isset($name))
+    if (!empty($name))
     {
-        echo "<strong>Debugging:</strong> $name<br><br>";
+        echo "<span class='kristal-debug-title'>Debugging: " . sanitizeString($name) . "</span>";
     }
 
-    echo var_export($variable, true);
-    echo "</pre>";
+    echo htmlspecialchars(var_export($value, true), ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8");
+
+    echo "</div>";
 }
 
+// ------------------------------------------------------------------------------------------------
+// Logging
+// ------------------------------------------------------------------------------------------------
 
 function debugLog($message, $severity = "Debug")
 {
-    if (!ENABLE_DEBUG_LOG) { return; }
-    
-    $time = date('d-M-Y H:i:s e');
+    if (!ENABLE_DEBUG_LOG)
+    {
+        return;
+    }
+
+    $time = date("Y-m-d H:i:s e");
 
     if (is_array($message))
     {
         $message = print_r($message, true);
     }
 
-    $log = "[$time] $severity:  $message\n";
-    error_log($log, 3, DEBUG_LOG_PATH);
+    $cleanMessage = "[" . $time . "] " . $severity . ": " . $message . "\n";
+
+    error_log($cleanMessage, 3, DEBUG_LOG_PATH);
 }
 
+// ------------------------------------------------------------------------------------------------
+// PHP error level configuration
+// ------------------------------------------------------------------------------------------------
 
 function kristal_setDebugLevels()
 {
-    $error_level = E_ALL;
+    $level = E_ALL;
 
     if (DEBUG_IGNORE_WARNINGS)
     {
-        $error_level &= ~(E_WARNING | E_CORE_WARNING | E_COMPILE_WARNING | E_USER_WARNING);
+        $level &= ~(E_WARNING | E_USER_WARNING | E_CORE_WARNING | E_COMPILE_WARNING);
     }
     if (DEBUG_IGNORE_NOTICES)
     {
-        $error_level &= ~(E_NOTICE | E_USER_NOTICE);
+        $level &= ~(E_NOTICE | E_USER_NOTICE);
     }
     if (DEBUG_IGNORE_DEPRECATED)
     {
-        $error_level &= ~(E_DEPRECATED | E_USER_DEPRECATED);
+        $level &= ~(E_DEPRECATED | E_USER_DEPRECATED);
     }
     if (DEBUG_IGNORE_STRICT)
     {
-        $error_level &= ~(E_STRICT);
+        $level &= ~(E_STRICT);
     }
 
-    error_reporting($error_level);
+    error_reporting($level);
 }
 
+// ------------------------------------------------------------------------------------------------
+// Error handler
+// ------------------------------------------------------------------------------------------------
 
-function kristal_errorHandler($error_type, $message, $file, $line)
+function kristal_errorHandler($type, $message, $file, $line)
 {
-    if ($error_type === E_WARNING || $error_type === E_CORE_WARNING || $error_type === E_COMPILE_WARNING || $error_type === E_USER_WARNING)
+    // Map to readable labels
+    if ($type === E_WARNING || $type === E_USER_WARNING || $type === E_CORE_WARNING || $type === E_COMPILE_WARNING)
     {
         if (DEBUG_IGNORE_WARNINGS) { return; }
-        $type = "Warning";
+        $label = "Warning";
     }
-    elseif ($error_type === E_NOTICE || $error_type === E_USER_NOTICE)
+    elseif ($type === E_NOTICE || $type === E_USER_NOTICE)
     {
         if (DEBUG_IGNORE_NOTICES) { return; }
-        $type = "Notice";
+        $label = "Notice";
     }
-    elseif ($error_type === E_DEPRECATED || $error_type === E_USER_DEPRECATED)
+    elseif ($type === E_DEPRECATED || $type === E_USER_DEPRECATED)
     {
         if (DEBUG_IGNORE_DEPRECATED) { return; }
-        $type = "Deprecated";
+        $label = "Deprecated";
     }
-    elseif ($error_type === E_STRICT)
+    elseif ($type === E_STRICT)
     {
         if (DEBUG_IGNORE_STRICT) { return; }
-        $type = "Strict";
+        $label = "Strict";
     }
     else
     {
-        $type = "Error";
+        $label = "Error";
     }
 
-    kristal_warningHandler($type, $message, $file, $line);
+    kristal_errorOutput($label, $message, $file, $line);
 }
 
+// ------------------------------------------------------------------------------------------------
+// Debug output for warnings and non-fatal errors
+// ------------------------------------------------------------------------------------------------
 
-function kristal_warningHandler($type, $message, $file, $line)
+function kristal_errorOutput($label, $message, $file, $line)
 {
     if (ENABLE_DEBUG_LOG)
     {
-        $time = date('d-M-Y H:i:s e');
-        $log = "[$time] $type:  $message in $file on line $line\n";
-        error_log($log, 3, DEBUG_LOG_PATH);
+        debugLog($message . " in " . $file . " on line " . $line, $label);
     }
 
-    if (!PRODUCTION_MODE)
+    if (PRODUCTION_MODE)
     {
-        ?>
-        <style>
-            .kristal-warning-div {
-                font-family: Helvetica, Arial, sans-serif !important;
-                background-color: #fff3cd !important;
-                color: black !important;
-                margin: 10px !important;
-                padding: 15px 25px !important;
-                border: 2px solid orange !important;
-            }
-        </style>
-        <?php
-
-        echo "<div class='kristal-warning-div'>";
-        echo "<strong>$type:</strong> $message<br>";
-        echo "$type occurred on line $line in the file $file<br>";
-        echo "</div>";
+        return;
     }
+
+    ?>
+    <style>
+        .kristal-warning-block {
+            font-family: Helvetica, Arial, sans-serif !important;
+            background-color: #fff3cd !important;
+            color: black !important;
+            margin: 14px !important;
+            padding: 18px 26px !important;
+            border: 2px solid orange !important;
+        }
+        .kristal-warning-title {
+            font-weight: bold;
+            margin-bottom: 6px;
+            display: block;
+        }
+    </style>
+    <?php
+
+    echo "<div class='kristal-warning-block'>";
+    echo "<span class='kristal-warning-title'>" . $label . ":</span>";
+    echo sanitizeString($message) . "<br>";
+    echo "Occurred on line " . sanitizeString($line) . " in file " . sanitizeString($file);
+    echo "</div>";
 }
 
+// ------------------------------------------------------------------------------------------------
+// Fatal error handler
+// ------------------------------------------------------------------------------------------------
 
 function kristal_fatalErrorHandler()
 {
     $error = error_get_last();
 
-    if ($error && ($error['type'] & (E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_RECOVERABLE_ERROR | E_USER_ERROR)))
+    if (!$error)
     {
-        // Check if output buffering is active before attempting to clean
-        if (ob_get_level() > 0) { ob_end_clean(); }
-        
+        return;
+    }
+
+    $isFatal =
+        $error["type"] === E_ERROR ||
+        $error["type"] === E_PARSE ||
+        $error["type"] === E_CORE_ERROR ||
+        $error["type"] === E_COMPILE_ERROR ||
+        $error["type"] === E_RECOVERABLE_ERROR ||
+        $error["type"] === E_USER_ERROR;
+
+    if (!$isFatal)
+    {
+        return;
+    }
+
+    // Clear output buffer safely
+    if (ob_get_level() > 0)
+    {
+        ob_end_clean();
+    }
+
+    // Production mode
+    if (PRODUCTION_MODE)
+    {
         ?>
         <style>
-            html, body {
-                background-color: #f1f1f1;
-                font-family: Helvetica, Arial, sans-serif;
-                color: black;
-            }
-
-            .fatal-error-div {
+            body { background-color: #f1f1f1; font-family: Helvetica, Arial, sans-serif; }
+            .kristal-fatal-block {
                 background-color: white;
                 border: 2px solid #e5e6e7;
-                width: 56%;
-                margin: 80px 0px 0px 20%;
-                padding: 30px 2%;
-                word-wrap: break-word;
-            }
-
-            @media only screen and (max-width: 1000px) {
-                .fatal-error-div {
-                    width: 74%;
-                    margin: 80px 0px 0px 10%;
-                    padding: 30px 3%;
-                }
-            }
-
-            @media only screen and (max-width: 400px) {
-                .fatal-error-div {
-                    width: 80%;
-                    margin: 80px 0px 0px 5%;
-                    padding: 30px 5%;
-                }
-            }
-
-            .prodcution {
+                width: 60%;
+                margin: 80px auto;
+                padding: 30px;
                 text-align: center;
             }
-            
-            .code-snippet {
-                font-family: "Courier New", monospace;
-                background-color: #f9f9f9;
-                border: 1px solid #ccc;
-                padding: 10px;
-                margin-top: 20px;
-                text-wrap: nowrap;
-                overflow-y: hidden;
-            }
-
-            .code-snippet .highlight {
-                background-color: #ffcccb;
-                font-weight: bold;
-                display: inline-table;
-                padding-bottom: 10px;
-                padding-top: 10px;
-                font-size: 105%;
-            }
         </style>
+        <div class="kristal-fatal-block">
+            A critical error has occurred. Please contact the site administrator.
+        </div>
         <?php
-
-        if (PRODUCTION_MODE)
-        {
-            echo "<div class='fatal-error-div prodcution'>";
-            echo "A critical error has occurred on this website. Please notify the site owner about this issue.";
-            echo "</div>";
-        }
-        else
-        {
-            echo "<div class='fatal-error-div development'>";
-            echo "<strong>Fatal Error:</strong> {$error['message']}";
-            echo "<br><br>";
-            echo "Fatal error occurred on line {$error['line']} in the file {$error['file']}";
-
-            echo "<div class='code-snippet'>";
-            $file_lines = file($error['file']);
-            $start_line = max(0, $error['line'] - 11);
-            $end_line = min(count($file_lines), $error['line'] + 10);
-            for ($i = $start_line; $i < $end_line; $i++)
-            {
-                $line_number = $i + 1;
-                $highlight_class = ($line_number === $error['line']) ? 'highlight' : '';
-                $indented_line = str_replace("\t", '&nbsp;&nbsp;&nbsp;&nbsp;', htmlentities($file_lines[$i]));
-                $indented_line = str_replace("  ", '&nbsp;&nbsp;', $indented_line);
-                echo "<div class='{$highlight_class}'>" . $line_number . ": " . $indented_line . "</div>";
-            }
-            echo "</div>";
-
-            echo "</div>";
-        }
+        return;
     }
+
+    // Development mode
+    ?>
+    <style>
+        body { background-color: #f1f1f1; font-family: Helvetica, Arial, sans-serif; }
+        .kristal-fatal-block {
+            background-color: white;
+            border: 2px solid #e5e6e7;
+            width: 60%;
+            margin: 80px auto;
+            padding: 30px;
+        }
+        .kristal-code-block {
+            background-color: #f9f9f9;
+            border: 1px solid #cccccc;
+            padding: 14px;
+            margin-top: 20px;
+            overflow-x: auto;
+            font-family: Courier New, monospace;
+            white-space: pre;
+        }
+        .kristal-highlight-line {
+            background-color: #ffdddd;
+            font-weight: bold;
+        }
+    </style>
+    <?php
+
+    echo "<div class='kristal-fatal-block'>";
+    echo "<strong>Fatal Error:</strong> " . sanitizeString($error["message"]) . "<br><br>";
+    echo "Occurred on line " . sanitizeString($error["line"]) . " in file " . sanitizeString($error["file"]);
+
+    $lines = @file($error["file"]);
+    if ($lines)
+    {
+        $start = max(0, $error["line"] - 11);
+        $end = min(count($lines), $error["line"] + 10);
+
+        echo "<div class='kristal-code-block'>";
+        for ($i = $start; $i < $end; $i++)
+        {
+            $number = $i + 1;
+            $safeLine = htmlspecialchars($lines[$i]);
+
+            if ($number === $error["line"])
+            {
+                echo "<div class='kristal-highlight-line'>" . $number . ": " . $safeLine . "</div>";
+            }
+            else
+            {
+                echo "<div>" . $number . ": " . $safeLine . "</div>";
+            }
+        }
+        echo "</div>";
+    }
+
+    echo "</div>";
 }
 
+// ------------------------------------------------------------------------------------------------
+// Bootstrap
+// ------------------------------------------------------------------------------------------------
 
 if (ENABLE_DEBUG)
 {
     kristal_setDebugLevels();
 
-    ini_set('display_errors', ENABLE_DEBUG_DISPLAY ? '1' : '0');
-    ini_set('display_startup_errors', ENABLE_DEBUG_DISPLAY ? '1' : '0');
-    ini_set('log_errors', ENABLE_DEBUG_LOG ? '1' : '0');
-    ini_set('error_log', DEBUG_LOG_PATH);
+    ini_set("display_errors", ENABLE_DEBUG_DISPLAY ? "1" : "0");
+    ini_set("display_startup_errors", ENABLE_DEBUG_DISPLAY ? "1" : "0");
+    ini_set("log_errors", ENABLE_DEBUG_LOG ? "1" : "0");
+    ini_set("error_log", DEBUG_LOG_PATH);
 
     if (ENABLE_DEBUG_DISPLAY)
     {
@@ -252,8 +303,8 @@ if (ENABLE_DEBUG)
 }
 else
 {
-    ini_set('display_errors', '0');
-    ini_set('display_startup_errors', '0');
-    ini_set('log_errors', '0');
+    ini_set("display_errors", "0");
+    ini_set("display_startup_errors", "0");
+    ini_set("log_errors", "0");
     error_reporting(0);
 }

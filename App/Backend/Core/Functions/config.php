@@ -2,6 +2,7 @@
 
 $kristal_mandatory_constants = [
     "PRODUCTION_MODE",
+    "DOMAIN",
     "BASE_URL",
     "MAINTENANCE_MODE",
     "MAINTENANCE_PASSWORD",
@@ -23,11 +24,13 @@ $kristal_mandatory_constants = [
     "MAILER_PROTOCOL",
     "MAILER_PORT",
     "SESSION_NAME",
-    "SESSION_TIMEOUT",
+    "SESSION_LIFETIME",
     "SESSION_AFK_TIMEOUT",
+    "SESSION_SAMESITE",
     "REGENERATE_CSRF_ON_PAGE_REFRESH",
     "COOKIE_NAME",
-    "COOKIE_EXPIRE_TIME",
+    "COOKIE_LIFETIME",
+    "COOKIE_SAMESITE",
     "TIMEZONE",
     "DATE_FORMAT",
     "TIME_FORMAT",

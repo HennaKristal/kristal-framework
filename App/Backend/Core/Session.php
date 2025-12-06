@@ -76,15 +76,17 @@ class Session
         
         session_name(SESSION_NAME);
 
+        ini_set('session.cookie_lifetime', SESSION_LIFETIME);
+        ini_set('session.cookie_path', '/');
+        ini_set('session.cookie_domain', DOMAIN);
         ini_set('session.cookie_secure', PRODUCTION_MODE ? '1' : '0');
         ini_set('session.cookie_httponly', '1');
-        ini_set('session.cookie_samesite', 'Lax');
+        ini_set('session.cookie_samesite', COOKIE_SAMESITE);
 
         session_start();
 
         // Check session duration
         self::afkTimeout(SESSION_AFK_TIMEOUT);
-        self::timeout(SESSION_TIMEOUT);
 
         if (empty(self::get("visitor_identity")))
         {
@@ -192,26 +194,6 @@ class Session
         }
 
         return session_status() === PHP_SESSION_ACTIVE;
-    }
-
-    // End Session after x seconds has passed (specified in the config.php)
-    private static function timeout($duration)
-    {
-        // Get time when session was started
-        $session_timeout = self::get("timeout");
-
-        // If time didn't exist then this is the start of session
-        if (!isset($session_timeout))
-        {
-            self::add("timeout", time());
-            return;
-        }
-
-        // Check has user exceeded the session duration
-        if ((time() - (int)$session_timeout) > $duration)
-        {
-            self::restart();
-        }
     }
 
     // End Session if user isn't active for x seconds (specified in the config.php)

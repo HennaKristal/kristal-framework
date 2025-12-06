@@ -1,5 +1,8 @@
 <?php defined("ACCESS") or exit("Access Denied");
 
+// ------------------------------------------------------------------------------------------------
+// Asset Helpers
+// ------------------------------------------------------------------------------------------------
 
 function kristal_getAssetPath($folder, $file, array $params = ["path" => "url"])
 {
@@ -33,51 +36,51 @@ function kristal_getAssetPath($folder, $file, array $params = ["path" => "url"])
     return $returnPath;
 }
 
-function image($file, array $params = ["path" => "url"]): string
+function image($file, array $parameters = ["path" => "url"])
 {
-    return kristal_getAssetPath("Images", $file, $params);
+    return kristal_getAssetPath("Images", $file, $parameters);
 }
 
-function css($file, array $params = ["path" => "url"]): string
+function css($file, array $parameters = ["path" => "url"])
 {
-    return kristal_getAssetPath("CSS", $file, $params);
+    return kristal_getAssetPath("CSS", $file, $parameters);
 }
 
-function js($file, array $params = ["path" => "url"]): string 
+function js($file, array $parameters = ["path" => "url"])
 {
-    return kristal_getAssetPath("Javascript", $file, $params);
+    return kristal_getAssetPath("Javascript", $file, $parameters);
 }
 
-function download($file, array $params = ["path" => "url"]): string
+function download($file, array $parameters = ["path" => "url"])
 {
-    return kristal_getAssetPath("Downloads", $file, $params);
+    return kristal_getAssetPath("Downloads", $file, $parameters);
 }
 
-function audio($file, array $params = ["path" => "url"]): string
+function audio($file, array $parameters = ["path" => "url"])
 {
-    return kristal_getAssetPath("Audio", $file, $params);
+    return kristal_getAssetPath("Audio", $file, $parameters);
 }
 
-
-// ============================================================================================================== \\
+// ------------------------------------------------------------------------------------------------
+// Page Helpers
+// ------------------------------------------------------------------------------------------------
 
 function page($file)
 {
     $file = ensurePHPExtension($file);
-    if (file_exists("App/Pages/$file"))
-    {
-        return "App/Pages/$file";
-    }
+    $path = WEBSITE_ROOT . "/App/Pages/" . $file;
 
-    return false;
+    return file_exists($path) ? $path : false;
 }
 
 function pageExists($file)
 {
-    return file_exists("App/Pages/" . ensurePHPExtension($file));
+    return file_exists(WEBSITE_ROOT . "/App/Pages/" . ensurePHPExtension($file));
 }
 
-// ============================================================================================================== \\
+// ------------------------------------------------------------------------------------------------
+// Routing and Redirect Helpers
+// ------------------------------------------------------------------------------------------------
 
 function route($page = "")
 {
@@ -89,12 +92,10 @@ function route($page = "")
     return BASE_URL . $page;
 }
 
-// ============================================================================================================== \\
-
 function redirect($target = null)
 {
     // Redirect to given page
-    if (isset($target))
+    if (!empty($target))
     {
         header("Location: " . $target);
         exit;
@@ -103,13 +104,11 @@ function redirect($target = null)
     // Redirect back to previous page
     if (isset($_SERVER["HTTP_REFERER"]))
     {
-        header("Location: " . $_SERVER["HTTP_REFERER"]);
+        header("Location: " . sanitizeString($_SERVER["HTTP_REFERER"]));
         exit;
     }
 
-    // Refresh page
-    header("Refresh:0");
-    exit;
+    refreshPage();
 }
 
 function redirectBack($fallback = null)
@@ -117,20 +116,18 @@ function redirectBack($fallback = null)
     // Redirect back to previous page
     if (isset($_SERVER["HTTP_REFERER"]))
     {
-        header("Location: " . $_SERVER["HTTP_REFERER"]);
+        header("Location: " . sanitizeString($_SERVER["HTTP_REFERER"]));
         exit;
     }
 
     // Redirect to fallback page
-    if (isset($fallback))
+    if (!empty($fallback))
     {
         header("Location: " . $fallback);
         exit;
     }
 
-    // Refresh page
-    header("Refresh:0");
-    exit;
+    refreshPage();
 }
 
 function refreshPage()
@@ -139,77 +136,56 @@ function refreshPage()
     exit;
 }
 
-// ============================================================================================================== \\
+// ------------------------------------------------------------------------------------------------
+// File Extension Helpers
+// ------------------------------------------------------------------------------------------------
 
 function ensurePHPExtension($file)
 {
-    return (substr($file, -4) === ".php") ? $file : $file . ".php";
+    return substr($file, -4) === ".php" ? $file : $file . ".php";
 }
 
 function ensureJSExtension($file)
 {
-    return (substr($file, -3) === ".js") ? $file : $file . ".js";
+    return substr($file, -3) === ".js" ? $file : $file . ".js";
 }
 
 function ensureCSSExtension($file)
 {
-    return (substr($file, -4) === ".css") ? $file : $file . ".css";
+    return substr($file, -4) === ".css" ? $file : $file . ".css";
 }
 
 function ensureSCSSExtension($file)
 {
-    return (substr($file, -5) === ".scss") ? $file : $file . ".scss";
+    return substr($file, -5) === ".scss" ? $file : $file . ".scss";
 }
 
-// ============================================================================================================== \\
+// ------------------------------------------------------------------------------------------------
+// Sanitizers
+// ------------------------------------------------------------------------------------------------
 
 function sanitizeFileName(string $fileName)
 {
-    $sanitized = preg_replace('/[^a-zA-Z0-9._-]/', '_', $fileName);
-    return substr($sanitized, 0, 255);
+    $safe = preg_replace("/[^a-zA-Z0-9._-]/", "_", $fileName);
+    return substr($safe, 0, 255);
 }
 
-function sanitizeString(string $name)
+function sanitizeString(string $value)
 {
-    $sanitized = htmlspecialchars($name, ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8");
-    return $sanitized;
+    return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8");
 }
 
-// ============================================================================================================== \\
+// ------------------------------------------------------------------------------------------------
+// Password Validation
+// ------------------------------------------------------------------------------------------------
 
 function isSecurePassword($password)
 {
-    // Check the length
-    if (strlen($password) < 8)
-    {
-        return false;
-    }
-
-    // Check for uppercase letter
-    if (!preg_match('/[A-Z]/', $password))
-    {
-        return false;
-    }
-
-    // Check for lowercase letter
-    if (!preg_match('/[a-z]/', $password))
-    {
-        return false;
-    }
-
-    // Check for digit
-    if (!preg_match('/\d/', $password))
-    {
-        return false;
-    }
-
-    // Check for special character
-    if (!preg_match('/[\W_]/', $password))
-    {
-        return false;
-    }
+    if (strlen($password) < 12) { return false; }
+    if (!preg_match("/[A-Z]/", $password)) { return false; }
+    if (!preg_match("/[a-z]/", $password)) { return false; }
+    if (!preg_match("/\d/", $password)) { return false; }
+    if (!preg_match("/[\W_]/", $password)) { return false; }
 
     return true;
 }
-
-// ============================================================================================================== \\
