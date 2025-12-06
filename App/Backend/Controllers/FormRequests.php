@@ -13,17 +13,12 @@ class FormRequests extends FormRequest
     {
         // Protected function can only be called when parent::__construct() is called with ["allow_protected_calls" => true] parameter
         // You can specify your own condition in the IF statement if you want to access protected functions from form requests
-        // For example Session::get("logged_in") or Session::get("role") === "admin"
-        if (false)
-        {
-            // Allow form requests to access protected functions
-            parent::__construct(["allow_protected_calls" => true]);
-        }
-        else
-        {
-            // Allow form requests to access only public functions
-            parent::__construct(["allow_protected_calls" => false]);
-        }
+        // For example Session::get("logged_in") === true or Session::get("role") === "admin"
+        $allowProtected = false;
+
+        parent::__construct([
+            "allow_protected_calls" => $allowProtected
+        ]);
     }
 
 

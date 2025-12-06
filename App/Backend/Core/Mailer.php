@@ -81,7 +81,7 @@ class Mailer
                 foreach ($variables as $key => $value)
                 {
                     $search[] = "{{ $key }}";
-                    $replace[] = $value;
+                    $replace[] = htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8");
                 }
                 $content_template = str_replace($search, $replace, $content_template);
             }

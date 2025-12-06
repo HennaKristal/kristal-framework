@@ -163,10 +163,15 @@ function ensureSCSSExtension($file)
 
 // ============================================================================================================== \\
 
-function sanitizeFileName(string $file_name)
+function sanitizeFileName(string $fileName)
 {
-    $sanitized = preg_replace('/[^a-zA-Z0-9\.-]/', '_', $file_name);
-    $sanitized = substr($sanitized, 0, 255);
+    $sanitized = preg_replace('/[^a-zA-Z0-9._-]/', '_', $fileName);
+    return substr($sanitized, 0, 255);
+}
+
+function sanitizeString(string $name)
+{
+    $sanitized = htmlspecialchars($name, ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8");
     return $sanitized;
 }
 

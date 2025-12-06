@@ -61,7 +61,7 @@ class Session
         $user_agent = self::getUserAgentHash();
 
         // Collect additional data if available
-        $additional_data = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+        $additional_data = $_SERVER["HTTP_ACCEPT_LANGUAGE"] ?? "unknown";
 
         // Generate a id by hashing these together
         return hash('sha256', $IP_address . $user_agent . $additional_data);
@@ -182,19 +182,17 @@ class Session
         return ($return_object) ? (object) $variables : $variables;
     }
 
-
     // Check if session is already active
     private static function isActive()
     {
-        // We do not want session on CLI
-        if (php_sapi_name() !== "cli")
-        {
+        $serverInterface = php_sapi_name();
+
+        if ($serverInterface === "cli") {
             return false;
         }
 
         return session_status() === PHP_SESSION_ACTIVE;
     }
-
 
     // End Session after x seconds has passed (specified in the config.php)
     private static function timeout($duration)
