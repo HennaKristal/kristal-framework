@@ -62,7 +62,7 @@
                         <span><?= translate("Too many login attempts, please wait %s before you are allowed to try again.", $kristal_authentication_lockout_duration); ?></span>
                     </p>
                 <?php elseif ($kristal_authentication_failed) : ?>
-                    <p id="feedback" style="color: red;"><?= translate("Failed to authenticate!"); ?></p>
+                    <p id="feedback" style="color: red;"><?= translate("Failed to authenticate."); ?></p>
                 <?php else: ?>
                     <p id="feedback" style="padding: 12px;"></p>
                 <?php endif; ?>

@@ -97,7 +97,7 @@ function kristal_errorOutput($label, $message, $file, $line)
 {
     if (ENABLE_DEBUG_LOG)
     {
-        debugLog($message . " in " . $file . " on line " . $line, $label);
+        debuglog($message . " in " . $file . " on line " . $line, $label);
     }
 
     if (PRODUCTION_MODE)

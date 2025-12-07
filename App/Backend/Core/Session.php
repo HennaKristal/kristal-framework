@@ -60,8 +60,17 @@ class Session
 
     public static function startSession($visitor_identity)
     {
-        if (SESSION_NAME == "________") {
-            Die("Please change your session key from '________' to a real value in Config/config.php");
+        if (SESSION_NAME == "________")
+        {
+            if (PRODUCTION_MODE)
+            {
+                debuglog("Could not start session for security reasons because the session name was default value", "warning");
+                return;
+            }
+            else
+            {
+                exit("Please update your session key from the default value to a unique value in config.php");
+            }
         }
         
         session_name(SESSION_NAME);

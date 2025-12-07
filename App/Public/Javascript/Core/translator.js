@@ -52,7 +52,7 @@ $(document).ready(function()
     $.getJSON(kristal_translation_url, (data) => {
         kristal_translations = data;
         kristal_initTranslations();
-    }).fail(() => { console.error("Failed to find translations file!\n\nTried to look at url:\n" + kristal_translation_url + "\n\nAlternatively, you may have an error in your JSON format!"); });
+    }).fail(() => { console.error("Failed to find translations file!\n\nTried to look at url:\n" + kristal_translation_url + "\n\nAlternatively, you may have an error in your JSON format."); });
 });
 
 
@@ -124,7 +124,7 @@ jQuery.fn.translate = function(key)
     }
     else
     {
-        console.warn("Translator was not able to translate value '" + key + "'!");
+        console.warn("Translator was not able to translate value: " + key);
     }
 }
 
@@ -143,7 +143,7 @@ jQuery.fn.tooltipTranslate = function(key)
     }
     else
     {
-        console.warn("Translator was not able to translate tooltip value '" + key + "'!");
+        console.warn("Translator was not able to translate tooltip value: " + key);
     }
 }
 

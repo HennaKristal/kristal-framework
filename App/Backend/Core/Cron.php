@@ -19,7 +19,15 @@ class Cron
     {
         if (!is_string($name) || !is_string($task))
         {
-            throw new \InvalidArgumentException("Invalid input parameters for Cron class.");
+            if (PRODUCTION_MODE)
+            {
+                debuglog("Cron name or task name was invalid or empty.", "error");
+                return;
+            }
+            else
+            {
+                exit("Cron name or task name was invalid or empty.");
+            }
         }
 
         if (is_array($interval))
@@ -46,7 +54,8 @@ class Cron
                     $this->interval = ["type" => self::INTERVAL_YEAR, "amount" => 1];
                     break;
                 default:
-                    throw new \Exception("invalid interval for cron job: " . $name . ". Value given was $interval");
+                    $this->interval = ["type" => self::INTERVAL_DAY, "amount" => 1];
+                    debuglog("invalid interval for cron job: $name Value given was $interval", "warning");
             }
         }
 
@@ -78,7 +87,15 @@ class Cron
         }
         else
         {
-            throw new \RuntimeException("Task file not found or not readable: $taskFile");
+            if (PRODUCTION_MODE)
+            {
+                debuglog("Task file not found or not readable: $taskFile", "error");
+                return;
+            }
+            else
+            {
+                exit("Task file not found or not readable: $taskFile");
+            }
         }
     }
     
@@ -115,6 +132,6 @@ class Cron
     
     private function getLogLocation()
     {
-        return "App/Backend/Cron/Logs/" . sanitizeFileName($this->name) . ".php";
+        return WEBSITE_ROOT . "/App/Backend/Cron/Logs/" . sanitizeFileName($this->name) . ".php";
     }
 }

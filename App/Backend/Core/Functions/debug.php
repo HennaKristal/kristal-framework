@@ -47,7 +47,7 @@ function debug($value, $name = null)
 // ------------------------------------------------------------------------------------------------
 // Logging
 // ------------------------------------------------------------------------------------------------
-function debugLog($message, $severity = "Debug")
+function debuglog($message, $severity = "Debug")
 {
     if (!ENABLE_DEBUG_LOG)
     {

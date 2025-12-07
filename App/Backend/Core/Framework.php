@@ -4,8 +4,16 @@
 define("ACCESS", "Granted");
 
 // Load composer autoload.php
-if (!file_exists(WEBSITE_ROOT . "/vendor/autoload.php")) {
-    exit("Composer autoload file is missing. Run 'composer install --prefer-dist --optimize-autoloader'. If this does not fix the issue, run 'composer dump-autoload --optimize' to regenerate the autoload.php file.");
+if (!file_exists(WEBSITE_ROOT . "/vendor/autoload.php"))
+{
+    if (PRODUCTION_MODE)
+    {
+        exit("Fatal error.");
+    }
+    else
+    {
+        exit("Composer autoload file is missing. Run 'composer install --prefer-dist --optimize-autoloader'. If this does not fix the issue, run 'composer dump-autoload --optimize' to regenerate the autoload.php file.");
+    }
 }
 
 // Load core files

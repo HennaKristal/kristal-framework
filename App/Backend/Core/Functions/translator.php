@@ -18,6 +18,12 @@ function getAppLocale()
 // Translate
 function translate($key, $variables = [])
 {
+    // Make sure $variables is an array
+    if (!is_array($variables))
+    {
+        $variables = [$variables];
+    }
+
     // Get translations
     static $translations = null;
 
@@ -27,7 +33,15 @@ function translate($key, $variables = [])
     
         if (!file_exists($path))
         {
-            die("Missing translation file at App/Public/Translations/translations.php");
+            if (PRODUCTION_MODE)
+            {
+                debuglog("Translation for text '$key' failed because text was not found in App/Public/Translations/translations.php file");
+                return vsprintf($key, $variables);
+            }
+            else
+            {
+                exit("Missing translation file at App/Public/Translations/translations.php");
+            }
         }
 
         $translations = include $path;
@@ -39,19 +53,13 @@ function translate($key, $variables = [])
         }
     }
 
-    // Make sure $variables is an array
-    if (!is_array($variables))
-    {
-        $variables = [$variables];
-    }
-
     // Get translation language
     $language = getAppLocale();
     
     // Return original string if no translation was found
     if (!array_key_exists($key, $translations))
     {
-        debugLog("Translation for text '$key' failed because text was not found in App/Public/Translations/translations.php file");
+        debuglog("Translation for text '$key' failed because text was not found in App/Public/Translations/translations.php file");
         return vsprintf($key, $variables);
     }
 
@@ -62,6 +70,6 @@ function translate($key, $variables = [])
     }
 
     // Return original string if no translation was found
-    debugLog("Translation for text '$key' failed because it did not have translation for language '$language'");
+    debuglog("Translation for text '$key' failed because it did not have translation for language '$language'");
     return vsprintf($key, $variables);
 }

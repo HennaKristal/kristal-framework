@@ -1,16 +1,14 @@
 <?php namespace Backend\Core;
 defined("ACCESS") or exit("Access Denied");
 
-
 class Block
 {
     protected static $shortcodes = [];
 
-
     public static function initialize()
     {
         // Get all directories within the blocks folder
-        $directories = glob('App/Backend/Blocks/*', GLOB_ONLYDIR);
+        $directories = glob(WEBSITE_ROOT . '/App/Backend/Blocks/*', GLOB_ONLYDIR);
 
         foreach ($directories as $dir)
         {
@@ -27,7 +25,6 @@ class Block
             }
         }
     }
-
 
     public static function render($shortcode, $atts = [])
     {

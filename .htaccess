@@ -1,6 +1,6 @@
 RewriteEngine On
 RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-RewriteBase /
+RewriteBase / 
 
 
 #===========================#
@@ -9,12 +9,11 @@ RewriteBase /
 Options -Indexes
 
 
-#==========================================================================#
-# Force HTTPS connection (activate when you have htaccess for you website) #
-#==========================================================================#
-RewriteCond %{HTTPS} off [OR]
-RewriteCond %{SERVER_PORT} 80
-RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+#========================#
+# Force HTTPS connection #
+#========================#
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
 
 #====================#
@@ -23,80 +22,96 @@ RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 RewriteRule ^index\.php$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /index.php [L]
+RewriteRule . index.php [L]
 
 
-#=========================#
-# Protect file extensions #
-#=========================#
-<FilesMatch "\.(htaccess|htpasswd|env|ini|php|sql|bak|bk|tmp|swp|yml|yaml|json|lock|log|xml|txt|md|gitignore)$">
-    Order Allow,Deny
-    Deny from all
+#================================#
+# Protect server sensitive files #
+#================================#
+<FilesMatch "\.(htaccess|htpasswd|env|ini|php|sql|bak|bk|tmp|swp|yml|yaml|lock|log|gitignore)$">
+    Require all denied
 </FilesMatch>
 
 
-#===================================================#
-# Allow key files that would otherwise be protected #
-#===================================================#
-<FilesMatch "index.php|robots.txt|sitemap.xml|translations.json">
-    Order Allow,Deny
-    Allow from all
+#==========================#
+# Block framework metadata #
+#==========================#
+<FilesMatch "^(composer\.json|composer\.lock|license\.txt|README\.md)$">
+    Require all denied
 </FilesMatch>
 
 
-#===============================#
-# Hide IDE directories and GIT  #
-#===============================#
-RedirectMatch 404 /\.git
-RedirectMatch 404 /\.vscode
-RedirectMatch 404 /\.vs
-RedirectMatch 404 /\.idea
+#==============================#
+# Allow public framework files #
+#==============================#
+<FilesMatch "^(index\.php|robots\.txt|sitemap\.xml|translations\.json)$">
+    Require all granted
+</FilesMatch>
+
+
+#======================================#
+# Hide IDE and development directories #
+#======================================#
+RedirectMatch 404 ^/\.git
+RedirectMatch 404 ^/\.vscode
+RedirectMatch 404 ^/\.vs
+RedirectMatch 404 ^/\.idea
 
 
 #==================#
 # Security headers #
 #==================#
 <IfModule mod_headers.c>
-
-    # Prevent Clickjacking attacks
-    # Header always append X-Frame-Options DENY
-
-    # Enable browser based XSS filtering
     Header set X-XSS-Protection "1; mode=block"
-
-    # Enforce secure connections to the server
+    Header set X-Content-Type-Options "nosniff"
     Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
-
-    # MIME type sniffing security protection
-    Header set X-Content-Type-Options nosniff
-
-    # Referrer Policy
     Header set Referrer-Policy "no-referrer-when-downgrade"
+    Header set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=()"
+    Header always set X-Download-Options "noopen"
 
-    # Content Security Policy
+    # Prevent hotlinking
+    # RewriteCond %{HTTP_REFERER} !^$
+    # RewriteCond %{HTTP_REFERER} !YOUR_SITE_NAME [NC]
+    # RewriteRule \.(jpg|jpeg|png|gif|webp|svg)$ - [F]
+
+    # Activate if your website does not use iframes from other domains or other domains don't put your website in an iframe
+    # Header always append X-Frame-Options DENY 
+
+    # Activate if you don't need to download content from other websites
     # Header set Content-Security-Policy "default-src 'self'; script-src 'self'; object-src 'none';"
-
 </IfModule>
 
 
-#========#
-# Cache  #
-#========#
-# <IfModule mod_headers.c>
-# 
-#     # Enable cache for images, CSS, JavaScript, and web fonts
-#     <FilesMatch "\.(jpg|jpeg|png|gif|webp|svg|css|js|woff|woff2|ttf|otf|eot)$">
-#         Header set Cache-Control "max-age=31536000, public"
-#     </FilesMatch>
-# 
-#     # Disable cache for dynamic content
-#     <FilesMatch "\.(php|cgi|pl|htm)$">
-#         Header set Cache-Control "no-cache, no-store, must-revalidate"
-#         Header set Pragma "no-cache"
-#         Header set Expires "0"
-#     </FilesMatch>
-# 
-# </IfModule>
+#==========#
+# caching  #
+#==========#
+
+# Disable ETag to avoid cache inconsistencies
+FileETag None
+
+<IfModule mod_headers.c>
+
+    # Enable cache for images, CSS, JavaScript, and web fonts (7884000 = 3 months) 
+    <FilesMatch "\.(jpg|jpeg|png|gif|webp|svg|css|js|woff|woff2|ttf|otf|eot)$">
+        Header set Cache-Control "max-age=7884000, public"
+    </FilesMatch>
+
+    # Disable cache for dynamic content
+    <FilesMatch "\.(php|cgi|pl|htm)$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </FilesMatch>
+
+</IfModule>
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript application/javascript application/json application/xml application/xhtml+xml
+</IfModule>
+
+<IfModule mod_brotli.c>
+    AddOutputFilterByType BROTLI_COMPRESS text/html text/plain text/css text/javascript application/javascript application/json application/xml application/xhtml+xml
+</IfModule>
 
 
 #================#
@@ -104,7 +119,7 @@ RedirectMatch 404 /\.idea
 #================#
 # AuthType Basic
 # AuthName "Restricted Access"
-# AuthUserFile /home/c2dzk9yu/public_html/hennakristal.com/.htpasswd
+# AuthUserFile /var/www/html/YOUR_SITE_NAME/.htpasswd
 # Require valid-user
 
 

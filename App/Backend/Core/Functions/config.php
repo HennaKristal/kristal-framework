@@ -58,14 +58,8 @@ foreach ($kristal_mandatory_constants as $constant)
 {
     if (!defined($constant))
     {
-        die("Mandatory configuration variable $constant is not set, please create this constant to the project's config.php file!");
+        exit("Mandatory configuration variable $constant is not set, please create this constant to the project's config.php file.");
     }
-}
-
-// Make sure default language is within available languages
-if (!in_array(DEFAULT_LANGUAGE, unserialize(AVAILABLE_LANGUAGES)))
-{
-    die("Default language '" . DEFAULT_LANGUAGE . "' is not within the available languages!");
 }
 
 // Set default timezone

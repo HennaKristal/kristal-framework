@@ -35,7 +35,6 @@ if ($targetDate === false)
 $dateDifference = $targetDate->getTimestamp() - $currentDate->getTimestamp();
 $uniqueId = uniqid('countdown_');
 
-
 ob_start();
 include( __DIR__ . '/template.php' );
 

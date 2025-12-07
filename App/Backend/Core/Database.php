@@ -21,7 +21,14 @@ class Database
         // Make sure database information is set
         if (empty($databases[$params["database"]]))
         {
-            throw new \Exception("Database configuration error! Database (" . $params["database"] . ") was empty, please double check your config file!");
+            if (PRODUCTION_MODE)
+            {
+                exit("Database configuration error.");
+            }
+            else
+            {
+                exit("Database configuration error. Database (" . $params["database"] . ") was empty, please double check your config file.");
+            }
         }
 
         try
@@ -36,7 +43,7 @@ class Database
         }
         catch (PDOException $e)
         {
-            throw new \Exception("Failed to Connect Database! Please double check your config file!");
+            exit("Failed to Connect to database.");
         }
 
         $this->arguments["where"] = "";
@@ -52,7 +59,18 @@ class Database
     // Check do we need to create a new table
     protected function confirmTable($engine = "InnoDB", $char_set = "utf8")
     {
-        if (!$this->table) throw new \Exception("Entity " . get_class($this) . " does not have a table name!");
+        if (!$this->table)
+        {
+            if (PRODUCTION_MODE)
+            {
+                exit("Database configuration error.");
+            }
+            else
+            {
+                exit("Entity " . get_class($this) . " does not have a table name.");
+            }
+        }
+        
         if ($this->doesTableExist($this->table) === false)
         {
             $this->createTable($this->table, $this->primary_key, $this->columns, $engine, $char_set);
@@ -98,13 +116,13 @@ class Database
 
         if (!$statement)
         {
-            if (MAINTENANCE_MODE)
+            if (PRODUCTION_MODE)
             {
-                throw new \Exception("Invalid mysql structure at $table entity class!");
+                exit("Fatal database error. Please contact site admin about this error.");
             }
             else
             {
-                throw new \Exception("Fatal database error while creating entity! Please contact site admin about this error!");
+                exit("Invalid mysql structure at $table entity class.");
             }
         } 
 
@@ -114,16 +132,42 @@ class Database
 
     public function dropTable($table = null)
     {
-        if ($table === null) { $table = $this->table; }
-        if ($table === null) { throw new \Exception("Fatal Error: you are trying to delete a table using dropTable() without specifying a table!"); }
+        if ($table === null)
+            $table = $this->table;
+
+        if ($table === null)
+        {
+            if (PRODUCTION_MODE)
+            {
+                exit("Fatal database error. Please contact site admin about this error.");
+            }
+            else
+            {
+                exit("Fatal Error: you are trying to delete a table using dropTable() without specifying a table."); 
+            }
+        }
+
         return $this->connection->prepare("drop table $table;")->execute();
     }
 
 
     public function dropTableCascade($table = null)
     {
-        if ($table === null) { $table = $this->table; }
-        if ($table === null) { throw new \Exception("Fatal Error: you are trying to delete a table using dropTable() without specifying a table!"); }
+        if ($table === null)
+            $table = $this->table;
+
+        if ($table === null) 
+        {
+            if (PRODUCTION_MODE)
+            {
+                exit("Fatal database error. Please contact site admin about this error.");
+            }
+            else
+            {
+                exit("Fatal Error: you are trying to delete a table using dropTable() without specifying a table."); 
+            }
+        }
+
         return $this->connection->prepare("drop table $table CASCADE;")->execute();
     }
 

@@ -5,9 +5,5 @@ Disallow: /vendor/
 Disallow: /composer.json
 Disallow: /composer.lock
 Disallow: /README.md
-Disallow: /.gitignore
 
-Crawl-delay: 10
-
-Host: https://www.YOUR_WEBSITE
-Sitemap: https://www.YOUR_WEBSITE/sitemap.xml
+Sitemap: https://YOUR_SITE_NAME/sitemap.xml

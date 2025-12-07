@@ -45,9 +45,9 @@ return array(
         "fi" => "Salasana",
         "sv" => "Lösenord",
     ],
-    "Failed to authenticate!" => [
-        "fi" => "Kirjautuminen epäonnistui!",
-        "sv" => "Autentisering misslyckades!",
+    "Failed to authenticate." => [
+        "fi" => "Kirjautuminen epäonnistui.",
+        "sv" => "Autentisering misslyckades.",
     ],
     "Too many login attempts, please wait %s before you are allowed to try again." => [
         "fi" => "Liian monta kirjautumisyritystä, odota %s kunnes voit kokeilla uudelleen",
@@ -79,9 +79,9 @@ return array(
         "fi" => "Kristal Framework",
         "sv" => "Kristal Framework",
     ],
-    "Version 1.0, Developed by Henna Kristal. Happy Coding!" => [
+    "Version 1.0, Developed by Henna Kristal. Happy Coding." => [
         "fi" => "Versio 1.0, Kehittäjänä Henna Kristal.",
-        "sv" => "Version 1.0, utvecklad av Henna Kristal. Lycka till med kodningen!",
+        "sv" => "Version 1.0, utvecklad av Henna Kristal. Lycka till med kodningen.",
     ],
     "Kristal Framework is a PHP-based framework designed to provide developers with a streamlined and simplified MVC environment for web development. The framework is publicly released under the MIT License, granting users the freedom to use, modify, and distribute it as they see fit." => [
         "fi" => "Kristal Framework on PHP-pohjainen kehys, joka on suunniteltu tarjoamaan kehittäjille virtaviivainen ja yksinkertaistettu MVC-ympäristö verkkosivustojen kehittämiseen. Kehys on julkaistu julkisesti MIT-lisenssin alaisena, mikä antaa käyttäjille vapauden käyttää, muokata ja jakaa sitä mielensä mukaan.",

@@ -1,61 +1,39 @@
 # Kristal Framework
-
-Kristal Framework is a PHP-based architecture designed to help developers create websites with a clean and straightforward MVC environment.
-The framework is publicly available under the MIT License, granting individuals the latitude to utilize, modify, and distribute it as they deem appropriate.
-
+Kristal Framework is a lightweight PHP framework built on the MVC architecture. It was designed as an alternative to Laravel, offering a simpler and more intuitive development flow while still providing the core features needed to build complex web applications.
 
 
 ## Important
+1. This framework is a personal tool created to match the exact development style and flow I prefer. It may not fit the needs or preferences of other developers. If you wish to customize it, feel free to create your own fork.
+2. The framework has not been reviewed by security professionals. It may contain vulnerabilities and should be used with caution in production environments.
+3. Updates are made only when needed for my own projects. Development may be irregular, paused, or end entirely depending on my personal needs.
 
-This project was initiated as a learning exercise to delve into the mechanics of PHP frameworks while allowing for some creative experimentation.
-It is not designed for use in production environments. Please be advised that the framework may contain security vulnerabilities, and there is the possibility that updates to the framework may cease without notice.
-As such, it is advised to use this framework strictly for exploratory or experimental applications.
 
+## License
+The framework is released under the MIT License, allowing anyone to freely use, modify, and distribute it.
 
 
 ## Server Requirements
-
-* Operating System: Linux is recommended (although other OS might work).
-* Web Server: Apache or LiteSpeed with .htaccess support is ideal (other servers may vary in compatibility).
-* PHP: Minimum version 7.4 ideally 8.x
-* Composer: Necessary for managing backend dependencies.
-
+* Web Server: Apache or LiteSpeed with .htaccess support
+* PHP: Minimum version 7.4, ideally 8.x
+* Composer: Required for managing backend dependencies
 
 
 ## Database Requirements
-
 * PDO PHP Extension: Ensure it is enabled and functional.
 * Database Engine: MySQL or MariaDB is preferred (other databases might work, but compatibility is not guaranteed).
 
 
-
 ## Installing
-
 1. Rename 'config-example.php' to 'config.php' and configure the framework settings.
 2. Upload the framework files to a server or local development environment.
 3. Run 'composer install --prefer-dist --optimize-autoloader' at the root folder to install dependencies from composer.json file.
 
-After completing these steps you should now be able to access the built-in demo page by going to your server's URL.
-
+After completing these steps, access your server's URL to view the built-in demo page.
 
 
 ## Troubleshooting
-
-If you have issues with navigating to pages, go to .htaccess file and change redirect path at the routing controller section from relative path
-
-    RewriteRule ^(.+)$ index.php [L]
-    
-to a full path
-
-    RewriteRule ^(.+)$ https://www.example.com/index.php [L]
-
-As this is a personal project, compatibility with all systems out-of-the-box is not guaranteed.
-Should you encounter any issues while utilizing the framework,
-please do not hesitate to reach out via email at hennakristal@outlook.com.
-Your feedback will aid in both resolving your issue and further refining the framework.
-
+Because this is a personal project, full compatibility with every hosting environment is not guaranteed. If you encounter issues, feel free to reach out at 'hennakristal@outlook.com'. Your feedback helps improve both the framework and its documentation.
 
 
 ## Documentation
-
-Documentation for the framework can be found [here](https://framework.hennakristal.com)
+Full documentation is available at: [framework.hennakristal.com](https://framework.hennakristal.com)

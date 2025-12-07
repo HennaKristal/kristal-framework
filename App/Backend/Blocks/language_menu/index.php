@@ -14,14 +14,12 @@ $atts = array_merge(array(
     'languages' => unserialize(AVAILABLE_LANGUAGES),
 ), $atts);
 
-
 // Validation
 if (!is_array($atts['languages']))
 {
     echo "Languages must be given as an array";
     return;
 }
-
 
 ob_start();
 include( __DIR__ . '/template.php' );
