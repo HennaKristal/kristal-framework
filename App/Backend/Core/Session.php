@@ -54,17 +54,7 @@ class Session
 
     public static function getUsersUniqueIdentity()
     {
-        // Use the IP address (consider using a more reliable method to get this)
-        $IP_address = self::getClientIPAddress();
-
-        // Use the User-Agent string
-        $user_agent = self::getUserAgentHash();
-
-        // Collect additional data if available
-        $additional_data = $_SERVER["HTTP_ACCEPT_LANGUAGE"] ?? "unknown";
-
-        // Generate a id by hashing these together
-        return hash('sha256', $IP_address . $user_agent . $additional_data);
+        return hash('sha256', self::getUserAgentHash());
     }
 
 
