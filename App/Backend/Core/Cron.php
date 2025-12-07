@@ -1,137 +1,177 @@
 <?php namespace Backend\Core;
 defined("ACCESS") or exit("Access Denied");
 
-
 class Cron
 {
-    const INTERVAL_DAY = 'day';
-    const INTERVAL_WEEK = 'week';
-    const INTERVAL_MONTH = 'month';
-    const INTERVAL_YEAR = 'year';
-
-    private $name;
-    private $task;
+    private $tasksPath = WEBSITE_ROOT . "/App/Backend/Cron/Tasks/";
+    private $logsPath = WEBSITE_ROOT . "/App/Backend/Cron/Logs/";
+    private $jobName;
+    private $taskFileName;
     private $interval;
-    private $run_time;
+    private $startDate;
+    private $lockHandle;
 
-
-    public function __construct($name, $task, $interval, $run_time = null, $start_date = null)
+    public function __construct($jobName, $taskFileName, $interval = "1 day", $startDate = null)
     {
-        if (!is_string($name) || !is_string($task))
+        $this->jobName = sanitizeFileName((string)$jobName);
+        $this->taskFileName = (string)$taskFileName;
+        $this->interval = $interval;
+        $this->startDate = $startDate;
+        $this->validate();
+    }
+
+    private function validate()
+    {
+        // Job name can not be empty
+        if (trim($this->jobName) === "")
         {
-            if (PRODUCTION_MODE)
-            {
-                debuglog("Cron name or task name was invalid or empty.", "error");
-                return;
-            }
-            else
-            {
-                exit("Cron name or task name was invalid or empty.");
-            }
+            debuglog("One of the cron job names was empty. Skipped cron job execution.", "warning");
+            return;
         }
 
-        if (is_array($interval))
+        // Task file can not be empty
+        if (trim($this->taskFileName) === "")
         {
-            $this->interval = array(
-                "amount" => $interval[0],
-                "type" => $interval[1]
-            );
-        }
-        else
-        {
-            switch (strtolower($interval))
-            {
-                case "daily":
-                    $this->interval = ["type" => self::INTERVAL_DAY, "amount" => 1];
-                    break;
-                case "weekly":
-                    $this->interval = ["type" => self::INTERVAL_WEEK, "amount" => 1];
-                    break;
-                case "monthly":
-                    $this->interval = ["type" => self::INTERVAL_MONTH, "amount" => 1];
-                    break;
-                case "yearly":
-                    $this->interval = ["type" => self::INTERVAL_YEAR, "amount" => 1];
-                    break;
-                default:
-                    $this->interval = ["type" => self::INTERVAL_DAY, "amount" => 1];
-                    debuglog("invalid interval for cron job: $name Value given was $interval", "warning");
-            }
+            debuglog("Cron job called '{$this->jobName}' had an empty task file name. Skipped cron job execution.", "warning");
+            return;
         }
 
-        $this->name = $name;
-        $this->task = $task;
-        $this->run_time = isset($run_time) ? $run_time : "H:i:s";
-
-        // Do not run cron job if activation date has not been reached
-        if (isset($start_date) && strtotime(date('Y-m-d H:i:s')) < strtotime($start_date))
+        // Do not execute before activation date
+        if ($this->startDate !== null && time() < strtotime($this->startDate))
         {
             return;
         }
 
-        if ($this->readyToExecute())
-        {
-            $this->updateTaskTimer();
-            $this->executeTask();
-        }
+        $this->run();
     }
 
+    private function run()
+    {
+        if (!$this->isReadyToExecute())
+        {
+            return;
+        }
+
+        if (!$this->acquireLock())
+        {
+            return;
+        }
+
+        // Prevention: Try to close user connection so they don't wait
+        if (function_exists('fastcgi_finish_request'))
+        {
+            session_write_close();
+            fastcgi_finish_request();
+        }
+
+        try
+        {
+            $this->updateExecutionLog();
+            $this->executeTask();
+        }
+        catch (\Throwable $e)
+        {
+            debuglog("Cron Job '{$this->jobName}' failed to execute due to error", "error");
+        }
+
+        $this->releaseLock();
+    }
 
     private function executeTask()
     {
-        $taskFile = $this->task;
+        $taskPath = realpath($this->$tasksPath . $this->taskFileName);
+        $taskRoot = realpath($this->$tasksPath);
 
-        if (file_exists($taskFile) && is_readable($taskFile))
+        if ($taskPath === false || strpos($taskPath, $taskRoot) !== 0)
         {
-            require_once($taskFile);
+            debuglog("Cron task path was invalid or outside task directory: {$this->taskFileName}", "error");
+            return;
         }
-        else
+
+        if (!is_readable($taskPath))
         {
-            if (PRODUCTION_MODE)
-            {
-                debuglog("Task file not found or not readable: $taskFile", "error");
-                return;
-            }
-            else
-            {
-                exit("Task file not found or not readable: $taskFile");
-            }
+            debuglog("Cron task file was not readable: {$this->taskFileName}", "error");
+            return;
         }
+
+        include $taskPath;
     }
-    
 
-    private function readyToExecute()
+    // Check Execution Window -----------------------------------------------------
+    private function isReadyToExecute()
     {
-        $file = $this->getLogLocation();
-    
-        if (file_exists($file))
-        {
-            $value = include $file;
-    
-            if ($value === null)
-            {
-                return true;
-            }
-    
-            return strtotime(date('Y-m-d H:i:s')) > strtotime($value);
-        }
-        else
+        $logFile = $this->getLogFilePath();
+
+        if (!file_exists($logFile))
         {
             return true;
         }
-    }
-    
 
-    private function updateTaskTimer()
-    {
-        $nextRunDate = date("Y-m-d {$this->run_time}", strtotime(date("Y-m-d {$this->run_time}") . "+{$this->interval['amount']} {$this->interval['type']}"));
-        $content = "<?php\n\n" . "// Last run at: " . date('Y-m-d H:i:s') . "\n" . "// Next run at: $nextRunDate" . "\n\n" . "return '$nextRunDate';";
-        file_put_contents($this->getLogLocation(), $content);
+        $data = json_decode(file_get_contents($logFile), true);
+
+        if (!isset($data["nextRun"]))
+        {
+            return true;
+        }
+
+        return time() >= strtotime($data["nextRun"]);
     }
-    
-    
-    private function getLogLocation()
+
+    private function updateExecutionLog()
     {
-        return WEBSITE_ROOT . "/App/Backend/Cron/Logs/" . sanitizeFileName($this->name) . ".php";
+        $currentTime = time();
+        $nextRunStamp = strtotime("+" . $this->interval, $currentTime);
+    
+        if ($nextRunStamp === false)
+        {
+            debuglog("Cron interval was invalid for job {$this->jobName}. Using default fallback of 1 year.", "warning");
+            $nextRunStamp = strtotime("+1 year", $currentTime);
+        }
+    
+        $data = [
+            "lastRun" => date("Y-m-d H:i:s", $currentTime),
+            "nextRun" => date("Y-m-d H:i:s", $nextRunStamp)
+        ];
+    
+        file_put_contents($this->getLogFilePath(), json_encode($data, JSON_PRETTY_PRINT));
+    }
+
+    private function acquireLock()
+    {
+        $lockPath = $this->getLockFilePath();
+        $handle = fopen($lockPath, "c");
+
+        if (!$handle)
+        {
+            return false;
+        }
+
+        if (!flock($handle, LOCK_EX | LOCK_NB))
+        {
+            fclose($handle);
+            return false;
+        }
+
+        $this->lockHandle = $handle;
+        return true;
+    }
+
+    private function releaseLock()
+    {
+        if ($this->lockHandle)
+        {
+            flock($this->lockHandle, LOCK_UN);
+            fclose($this->lockHandle);
+        }
+    }
+
+    private function getLogFilePath()
+    {
+        return $this->logsPath . $this->jobName . ".json";
+    }
+
+    private function getLockFilePath()
+    {
+        return $this->logsPath . $this->jobName . ".lock";
     }
 }

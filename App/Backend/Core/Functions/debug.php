@@ -5,10 +5,8 @@
 // ------------------------------------------------------------------------------------------------
 function debug($value, $name = null)
 {
-    if (PRODUCTION_MODE)
-    {
+    if (PRODUCTION_MODE || !ENABLE_DEBUG_DISPLAY)
         return;
-    }
 
     ?>
     <style>
@@ -50,9 +48,7 @@ function debug($value, $name = null)
 function debuglog($message, $severity = "Debug")
 {
     if (!ENABLE_DEBUG_LOG)
-    {
         return;
-    }
 
     $time = date("Y-m-d H:i:s e");
 

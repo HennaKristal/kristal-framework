@@ -3,7 +3,6 @@
 use Backend\Core\Router;
 use Backend\Controllers\ThemeController;
 
-
 class Routes extends Router
 {
     public function __construct()
@@ -32,16 +31,12 @@ class Routes extends Router
         parent::handleRoutes();
     }
 
-
-
     function homepageHandler()
     {
         // Render() method will render a page template from your pages folder
         // For example the following line will render content from /App/Pages/frontpage.php
         $this->render("frontpage");
     }
-
-
 
     // Variables are passed into the route the following way:
     // "example.com/route/variable1/variable2/..."
@@ -65,8 +60,6 @@ class Routes extends Router
         ]);
     }
 
-
-
     function pageNotFoundHandler()
     {
         // Render content from App/Pages/404.php
@@ -74,7 +67,6 @@ class Routes extends Router
         $this->render("404");
     }
 }
-
 
 // Initialize routes
 new Routes();

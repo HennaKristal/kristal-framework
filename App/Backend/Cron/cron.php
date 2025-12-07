@@ -1,27 +1,45 @@
 <?php defined("ACCESS") or exit("Access Denied");
+
 use Backend\Core\Cron;
 
-
 /*================================================================================================================*\
-|  This file mimics cron jobs. You can create calls to executable php files with given time intervals.             |
+|  This file defines software based cron jobs. Each job runs automatically when a page is visited.                 |
 |                                                                                                                  |
-|  You can create a cron job by calling the Cron class with the following constructors:                            |
-|    * (Required) Job name                                                                                         |
-|    * (Required) Job script location                                                                              |
-|    * (Required) Interval (daily, weekly, monthly, yearly or custom interval [2, "days"], [3, "weeks"], etc.)     |
-|    * Execute time during the day in 24 hour format (at H:i:s format), cron job will be fired at this given time  |
-|    * Activation date, the cron job won't be executed before this date.                                           |
+|  Cron jobs are created by instantiating the Cron class with the following parameters:                            |
 |                                                                                                                  |
-|  Note that these cron jobs will only be ran if the page is visited,                                              |
-|  if no one visits the site the cron jobs will not be ran until the next visit.                                   |
-|  Because of this you should not use this class for tasks that needs to be done reliably or at a specific time.   |
+|    1. Job name                                                                                                   |
+|       Any descriptive name. This is used as the log file name and identifier.                                    |
+|                                                                                                                  |
+|    2. Job script file                                                                                            |
+|       The PHP file to execute. This must be the file name of a script inside                                     |
+|       /App/Backend/Cron/Tasks/.                                                                                  |
+|                                                                                                                  |
+|    3. Time between runs                                                                                          |
+|       A relative time description that PHP's strtotime function understands, such as:                            |
+|           "30 seconds"                                                                                            |
+|           "5 minutes"                                                                                             |
+|           "2 hours"                                                                                               |
+|           "3 days"                                                                                                |
+|           "2 weeks"                                                                                               |
+|       Internally this is calculated as: now + <your interval>.                                                   |
+|       If the interval is invalid, the system falls back to one year and logs a warning.                          |
+|                                                                                                                  |
+|    4. Activation date (optional)                                                                                 |
+|       The job will not run before this date. Format must be "d.m.Y H:i:s".                                       |
+|                                                                                                                  |
+|  Important notes:                                                                                                |
+|    * Cron jobs only run during page visits.                                                                      |
+|      If the site receives no traffic, scheduled jobs will be delayed until the next visit.                       |
+|                                                                                                                  |
+|    * Do not use this system for time critical or guaranteed execution tasks.                                     |
+|      For reliable scheduling, use the server's operating system cron instead.                                    |
+|                                                                                                                  |
 \*================================================================================================================*/
 
-
 // Example calls
-// new Cron("clean_cache_daily", "App/Backend/Cron/Tasks/clean_cache.php", "daily", "12:00:00", "2019-10-05 11:00:00");
-// new Cron("clean_cache_weekly", "App/Backend/Cron/Tasks/clean_cache.php", "weekly", "12:00:00");
-// new Cron("clean_cache_monthly", "App/Backend/Cron/Tasks/clean_cache.php", "monthly", "12:00:00");
-// new Cron("clean_cache_yearly", "App/Backend/Cron/Tasks/clean_cache.php", "yearly", "12:00:00");
-// new Cron("clean_cache_every_120_seconds", "App/Backend/Cron/Tasks/clean_cache.php", [120, "seconds"]);
-// new Cron("clean_cache_every_2_days", "App/Backend/Cron/Tasks/clean_cache.php", [2, "days"], "12:00:00");
+// new Cron("clean_cache_daily", "clean_cache.php", "1 day");
+// new Cron("clean_cache_monthly", "clean_cache.php", "1 month");
+// new Cron("clean_cache_yearly", "clean_cache.php", "1 year");
+// new Cron("clean_cache_every_30_seconds", "clean_cache.php", "30 seconds");
+// new Cron("clean_cache_every_2_days", "clean_cache.php", "2 days");
+// new Cron("clean_cache_daily_starting_2026", "clean_cache.php", "1 day", "01.01.2026 00:00:00");

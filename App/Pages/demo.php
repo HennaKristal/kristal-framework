@@ -51,7 +51,7 @@
 <div class="container main-content">
     <h1>Countdown Block</h1>
     <?php Block::render("countdown", [
-        "date" => "1.1.2024 00:00:00",
+        "date" => "1.1.2027 00:00:00",
         "format" => "⏰ {d} {D} {h}:{m}:{s} ⏰",
         "days" => "days|day",
         "hours" => "h",

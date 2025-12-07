@@ -5,7 +5,6 @@ use Backend\Controllers\FormRequests;
 use Backend\Core\PHPJS;
 use voku\helper\HtmlMin;
 
-
 class Router
 {
     private $registered_routes = [];
@@ -14,20 +13,17 @@ class Router
     private $content_last_modified_time = "";
     private $ignore_maintenance_routes = array();
 
-
     protected function __construct()
     {
         // Handle form requests
         new FormRequests();
     }
 
-
     protected function addRoute($route_name, $handler)
     {
         $this->registered_routes[$route_name] = $handler;
     }
 
-    
     protected function setHomepageHandler($handler)
     {
         if (ENABLE_LANGUAGES)
@@ -45,12 +41,10 @@ class Router
         $this->registered_routes[""] = $handler;
     }
 
-
     protected function setDefaultHandler($handler)
     {
         $this->default_route_handler = $handler;
     }
-
 
     protected function ignoreMaintenance($routes)
     {
@@ -58,7 +52,6 @@ class Router
             $this->ignore_maintenance_routes[] = $route;
         }
     }
-
 
     protected function handleRoutes()
     {
@@ -103,7 +96,6 @@ class Router
         call_user_func_array([$this, $this->registered_routes[$url_request['page']]], $url_request['variables']);
     }
 
-    
     private function getURLRequest()
     {
         // Parse page name and variables from the URL
@@ -159,7 +151,6 @@ class Router
         return ['page' => $page, 'variables' => $variables_from_url];
     }
 
-
     private function ShouldSitemapBeRegenerated()
     {
         if (!AUTO_COMPILE_SITEMAP) { return false; }
@@ -169,7 +160,7 @@ class Router
         $this->content_last_modified_time = filemtime('Routes/routes.php');
 
         // Get the latest modified date from pages folder
-        foreach (glob('App/Pages/*.php') as $file)
+        foreach (glob(WEBSITE_ROOT . '/App/Pages/*.php') as $file)
         {
             $page_last_modified = filemtime($file);
 
@@ -182,7 +173,6 @@ class Router
         // Check is the content been modified after last sitemap generation
         return $this->content_last_modified_time > $sitemap_last_mod_time;
     }
-
 
     private function generateSitemap()
     {
@@ -209,13 +199,11 @@ class Router
         $dom->save('sitemap.xml');
     }
 
-
     private function minifyHTML($buffer)
     {
         $minified_HTML = new HtmlMin();
         return $minified_HTML->minify($buffer);
     }
-
 
     protected function render($page, $variables = array())
     {
@@ -275,7 +263,6 @@ class Router
             include_once page($page);
         }
 
-
         // Render PHP created javascript variables and code
         PHPJS::release();
 
@@ -305,65 +292,86 @@ class Router
         $this->rendered_view = $page;
     }
 
-
     private function renderMaintenancePage()
     {
-        // Variables sent to template to tell authentication was failed
-        $kristal_authentication_failed = false;
-        $kristal_authentication_attempt_limit_reached = false;
-        $kristal_authentication_lockout_duration = 0;
+        if (Session::has("maintenance_access_granted"))
+            return;
 
-        // Check did we get authentication request
-        if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["maintenance-password"]))
+        $authenticationFailed = false;
+        $authenticationAttemptLimitReached = false;
+        $authenticationLockoutLabel = "";
+        $loginAttempts = Session::get("maintenance_login_attempts", 1);
+        $lockoutStartedAt = Session::get("maintenance_lockout_started_at", null);
+
+        // Check have we reached login attempt count
+        if ($loginAttempts >= MAINTENANCE_LOCKOUT_LIMIT)
         {
-            $kristal_rate_limit_file = "App/Public/Cache/Maintenance/lockout-" . Session::get("visitor_identity") . ".php";
-            $kristal_failed_attempts = file_exists($kristal_rate_limit_file) ? (time() - filemtime($kristal_rate_limit_file) < MAINTENANCE_LOCKOUT_CLEAR_TIME ? include $kristal_rate_limit_file : 1) : 1;
+            $authenticationAttemptLimitReached = true;
 
-            if ($kristal_failed_attempts > MAINTENANCE_LOCKOUT_LIMIT)
+            if ($lockoutStartedAt === null)
             {
-                // Too many attempts
-                $kristal_authentication_attempt_limit_reached = true;
-                $kristal_time_difference = MAINTENANCE_LOCKOUT_CLEAR_TIME - (time() - filemtime($kristal_rate_limit_file));
-                $kristal_authentication_lockout_duration = $kristal_time_difference > 60 ? floor($kristal_time_difference / 60) . ' min' : $kristal_time_difference . ' s';
+                $lockoutStartedAt = time();
+                Session::add("maintenance_lockout_started_at", $lockoutStartedAt);
             }
-            elseif (password_verify($_POST["maintenance-password"], MAINTENANCE_PASSWORD))
+        }
+
+        // Handle lockout countdown
+        if ($authenticationAttemptLimitReached)
+        {
+            $remainingLockoutSeconds = MAINTENANCE_LOCKOUT_CLEAR_TIME - (time() - $lockoutStartedAt);
+    
+            if ($remainingLockoutSeconds > 0)
+            {
+                if ($remainingLockoutSeconds > 60)
+                {
+                    $authenticationLockoutLabel = floor($remainingLockoutSeconds / 60) . " min";
+                }
+                else
+                {
+                    $authenticationLockoutLabel = $remainingLockoutSeconds . " s";
+                }
+            }
+            else
+            {
+                $loginAttempts = 0;
+                $authenticationAttemptLimitReached = false;
+                Session::remove("maintenance_failed_attempts");
+                Session::remove("maintenance_lockout_started_at");
+            }
+        }
+
+        // Handle authentication request
+        if (!$authenticationAttemptLimitReached && $_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["maintenance-password"]))
+        {
+            if (password_verify($_POST["maintenance-password"], MAINTENANCE_PASSWORD))
             {
                 Session::add("maintenance_access_granted", "Granted");
             }
             else
             {
-                // Failed authentication
-                $kristal_authentication_failed = true;
-                $kristal_failed_attempts++;
-                $kristal_lockout_content = "<?php return $kristal_failed_attempts; ?>";
-
-                if (!file_put_contents($kristal_rate_limit_file, $kristal_lockout_content))
-                {
-                    debuglog("Unable to write maintenance authentication lockout data to $kristal_rate_limit_file", "Warning");
-                }
+                $authenticationFailed = true;
+                $loginAttempts++;
+                Session::add("maintenance_login_attempts", $loginAttempts);
             }
         }
 
-        // Show authentication if user did not attempt or failed the authentication
-        if (!Session::has("maintenance_access_granted"))
+        // Render maintenance page
+        $maintenancePagePath = WEBSITE_ROOT . "/App/Pages/maintenance.php";
+    
+        if (!file_exists($maintenancePagePath))
         {
-            $maintenancePagePath = "App/Pages/maintenance.php";
-
-            if (!file_exists($maintenancePagePath))
+            if (PRODUCTION_MODE)
             {
-                if (PRODUCTION_MODE)
-                {
-                    exit("Site is under maintenance");
-                }
-                else
-                {
-                    exit("Maintenance page is missing! Should be located at {$maintenancePagePath}");
-                }
+                exit("Site is under maintenance");
             }
-
-            include $maintenancePagePath;
-            PHPJS::release();
-            exit;
+            else
+            {
+                exit("Maintenance page is missing. It should be located at " . $maintenancePagePath);
+            }
         }
+
+        include $maintenancePagePath;
+        PHPJS::release();
+        exit;
     }
 }

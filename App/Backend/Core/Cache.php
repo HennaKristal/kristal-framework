@@ -1,68 +1,96 @@
 <?php namespace Backend\Core;
 defined("ACCESS") or exit("Access Denied");
 
+/* ===============================================
+Usage:
+Cache::add("cache_name", $value, "1 day");
+Cache::get("cache_name");
+Cache::remove("cache_name");
+Cache::clear();
+=============================================== */
 
 class Cache
 {
-    private static $cache_path = "App/Cache/Cache/";
+    private static $cachePath = WEBSITE_ROOT . "/Cache/";
 
-
-    public static function add($name, $value, $duration = 24)
+    // Add value to cache --------------------------------------------------------
+    public static function add($name, $value, $duration = "24 hours")
     {
-        // Ensure cache directory exists
-        if (!file_exists(self::$cache_path)) {
-            mkdir(self::$cache_path, 0755, true);
+        if (!file_exists(self::$cachePath))
+        {
+            mkdir(self::$cachePath, 0755, true);
         }
 
-        // Create path, content and duration for the cache
-        $file = self::$cache_path . sanitizeFileName($name) . ".php";
-        $value = var_export($value, true);
-        $date = strtotime(date('Y-m-d H:i:s'));
-        $duration = $duration * 3600;
+        $fileName = sanitizeFileName($name) . ".json";
+        $filePath = self::$cachePath . $fileName;
+        $expires = strtotime("now + " . $duration);
 
-        // Create file for cached content
-        $cache = '<?php' . "\n\nif ($date - strtotime(date('Y-m-d H:i:s')) + $duration < 0) { return null; }\n\nreturn $value;\n" . '?>';
+        if ($expires === false)
+        {
+            debuglog("Invalid cache duration for {$name}. Duration given: {$duration}", "warning");
+            $expires = strtotime("now + 1 day");
+        }
 
-        // Write file
-        return file_put_contents($file, $cache);
+        $content = [
+            "expires" => $expires,
+            "data" => serialize($value)
+        ];
+
+        return file_put_contents($filePath, json_encode($content, JSON_PRETTY_PRINT));
     }
 
-
+    // Get value from cache ------------------------------------------------------
     public static function get($name)
     {
-        // Create file path
-        $file = self::$cache_path . sanitizeFileName($name) . ".php";
+        $fileName = sanitizeFileName($name) . ".json";
+        $filePath = self::$cachePath . $fileName;
 
-        // Check if file exists
-        if (file_exists($file))
+        if (!file_exists($filePath))
         {
-            // Get content
-            $value = include $file;
-
-            // Remove cache if cache file returned null (expired)
-            if ($value === null)
-            {
-                self::remove($name);
-            }
+            return null;
         }
 
-        return $value;
-    }
+        $content = json_decode(file_get_contents($filePath), true);
 
+        if (!is_array($content) || !isset($content["expires"]) || !isset($content["data"]))
+        {
+            debuglog("Cache file is invalid or corrupted for {$name}. Removing file.", "warning");
+            self::remove($name);
+            return null;
+        }
+
+        if (time() > (int)$content["expires"])
+        {
+            self::remove($name);
+            return null;
+        }
+
+        return unserialize($content["data"]);
+    }
 
     public static function remove($name)
     {
-        // Create file path
-        $file = self::$cache_path . sanitizeFileName($name) . ".php";
+        $fileName = sanitizeFileName($name) . ".json";
+        $filePath = self::$cachePath . $fileName;
 
-        // Check if file exists
-        if (file_exists($file))
+        if (file_exists($filePath))
         {
-            // Delete file
-            unlink($file);
+            unlink($filePath);
             return true;
         }
 
         return false;
+    }
+
+    public static function clear()
+    {
+        if (!file_exists(self::$cachePath))
+            return;
+
+        // Delete all json files
+        foreach (glob(self::$cachePath . "*.json") as $file)
+        {
+            unlink($file);
+        }
     }
 }

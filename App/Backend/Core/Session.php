@@ -116,20 +116,10 @@ class Session
 
 
     // Add variables to session
-    public static function add($identifier, $value = null)
+    public static function add($identifier, $value)
     {
-        // Set single variable
-        if (!is_array($identifier))
-        {
-            $_SESSION[$identifier] = $value;
-            return;
-        }
-
-        // Set multiple variables
-        foreach ($identifier as $key => $value)
-        {
-            $_SESSION[$key] = $value;
-        }
+        $_SESSION[$identifier] = $value;
+        return;
     }
 
 
@@ -166,21 +156,9 @@ class Session
 
 
     // Get variables from session
-    public static function get($key, $return_object = true, $default_value = null)
+    public static function get($key, $default_value = null)
     {
-        // Return single variable
-        if (!is_array($key))
-        {
-            return (isset($_SESSION[$key])) ? $_SESSION[$key] : $default_value;
-        }
-
-        // Return array of variables
-        foreach ($key as $variable)
-        {
-            $variables[$variable] = (isset($_SESSION[$variable])) ? $_SESSION[$variable] : null;
-        }
-
-        return ($return_object) ? (object) $variables : $variables;
+        return (isset($_SESSION[$key])) ? $_SESSION[$key] : $default_value;
     }
 
     // Check if session is already active

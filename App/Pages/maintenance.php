@@ -57,11 +57,11 @@
 
                 <button type="submit" class="btn btn-primary"><?= translate("Sign In"); ?></button>
 
-                <?php if ($kristal_authentication_attempt_limit_reached) : ?>
+                <?php if ($authenticationAttemptLimitReached) : ?>
                     <p id="feedback" style="color: red;">
-                        <span><?= translate("Too many login attempts, please wait %s before you are allowed to try again.", $kristal_authentication_lockout_duration); ?></span>
+                        <span><?= translate("Too many login attempts, please wait %s before you are allowed to try again.", $authenticationLockoutLabel); ?></span>
                     </p>
-                <?php elseif ($kristal_authentication_failed) : ?>
+                <?php elseif ($authenticationFailed) : ?>
                     <p id="feedback" style="color: red;"><?= translate("Failed to authenticate."); ?></p>
                 <?php else: ?>
                     <p id="feedback" style="padding: 12px;"></p>

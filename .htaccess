@@ -71,7 +71,7 @@ RedirectMatch 404 ^/\.idea
 
     # Prevent hotlinking
     # RewriteCond %{HTTP_REFERER} !^$
-    # RewriteCond %{HTTP_REFERER} !YOUR_SITE_NAME [NC]
+    # RewriteCond %{HTTP_REFERER} !YOUR_SITE_NAME[NC]
     # RewriteRule \.(jpg|jpeg|png|gif|webp|svg)$ - [F]
 
     # Activate if your website does not use iframes from other domains or other domains don't put your website in an iframe

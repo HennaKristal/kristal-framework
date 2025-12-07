@@ -8,8 +8,8 @@ final class JS_Compiler
 {
     public static function initialize()
     {
-        $folder_path = "App/Public/Javascript/";
-        $compiled_folder_path = "App/Public/Javascript/";
+        $folder_path = WEBSITE_ROOT . "/App/Public/Javascript/";
+        $compiled_folder_path = WEBSITE_ROOT . "/App/Public/Javascript/";
         $compiler = new JSqueeze();
         $js_bundles = unserialize(JS_BUNDLES);
 

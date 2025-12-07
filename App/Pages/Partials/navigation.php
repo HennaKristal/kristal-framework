@@ -26,7 +26,6 @@
 
             <!-- Language settings -->
             <?php Block::render("language_menu", ["request" => "change_language"]);  ?>
-
         </div>
     </div>
 </nav>

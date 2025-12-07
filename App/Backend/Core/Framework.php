@@ -3,6 +3,10 @@
 // Grant access to php files
 define("ACCESS", "Granted");
 
+// Load configurations
+require_once WEBSITE_ROOT . "/Config/config.php";
+require_once WEBSITE_ROOT . "/App/Backend/Core/Functions/config.php";
+
 // Load composer autoload.php
 if (!file_exists(WEBSITE_ROOT . "/vendor/autoload.php"))
 {
@@ -18,8 +22,6 @@ if (!file_exists(WEBSITE_ROOT . "/vendor/autoload.php"))
 
 // Load core files
 require_once WEBSITE_ROOT . "/vendor/autoload.php";
-require_once WEBSITE_ROOT . "/Config/config.php";
-require_once WEBSITE_ROOT . "/App/Backend/Core/Functions/config.php";
 require_once WEBSITE_ROOT . "/App/Backend/Core/Functions/errors.php";
 require_once WEBSITE_ROOT . "/App/Backend/Core/Functions/debug.php";
 require_once WEBSITE_ROOT . "/App/Backend/Core/Functions/utilities.php";
