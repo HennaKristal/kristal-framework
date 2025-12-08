@@ -13,6 +13,7 @@
     "prefer-stable": true,
 
     "require": {
+        "php": "^8.3",
         "scssphp/scssphp": "1.13.0",
         "phpmailer/phpmailer": "7.0.1",
         "voku/html-min": "4.5.1"
@@ -22,5 +23,9 @@
         "psr-4": {
             "Backend\\": "./App/Backend"
         }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
     }
 }
