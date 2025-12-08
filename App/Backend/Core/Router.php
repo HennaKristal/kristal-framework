@@ -48,7 +48,8 @@ class Router
 
     protected function ignoreMaintenance($routes)
     {
-        foreach ($routes as $route) {
+        foreach ($routes as $route)
+        {
             $this->ignore_maintenance_routes[] = $route;
         }
     }
@@ -59,7 +60,8 @@ class Router
         $url_request = $this->getURLRequest();
 
         // Display maintenance if needed
-        if (!in_array($url_request["page"], $this->ignore_maintenance_routes)) {
+        if (!in_array($url_request["page"], $this->ignore_maintenance_routes))
+        {
             if (MAINTENANCE_MODE && !Session::has("maintenance_access_granted"))
             {
                 $this->renderMaintenancePage();
@@ -346,6 +348,7 @@ class Router
             if (password_verify($_POST["maintenance-password"], MAINTENANCE_PASSWORD))
             {
                 Session::add("maintenance_access_granted", "Granted");
+                return;
             }
             else
             {
