@@ -14,7 +14,7 @@ The framework is released under the MIT License, allowing anyone to freely use, 
 
 ## Server Requirements
 * Web Server: Apache or LiteSpeed with .htaccess support
-* PHP: Minimum version 7.4, ideally 8.x
+* PHP: Tested only with 8.3, other version may require changes to composer packages
 * Composer: Required for managing backend dependencies
 
 
