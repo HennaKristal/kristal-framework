@@ -48,9 +48,6 @@ $kristal_mandatory_constants = [
     "COMPILED_CSS_TYPE",
     "DEFAULT_THEME",
     "PRINT_COMPILE_DATE_CSS",
-    "AUTO_COMPILE_JS",
-    "PRINT_COMPILE_DATE_JS",
-    "JS_BUNDLES",
     "METADATA",
 ];
 

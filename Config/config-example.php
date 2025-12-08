@@ -264,36 +264,6 @@ define("PRINT_COMPILE_DATE_CSS", true);
 
 
 # --------------------------------------------------------------------------
-# JavaScript configurations (does not work when in production mode)
-# --------------------------------------------------------------------------
-
-// Automatically recompile JavaScript files upon modifications and page reload
-define("AUTO_COMPILE_JS", true);
-
-// Include a comment indicating the last compilation time of the JavaScript file
-define("PRINT_COMPILE_DATE_JS", true);
-
-// Tell the framework how do you want your js files to be bundled and minified
-define("JS_BUNDLES", serialize([
-    "core.js" => [
-        "Core/form.js",
-        "Core/tooltips.js",
-        "Core/translator.js",
-        "Core/animator.js",
-    ],
-    "maintenance.js" => [
-        "Scripts/maintenance.js",
-    ],
-    "main.js" => [
-        "Scripts/main.js",
-    ],
-]));
-
-
-
-
-
-# --------------------------------------------------------------------------
 # Page metadata configurations
 # --------------------------------------------------------------------------
 // This tell the header file how to set the page's metadata
