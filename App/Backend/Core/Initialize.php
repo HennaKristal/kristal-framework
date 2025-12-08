@@ -24,6 +24,8 @@ if (!file_exists(WEBROOT . "/vendor/autoload.php"))
 require_once WEBROOT . "/vendor/autoload.php";
 require_once WEBROOT . "/App/Backend/Core/Functions/errors.php";
 require_once WEBROOT . "/App/Backend/Core/Functions/debug.php";
+require_once WEBROOT . "/App/Backend/Core/Functions/assetHelper.php";
+require_once WEBROOT . "/App/Backend/Core/Functions/webp.php";
 require_once WEBROOT . "/App/Backend/Core/Functions/utilities.php";
 require_once WEBROOT . "/App/Backend/Core/Functions/cookies.php";
 require_once WEBROOT . "/App/Backend/Core/Functions/translator.php";

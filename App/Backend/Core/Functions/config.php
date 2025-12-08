@@ -43,6 +43,7 @@ $kristal_mandatory_constants = [
     "AUTO_COMPILE_SITEMAP",
     "DISCOURAGE_SEARCH_ENGINES",
     "MINIFY_HTML",
+    "WEBP_DEFAULT_QUALITY",
     "AUTO_COMPILE_SCSS",
     "COMPILED_CSS_TYPE",
     "DEFAULT_THEME",

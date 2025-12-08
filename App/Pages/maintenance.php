@@ -11,7 +11,7 @@
         <!-- Styles -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="<?php echo css("maintenance.css"); ?>">
-        <style>body { background-image: url("<?php echo image('Backgrounds/maintenance.jpg'); ?>"); }</style>
+        <style>body { background-image: url("<?php echo webp('Backgrounds/maintenance.jpg'); ?>"); }</style>
 
         <!-- Scripts -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
@@ -26,7 +26,7 @@
         <title><?php echo translate("Maintenance"); ?></title>
 
         <!-- Website icon -->
-        <link rel="icon" type="image/gif" href="<?php echo image("kristal_framework_alt_icon.png"); ?>" />
+        <link rel="icon" type="image/gif" href="<?php echo webp("kristal_framework_alt_icon.png"); ?>" />
     </head>
 
     <body>
@@ -73,22 +73,22 @@
         <div class="social-icons">
             <!-- Email -->
             <a class="social-menu-link" href="mailto:example@example.com" target="_blank" data-bs-toggle="tooltip" data-bs-title="<?php echo translate("Email"); ?>">
-                <img class="social-menu-image" src="<?php echo image("Icons/email.png") ?>">
+                <img class="social-menu-image" src="<?php echo webp("Icons/email.png") ?>">
             </a>
 
             <!-- Twitter -->
             <a class="social-menu-link" href="https://twitter.com" target="_blank" data-bs-toggle="tooltip" data-bs-title="Twitter">
-                <img class="social-menu-image" src="<?php echo image("Icons/twitter.png") ?>">
+                <img class="social-menu-image" src="<?php echo webp("Icons/twitter.png") ?>">
             </a>
 
             <!-- Facebook -->
             <a class="social-menu-link" href="https://facebook.com" target="_blank" data-bs-toggle="tooltip" data-bs-title="Facebook">
-                <img class="social-menu-image" src="<?php echo image("Icons/facebook.png") ?>">
+                <img class="social-menu-image" src="<?php echo webp("Icons/facebook.png") ?>">
             </a>
 
             <!-- Youtube -->
             <a class="social-menu-link" href="https://youtube.com" target="_blank" data-bs-toggle="tooltip" data-bs-title="Youtube">
-                <img class="social-menu-image" src="<?php echo image("Icons/youtube.png") ?>">
+                <img class="social-menu-image" src="<?php echo webp("Icons/youtube.png") ?>">
             </a>
         </div>
 

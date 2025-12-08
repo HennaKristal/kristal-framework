@@ -5,7 +5,7 @@
         <!-- <a class="navbar-brand" href="<?php echo route(""); ?>"><?php echo translate("Kristal Framework"); ?></a> -->
 
         <!-- Navbar Title (image) -->
-        <a class="navbar-brand" href="<?php echo route(""); ?>"><img class="navbar-logo colorized-fast" src="<?php echo image("kristal_framework_logo.png"); ?>" /></a>
+        <a class="navbar-brand" href="<?php echo route(""); ?>"><img class="navbar-logo colorized-fast" src="<?php echo webp("kristal_framework_logo.png"); ?>" /></a>
 
         <!-- Navbar mobile toggle button -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation" data-bs-theme="dark">

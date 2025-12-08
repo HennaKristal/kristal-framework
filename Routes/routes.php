@@ -1,7 +1,6 @@
 <?php defined("ACCESS") or exit("Access Denied");
 
 use Backend\Core\Router;
-use Backend\Core\Cache;
 use Backend\Controllers\ThemeController;
 
 class Routes extends Router
