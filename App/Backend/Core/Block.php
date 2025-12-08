@@ -8,7 +8,7 @@ class Block
     public static function initialize()
     {
         // Get all directories within the blocks folder
-        $directories = glob(WEBSITE_ROOT . '/App/Backend/Blocks/*', GLOB_ONLYDIR);
+        $directories = glob(WEBROOT . '/App/Backend/Blocks/*', GLOB_ONLYDIR);
 
         foreach ($directories as $dir)
         {

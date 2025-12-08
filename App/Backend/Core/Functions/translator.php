@@ -29,7 +29,7 @@ function translate($key, $variables = [])
 
     if ($translations === null)
     {
-        $path = WEBSITE_ROOT . '/App/Public/Translations/translations.php';
+        $path = WEBROOT . '/App/Public/Translations/translations.php';
     
         if (!file_exists($path))
         {

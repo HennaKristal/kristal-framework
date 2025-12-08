@@ -37,9 +37,9 @@ use Backend\Core\Cron;
 \*================================================================================================================*/
 
 // Example calls
-// new Cron("clean_cache_daily", "clean_cache.php", "1 day");
-// new Cron("clean_cache_monthly", "clean_cache.php", "1 month");
-// new Cron("clean_cache_yearly", "clean_cache.php", "1 year");
-// new Cron("clean_cache_every_30_seconds", "clean_cache.php", "30 seconds");
-// new Cron("clean_cache_every_2_days", "clean_cache.php", "2 days");
-// new Cron("clean_cache_daily_starting_2026", "clean_cache.php", "1 day", "01.01.2026 00:00:00");
+// new Cron("clean_cache_daily", "example_task.php", "1 day");
+// new Cron("clean_cache_monthly", "example_task.php", "1 month");
+// new Cron("clean_cache_yearly", "example_task.php", "1 year");
+// new Cron("clean_cache_every_30_seconds", "example_task.php", "30 seconds");
+// new Cron("clean_cache_every_2_days", "example_task.php", "2 days");
+// new Cron("clean_cache_daily_starting_2026", "example_task.php", "1 day", "01.01.2026 00:00:00");

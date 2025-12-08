@@ -6,10 +6,10 @@ use ScssPhp\ScssPhp\Compiler;
 
 final class SCSS_Compiler
 {
-    private static $glob_themes_folder = WEBSITE_ROOT . "/App/Public/CSS/Themes/*.scss";
-    private static $glob_compiled_css_folder = WEBSITE_ROOT . "/App/Public/CSS/*.css";
-    private static $compiled_css_folder_path = WEBSITE_ROOT . "/App/Public/CSS/";
-    private static $scss_folder_path = WEBSITE_ROOT . "/App/Public/CSS/SCSS/";
+    private static $glob_themes_folder = WEBROOT . "/App/Public/CSS/Themes/*.scss";
+    private static $glob_compiled_css_folder = WEBROOT . "/App/Public/CSS/*.css";
+    private static $compiled_css_folder_path = WEBROOT . "/App/Public/CSS/";
+    private static $scss_folder_path = WEBROOT . "/App/Public/CSS/SCSS/";
 
 
     public static function initialize()

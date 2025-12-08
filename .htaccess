@@ -1,3 +1,6 @@
+#======================================#
+# Rewrite Engine and Environment Setup #
+#======================================#
 RewriteEngine On
 RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 RewriteBase / 
@@ -13,7 +16,18 @@ Options -Indexes
 # Force HTTPS connection #
 #========================#
 RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP:X-Forwarded-Proto} !https [NC]
+RewriteCond %{HTTP_HOST} !^localhost(:[0-9]+)?$ [NC]
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+
+#===========================================#
+# Normalize trailing slashes for clean URLs #
+#===========================================#
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} !^/$
+RewriteCond %{REQUEST_URI} !(.*)/$
+RewriteRule ^(.+)$ /$1/ [R=301,L]
 
 
 #====================#
@@ -22,30 +36,15 @@ RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 RewriteRule ^index\.php$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . index.php [L]
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteRule . index.php [L,QSA]
 
 
 #================================#
 # Protect server sensitive files #
 #================================#
-<FilesMatch "\.(htaccess|htpasswd|env|ini|php|sql|bak|bk|tmp|swp|yml|yaml|lock|log|gitignore)$">
+<FilesMatch "^\.|\.env|\.ini|\.sql|\.bak|\.bk|\.tmp|\.swp|\.yml|\.yaml|\.lock|\.log|composer\.(json|lock)|README\.md|license\.txt|\.gitignore$">
     Require all denied
-</FilesMatch>
-
-
-#==========================#
-# Block framework metadata #
-#==========================#
-<FilesMatch "^(composer\.json|composer\.lock|license\.txt|README\.md)$">
-    Require all denied
-</FilesMatch>
-
-
-#==============================#
-# Allow public framework files #
-#==============================#
-<FilesMatch "^(index\.php|robots\.txt|sitemap\.xml|translations\.json)$">
-    Require all granted
 </FilesMatch>
 
 
@@ -62,55 +61,46 @@ RedirectMatch 404 ^/\.idea
 # Security headers #
 #==================#
 <IfModule mod_headers.c>
-    Header set X-XSS-Protection "1; mode=block"
-    Header set X-Content-Type-Options "nosniff"
+    Header always set X-Content-Type-Options "nosniff"
     Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
-    Header set Referrer-Policy "no-referrer-when-downgrade"
-    Header set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=()"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=()"
     Header always set X-Download-Options "noopen"
 
-    # Prevent hotlinking
-    # RewriteCond %{HTTP_REFERER} !^$
-    # RewriteCond %{HTTP_REFERER} !YOUR_SITE_NAME[NC]
-    # RewriteRule \.(jpg|jpeg|png|gif|webp|svg)$ - [F]
-
     # Activate if your website does not use iframes from other domains or other domains don't put your website in an iframe
-    # Header always append X-Frame-Options DENY 
+    # Header always set X-Frame-Options "SAMEORIGIN"
 
     # Activate if you don't need to download content from other websites
-    # Header set Content-Security-Policy "default-src 'self'; script-src 'self'; object-src 'none';"
+    # Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; object-src 'none';"
 </IfModule>
 
 
 #==========#
 # caching  #
 #==========#
-
-# Disable ETag to avoid cache inconsistencies
 FileETag None
 
 <IfModule mod_headers.c>
-
     # Enable cache for images, CSS, JavaScript, and web fonts (7884000 = 3 months) 
     <FilesMatch "\.(jpg|jpeg|png|gif|webp|svg|css|js|woff|woff2|ttf|otf|eot)$">
         Header set Cache-Control "max-age=7884000, public"
     </FilesMatch>
-
     # Disable cache for dynamic content
-    <FilesMatch "\.(php|cgi|pl|htm)$">
-        Header set Cache-Control "no-cache, no-store, must-revalidate"
+    <FilesMatch "\.(php|cgi|pl|htm|html)$">
+        Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
         Header set Pragma "no-cache"
         Header set Expires "0"
     </FilesMatch>
-
-</IfModule>
-
-<IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript application/javascript application/json application/xml application/xhtml+xml
 </IfModule>
 
 <IfModule mod_brotli.c>
     AddOutputFilterByType BROTLI_COMPRESS text/html text/plain text/css text/javascript application/javascript application/json application/xml application/xhtml+xml
+</IfModule>
+
+<IfModule mod_deflate.c>
+    <IfModule !mod_brotli.c>
+        AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript application/javascript application/json application/xml application/xhtml+xml
+    </IfModule>
 </IfModule>
 
 
@@ -119,7 +109,7 @@ FileETag None
 #================#
 # AuthType Basic
 # AuthName "Restricted Access"
-# AuthUserFile /var/www/html/YOUR_SITE_NAME/.htpasswd
+# AuthUserFile /PATH_TO_YOUR_WEBSITE/.htpasswd
 # Require valid-user
 
 

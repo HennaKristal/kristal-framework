@@ -7,7 +7,7 @@ use PHPMailer\PHPMailer\Exception;
 class Mailer
 {
     private $mailer;
-    private static $email_template_path = WEBSITE_ROOT . "/App/Emails/";
+    private static $email_template_path = WEBROOT . "/App/Emails/";
 
 
     public function __construct()

@@ -3,7 +3,7 @@ defined("ACCESS") or exit("Access Denied");
 
 class LanguageController
 {
-    public function changeLanguage($language = null)
+    public function changeLanguage($language)
     {
         if (in_array($language, unserialize(AVAILABLE_LANGUAGES)) && $language != getAppLocale())
         {

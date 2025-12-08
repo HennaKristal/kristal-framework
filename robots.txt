@@ -1,9 +1,1 @@
-User-agent: *
-Disallow: /App/Backend/
-Disallow: /Config/
-Disallow: /vendor/
-Disallow: /composer.json
-Disallow: /composer.lock
-Disallow: /README.md
-
 Sitemap: https://YOUR_SITE_NAME/sitemap.xml

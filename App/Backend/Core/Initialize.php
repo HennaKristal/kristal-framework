@@ -4,11 +4,11 @@
 define("ACCESS", "Granted");
 
 // Load configurations
-require_once WEBSITE_ROOT . "/Config/config.php";
-require_once WEBSITE_ROOT . "/App/Backend/Core/Functions/config.php";
+require_once WEBROOT . "/Config/config.php";
+require_once WEBROOT . "/App/Backend/Core/Functions/config.php";
 
 // Load composer autoload.php
-if (!file_exists(WEBSITE_ROOT . "/vendor/autoload.php"))
+if (!file_exists(WEBROOT . "/vendor/autoload.php"))
 {
     if (PRODUCTION_MODE)
     {
@@ -21,13 +21,13 @@ if (!file_exists(WEBSITE_ROOT . "/vendor/autoload.php"))
 }
 
 // Load core files
-require_once WEBSITE_ROOT . "/vendor/autoload.php";
-require_once WEBSITE_ROOT . "/App/Backend/Core/Functions/errors.php";
-require_once WEBSITE_ROOT . "/App/Backend/Core/Functions/debug.php";
-require_once WEBSITE_ROOT . "/App/Backend/Core/Functions/utilities.php";
-require_once WEBSITE_ROOT . "/App/Backend/Core/Functions/cookies.php";
-require_once WEBSITE_ROOT . "/App/Backend/Core/Functions/translator.php";
-require_once WEBSITE_ROOT . "/App/Backend/Cron/cron.php";
+require_once WEBROOT . "/vendor/autoload.php";
+require_once WEBROOT . "/App/Backend/Core/Functions/errors.php";
+require_once WEBROOT . "/App/Backend/Core/Functions/debug.php";
+require_once WEBROOT . "/App/Backend/Core/Functions/utilities.php";
+require_once WEBROOT . "/App/Backend/Core/Functions/cookies.php";
+require_once WEBROOT . "/App/Backend/Core/Functions/translator.php";
+require_once WEBROOT . "/App/Backend/Cron/cron.php";
 
 // Initialize session
 class_alias("Backend\Core\Session", "Session");
@@ -57,4 +57,4 @@ if (!PRODUCTION_MODE)
 }
 
 // Load routes
-require_once WEBSITE_ROOT . "/Routes/routes.php";
+require_once WEBROOT . "/Routes/routes.php";

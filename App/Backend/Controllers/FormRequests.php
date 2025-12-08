@@ -4,8 +4,6 @@ defined("ACCESS") or exit("Access Denied");
 use Backend\Core\FormRequest;
 use Backend\Controllers\ThemeController;
 use Backend\Controllers\LanguageController;
-use Backend\Controllers\Email;
-
 
 class FormRequests extends FormRequest
 {
@@ -21,28 +19,19 @@ class FormRequests extends FormRequest
         ]);
     }
 
-
     // Form Request for changing theme
-    public function change_theme($request) // $request variable contains all data sent by the form
+    public function change_theme($request)
     {
-        $theme_controller = new ThemeController();
-        $theme_controller->changeTheme($request["theme"]);
+        // $request variable contains all data sent by the form
+        $themeController = new ThemeController();
+        $themeController->changeTheme($request["theme"]);
     }
-
 
     // Form Request for changing language
     public function change_language($request)
     {
-        $language_controller = new LanguageController();
-        $language_controller->changeLanguage($request["language"]);
-    }
-
-
-    // Form Request for sending email
-    public function send_email($request)
-    {
-        $email = new Email();
-        $email->sendMail($request["receiver"], $request["title"], $request["message"]);
+        $languageController = new LanguageController();
+        $languageController->changeLanguage($request["language"]);
     }
 
     // Protected functions can only be called when the parent class is constructed with 'true' parameter or internally from other functions
@@ -50,7 +39,6 @@ class FormRequests extends FormRequest
     {
         // ...
     }
-
 
     // Private functions can only be called internally from other functions within this class
     private function xxxxxxx($request)

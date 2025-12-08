@@ -12,7 +12,7 @@ function kristal_getAssetURL($folder, $file)
     }
 
     $searchFolder = "App/Public/" . $folder . "/";
-    $filePath = WEBSITE_ROOT . "/" . $searchFolder . $file;
+    $filePath = WEBROOT . "/" . $searchFolder . $file;
 
     // If file doesn't exist try to find same file with any extension
     if (!file_exists($filePath))
@@ -44,7 +44,7 @@ function kristal_getAssetURL($folder, $file)
 
 function kristal_getAssetPath($folder, $file)
 {
-    $filePath = WEBSITE_ROOT . "/App/Public/" . $folder . "/" . $file;
+    $filePath = WEBROOT . "/App/Public/" . $folder . "/" . $file;
 
     // Return path as is if file exists
     if (file_exists($filePath))
@@ -84,14 +84,14 @@ function audioPath($file) { return kristal_getAssetPath("Audio", $file); }
 function page($file)
 {
     $file = ensurePHPExtension($file);
-    $path = WEBSITE_ROOT . "/App/Pages/" . $file;
+    $path = WEBROOT . "/App/Pages/" . $file;
 
     return file_exists($path) ? $path : false;
 }
 
 function pageExists($file)
 {
-    return file_exists(WEBSITE_ROOT . "/App/Pages/" . ensurePHPExtension($file));
+    return file_exists(WEBROOT . "/App/Pages/" . ensurePHPExtension($file));
 }
 
 

@@ -160,7 +160,7 @@ class Router
         $this->content_last_modified_time = filemtime('Routes/routes.php');
 
         // Get the latest modified date from pages folder
-        foreach (glob(WEBSITE_ROOT . '/App/Pages/*.php') as $file)
+        foreach (glob(WEBROOT . '/App/Pages/*.php') as $file)
         {
             $page_last_modified = filemtime($file);
 
@@ -356,7 +356,7 @@ class Router
         }
 
         // Render maintenance page
-        $maintenancePagePath = WEBSITE_ROOT . "/App/Pages/maintenance.php";
+        $maintenancePagePath = WEBROOT . "/App/Pages/maintenance.php";
     
         if (!file_exists($maintenancePagePath))
         {

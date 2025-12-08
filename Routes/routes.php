@@ -1,6 +1,7 @@
 <?php defined("ACCESS") or exit("Access Denied");
 
 use Backend\Core\Router;
+use Backend\Core\Cache;
 use Backend\Controllers\ThemeController;
 
 class Routes extends Router
@@ -48,15 +49,15 @@ class Routes extends Router
 
         // Try to change the theme by calling theme controller which has a custom changeTheme() method
         // Theme controller can be found and modified at App/Backend/Controllers/ folder
-        $theme_feedback = "";
+        $themeFeedback = "";
         if (!empty($theme_name))
         {
-            $theme_feedback = $theme_controller->changeTheme($theme_name);
+            $themeFeedback = $theme_controller->changeTheme($theme_name);
         }
 
         // Render content from App/Pages/demo.php and create $feedback variable that can be used in the template
         $this->render("demo", [
-            "feedback" => $theme_feedback,
+            "themeFeedback" => $themeFeedback,
         ]);
     }
 

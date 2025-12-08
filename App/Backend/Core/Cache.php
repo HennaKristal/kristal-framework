@@ -11,7 +11,7 @@ Cache::clear();
 
 class Cache
 {
-    private static $cachePath = WEBSITE_ROOT . "/Cache/";
+    private static $cachePath = WEBROOT . "/Cache/";
 
     // Add value to cache --------------------------------------------------------
     public static function add($name, $value, $duration = "24 hours")

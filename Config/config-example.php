@@ -225,6 +225,9 @@ define("AVAILABLE_LANGUAGES", serialize([
 // Automatically generate sitemaps from your routes (excluding private and protected functions)
 define("AUTO_COMPILE_SITEMAP", false);
 
+// When true, adds noindex and nofollow meta tags to discourage search engines
+define("DISCOURAGE_SEARCH_ENGINES", false);
+
 
 
 

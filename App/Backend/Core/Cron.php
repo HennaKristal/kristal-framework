@@ -3,8 +3,8 @@ defined("ACCESS") or exit("Access Denied");
 
 class Cron
 {
-    private $tasksPath = WEBSITE_ROOT . "/App/Backend/Cron/Tasks/";
-    private $logsPath = WEBSITE_ROOT . "/App/Backend/Cron/Logs/";
+    private $tasksPath = WEBROOT . "/App/Backend/Cron/Tasks/";
+    private $logsPath = WEBROOT . "/App/Backend/Cron/Logs/";
     private $jobName;
     private $taskFileName;
     private $interval;
