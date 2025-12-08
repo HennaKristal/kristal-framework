@@ -3,28 +3,11 @@
 // ------------------------------------------------------------------------------------------------
 // Bootstrap
 // ------------------------------------------------------------------------------------------------
-if (ENABLE_DEBUG)
-{
-    kristal_setDebugLevels();
-
-    ini_set("display_errors", ENABLE_DEBUG_DISPLAY ? "1" : "0");
-    ini_set("display_startup_errors", ENABLE_DEBUG_DISPLAY ? "1" : "0");
-    ini_set("log_errors", ENABLE_DEBUG_LOG ? "1" : "0");
-    ini_set("error_log", DEBUG_LOG_PATH);
-
-    if (ENABLE_DEBUG_DISPLAY)
-    {
-        set_error_handler("kristal_errorHandler");
-        register_shutdown_function("kristal_fatalErrorHandler");
-    }
-}
-else
-{
-    ini_set("display_errors", "0");
-    ini_set("display_startup_errors", "0");
-    ini_set("log_errors", "0");
-    error_reporting(0);
-}
+kristal_setDebugLevels();
+ini_set("display_errors", ENABLE_DEBUG_DISPLAY ? "1" : "0");
+ini_set("display_startup_errors", ENABLE_DEBUG_DISPLAY ? "1" : "0");
+ini_set("log_errors", ENABLE_DEBUG_LOG ? "1" : "0");
+ini_set("error_log", DEBUG_LOG_PATH);
 
 
 // ------------------------------------------------------------------------------------------------
@@ -32,6 +15,12 @@ else
 // ------------------------------------------------------------------------------------------------
 function kristal_setDebugLevels()
 {
+    if (!ENABLE_DEBUG_DISPLAY)
+    {
+        error_reporting(0);
+        return;
+    }
+
     $level = E_ALL;
 
     if (DEBUG_IGNORE_WARNINGS)
@@ -52,6 +41,8 @@ function kristal_setDebugLevels()
     }
 
     error_reporting($level);
+    set_error_handler("kristal_errorHandler");
+    register_shutdown_function("kristal_fatalErrorHandler");
 }
 
 
@@ -95,10 +86,7 @@ function kristal_errorHandler($type, $message, $file, $line)
 // ------------------------------------------------------------------------------------------------
 function kristal_errorOutput($label, $message, $file, $line)
 {
-    if (ENABLE_DEBUG_LOG)
-    {
-        debuglog($message . " in " . $file . " on line " . $line, $label);
-    }
+    debuglog($message . " in " . $file . " on line " . $line, $label);
 
     if (PRODUCTION_MODE)
     {

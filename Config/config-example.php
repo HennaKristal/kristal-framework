@@ -42,14 +42,14 @@ define("MAINTENANCE_LOCKOUT_CLEAR_TIME", 900);
 # Error reporting configurations
 # --------------------------------------------------------------------------
 
-// Should debugging features be enabled (disabling will turn off all error debugging features)
-define("ENABLE_DEBUG", true);
+// Determines the visibility of debug messages in frontend (can not be displayed in production mode)
+define("ENABLE_DEBUG_DISPLAY", true);
 
 // Determines whether debug messages are recorded in a log file
 define("ENABLE_DEBUG_LOG", true);
 
-// Determines the visibility of debug messages in frontend (can not be displayed in production mode)
-define("ENABLE_DEBUG_DISPLAY", true);
+// Defines the file path for logging debug messages (please keep this outside of html root)
+define("DEBUG_LOG_PATH", "./debug.log");
 
 // When enabled, PHP notices will not be displayed or logged (can not be displayed in production mode)
 define("DEBUG_IGNORE_WARNINGS", false);
@@ -62,9 +62,6 @@ define("DEBUG_IGNORE_DEPRECATED", false);
 
 // When enabled, PHP strict standards notices will not be displayed or logged (can not be displayed in production mode)
 define("DEBUG_IGNORE_STRICT", false);
-
-// Defines the file path for logging debug messages (please keep this outside of html root)
-define("DEBUG_LOG_PATH", "./debug.log");
 
 
 

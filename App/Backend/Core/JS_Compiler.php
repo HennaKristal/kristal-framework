@@ -34,13 +34,13 @@ final class JS_Compiler
 
             if (!file_exists($file))
             {
-                if (!PRODUCTION_MODE)
-                {
-                    exit("JS_Compiler Error: Failed to load JS file '{$filename}'.");
-                }
-                else if (ENABLE_DEBUG_LOG)
+                if (PRODUCTION_MODE)
                 {
                     debuglog("Failed to load JS script: '{$filename}'", "warning");
+                }
+                else
+                {
+                    exit("JS_Compiler Error: Failed to load JS file '{$filename}'.");
                 }
 
                 continue;
