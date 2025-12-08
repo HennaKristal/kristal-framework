@@ -94,8 +94,13 @@ function webpDevelopment($file, $compression)
     // Native webp
     if ($imageType === IMAGETYPE_WEBP)
     {
-        $outputPath = $webpFolder . $cleanName;
+        // Remove extension from cleanName
+        $cleanName = preg_replace("/\.[a-zA-Z0-9]+$/", "", $cleanName);
 
+        // Output should match naming rules: name-quality.webp
+        $outputPath = $webpFolder . $cleanName . "-" . $compression . ".webp";
+
+        // Use cached version if available
         if (!file_exists($outputPath))
         {
             copy($filePath, $outputPath);
