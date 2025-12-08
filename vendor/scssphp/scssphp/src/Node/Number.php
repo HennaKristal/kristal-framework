@@ -33,12 +33,12 @@ use ScssPhp\ScssPhp\Util;
  *
  * @template-implements \ArrayAccess<int, mixed>
  */
-class Number extends Node implements \ArrayAccess
+class Number extends Node implements \ArrayAccess, \JsonSerializable
 {
     const PRECISION = 10;
 
     /**
-     * @var integer
+     * @var int
      * @deprecated use {Number::PRECISION} instead to read the precision. Configuring it is not supported anymore.
      */
     public static $precision = self::PRECISION;
@@ -81,7 +81,7 @@ class Number extends Node implements \ArrayAccess
     ];
 
     /**
-     * @var integer|float
+     * @var int|float
      */
     private $dimension;
 
@@ -100,7 +100,7 @@ class Number extends Node implements \ArrayAccess
     /**
      * Initialize number
      *
-     * @param integer|float   $dimension
+     * @param int|float       $dimension
      * @param string[]|string $numeratorUnits
      * @param string[]        $denominatorUnits
      *
@@ -131,7 +131,7 @@ class Number extends Node implements \ArrayAccess
     }
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     public function getNumeratorUnits()
     {
@@ -139,7 +139,7 @@ class Number extends Node implements \ArrayAccess
     }
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     public function getDenominatorUnits()
     {
@@ -147,8 +147,19 @@ class Number extends Node implements \ArrayAccess
     }
 
     /**
-     * {@inheritdoc}
+     * @return mixed
      */
+    #[\ReturnTypeWillChange]
+    public function jsonSerialize()
+    {
+        // Passing a compiler instance makes the method output a Sass representation instead of a CSS one, supporting full units.
+        return $this->output(new Compiler());
+    }
+
+    /**
+     * @return bool
+     */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         if ($offset === -3) {
@@ -172,8 +183,9 @@ class Number extends Node implements \ArrayAccess
     }
 
     /**
-     * {@inheritdoc}
+     * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         switch ($offset) {
@@ -198,16 +210,18 @@ class Number extends Node implements \ArrayAccess
     }
 
     /**
-     * {@inheritdoc}
+     * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         throw new \BadMethodCallException('Number is immutable');
     }
 
     /**
-     * {@inheritdoc}
+     * @return void
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         throw new \BadMethodCallException('Number is immutable');
@@ -216,11 +230,21 @@ class Number extends Node implements \ArrayAccess
     /**
      * Returns true if the number is unitless
      *
-     * @return boolean
+     * @return bool
      */
     public function unitless()
     {
         return \count($this->numeratorUnits) === 0 && \count($this->denominatorUnits) === 0;
+    }
+
+    /**
+     * Returns true if the number has any units
+     *
+     * @return bool
+     */
+    public function hasUnits()
+    {
+        return !$this->unitless();
     }
 
     /**
@@ -262,7 +286,27 @@ class Number extends Node implements \ArrayAccess
         try {
             return Util::checkRange('', new Range($min, $max), $this);
         } catch (RangeException $e) {
-            throw SassScriptException::forArgument(sprintf('Expected %s to be within %s%s and %s%3$s', $this, $min, $this->unitStr(), $max), $name);
+            throw SassScriptException::forArgument(sprintf('Expected %s to be within %s%s and %s%3$s.', $this, $min, $this->unitStr(), $max), $name);
+        }
+    }
+
+    /**
+     * @param float|int $min
+     * @param float|int $max
+     * @param string    $name
+     * @param string    $unit
+     *
+     * @return float|int
+     * @throws SassScriptException
+     *
+     * @internal
+     */
+    public function valueInRangeWithUnit($min, $max, $name, $unit)
+    {
+        try {
+            return Util::checkRange('', new Range($min, $max), $this);
+        } catch (RangeException $e) {
+            throw SassScriptException::forArgument(sprintf('Expected %s to be within %s%s and %s%3$s.', $this, $min, $unit, $max), $name);
         }
     }
 
@@ -520,7 +564,7 @@ class Number extends Node implements \ArrayAccess
 
         try {
             return $this->coerceUnits($other, function ($num1, $num2) {
-                return round($num1,self::PRECISION) == round($num2, self::PRECISION);
+                return round($num1, self::PRECISION) == round($num2, self::PRECISION);
             });
         } catch (SassScriptException $e) {
             return false;

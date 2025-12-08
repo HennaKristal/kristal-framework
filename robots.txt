@@ -1,1 +1,1 @@
-Sitemap: https://YOUR_SITE_NAME/sitemap.xml
+Sitemap: https://framework-demo.hennakristal.com/sitemap.xml

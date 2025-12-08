@@ -9,13 +9,15 @@
             "email": "hennakristal@outlook.com"
         }
     ],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+
     "require": {
-        "scssphp/scssphp": "1.6.0",
-        "patchwork/jsqueeze": "2.0.5",
-        "phpmailer/phpmailer": "6.5.3",
-        "voku/html-min": "3.1.2"
+        "scssphp/scssphp": "1.13.0",
+        "phpmailer/phpmailer": "7.0.1",
+        "voku/html-min": "4.5.1"
     },
+
     "autoload": {
         "psr-4": {
             "Backend\\": "./App/Backend"

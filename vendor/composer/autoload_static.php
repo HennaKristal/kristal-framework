@@ -4,98 +4,79 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitea34d03bfe2e759d41b12c3b4a2ba9e4
+class ComposerStaticInitd0185ee0cc284daaa9d4b91fddcbdb3c
 {
-    public static $files = array (
-        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
-    );
-
     public static $prefixLengthsPsr4 = array (
-        'v' => 
+        'v' =>
         array (
             'voku\\helper\\' => 12,
             'voku\\' => 5,
         ),
-        'S' => 
+        'S' =>
         array (
-            'Symfony\\Polyfill\\Php80\\' => 23,
             'Symfony\\Component\\CssSelector\\' => 30,
             'ScssPhp\\ScssPhp\\' => 16,
         ),
-        'P' => 
+        'P' =>
         array (
-            'Patchwork\\' => 10,
             'PHPMailer\\PHPMailer\\' => 20,
         ),
-        'B' => 
+        'B' =>
         array (
             'Backend\\' => 8,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'voku\\helper\\' => 
+        'voku\\helper\\' =>
         array (
             0 => __DIR__ . '/..' . '/voku/simple_html_dom/src/voku/helper',
         ),
-        'voku\\' => 
+        'voku\\' =>
         array (
             0 => __DIR__ . '/..' . '/voku/html-min/src/voku',
         ),
-        'Symfony\\Polyfill\\Php80\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
-        ),
-        'Symfony\\Component\\CssSelector\\' => 
+        'Symfony\\Component\\CssSelector\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/css-selector',
         ),
-        'ScssPhp\\ScssPhp\\' => 
+        'ScssPhp\\ScssPhp\\' =>
         array (
             0 => __DIR__ . '/..' . '/scssphp/scssphp/src',
         ),
-        'Patchwork\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/patchwork/jsqueeze/src',
-        ),
-        'PHPMailer\\PHPMailer\\' => 
+        'PHPMailer\\PHPMailer\\' =>
         array (
             0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
         ),
-        'Backend\\' => 
+        'Backend\\' =>
         array (
             0 => __DIR__ . '/../..' . '/App/Backend',
         ),
     );
 
     public static $classMap = array (
-        'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
-        'Backend\\Controllers\\FormRequests' => __DIR__ . '/../..' . '/App/Backend/Controllers/FormRequests.php',
-        'Backend\\Controllers\\LanguageController' => __DIR__ . '/../..' . '/App/Backend/Controllers/LanguageController.php',
-        'Backend\\Controllers\\ThemeController' => __DIR__ . '/../..' . '/App/Backend/Controllers/ThemeController.php',
-        'Backend\\Core\\Block' => __DIR__ . '/../..' . '/App/Backend/Core/Block.php',
-        'Backend\\Core\\CSRF' => __DIR__ . '/../..' . '/App/Backend/Core/CSRF.php',
-        'Backend\\Core\\Cache' => __DIR__ . '/../..' . '/App/Backend/Core/Cache.php',
-        'Backend\\Core\\Cron' => __DIR__ . '/../..' . '/App/Backend/Core/Cron.php',
-        'Backend\\Core\\Database' => __DIR__ . '/../..' . '/App/Backend/Core/Database.php',
-        'Backend\\Core\\Entity' => __DIR__ . '/../..' . '/App/Backend/Core/Entity.php',
-        'Backend\\Core\\FormRequest' => __DIR__ . '/../..' . '/App/Backend/Core/FormRequest.php',
-        'Backend\\Core\\JS_Compiler' => __DIR__ . '/../..' . '/App/Backend/Core/JS_Compiler.php',
-        'Backend\\Core\\Mailer' => __DIR__ . '/../..' . '/App/Backend/Core/Mailer.php',
-        'Backend\\Core\\PHPJS' => __DIR__ . '/../..' . '/App/Backend/Core/PHPJS.php',
-        'Backend\\Core\\Router' => __DIR__ . '/../..' . '/App/Backend/Core/Router.php',
-        'Backend\\Core\\SCSS_Compiler' => __DIR__ . '/../..' . '/App/Backend/Core/SCSS_Compiler.php',
-        'Backend\\Core\\Session' => __DIR__ . '/../..' . '/App/Backend/Core/Session.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'PHPMailer\\PHPMailer\\DSNConfigurator' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/DSNConfigurator.php',
         'PHPMailer\\PHPMailer\\Exception' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/Exception.php',
         'PHPMailer\\PHPMailer\\OAuth' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/OAuth.php',
+        'PHPMailer\\PHPMailer\\OAuthTokenProvider' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/OAuthTokenProvider.php',
         'PHPMailer\\PHPMailer\\PHPMailer' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/PHPMailer.php',
         'PHPMailer\\PHPMailer\\POP3' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/POP3.php',
         'PHPMailer\\PHPMailer\\SMTP' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/SMTP.php',
-        'Patchwork\\JSqueeze' => __DIR__ . '/..' . '/patchwork/jsqueeze/src/JSqueeze.php',
-        'PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
         'ScssPhp\\ScssPhp\\Base\\Range' => __DIR__ . '/..' . '/scssphp/scssphp/src/Base/Range.php',
         'ScssPhp\\ScssPhp\\Block' => __DIR__ . '/..' . '/scssphp/scssphp/src/Block.php',
+        'ScssPhp\\ScssPhp\\Block\\AtRootBlock' => __DIR__ . '/..' . '/scssphp/scssphp/src/Block/AtRootBlock.php',
+        'ScssPhp\\ScssPhp\\Block\\CallableBlock' => __DIR__ . '/..' . '/scssphp/scssphp/src/Block/CallableBlock.php',
+        'ScssPhp\\ScssPhp\\Block\\ContentBlock' => __DIR__ . '/..' . '/scssphp/scssphp/src/Block/ContentBlock.php',
+        'ScssPhp\\ScssPhp\\Block\\DirectiveBlock' => __DIR__ . '/..' . '/scssphp/scssphp/src/Block/DirectiveBlock.php',
+        'ScssPhp\\ScssPhp\\Block\\EachBlock' => __DIR__ . '/..' . '/scssphp/scssphp/src/Block/EachBlock.php',
+        'ScssPhp\\ScssPhp\\Block\\ElseBlock' => __DIR__ . '/..' . '/scssphp/scssphp/src/Block/ElseBlock.php',
+        'ScssPhp\\ScssPhp\\Block\\ElseifBlock' => __DIR__ . '/..' . '/scssphp/scssphp/src/Block/ElseifBlock.php',
+        'ScssPhp\\ScssPhp\\Block\\ForBlock' => __DIR__ . '/..' . '/scssphp/scssphp/src/Block/ForBlock.php',
+        'ScssPhp\\ScssPhp\\Block\\IfBlock' => __DIR__ . '/..' . '/scssphp/scssphp/src/Block/IfBlock.php',
+        'ScssPhp\\ScssPhp\\Block\\MediaBlock' => __DIR__ . '/..' . '/scssphp/scssphp/src/Block/MediaBlock.php',
+        'ScssPhp\\ScssPhp\\Block\\NestedPropertyBlock' => __DIR__ . '/..' . '/scssphp/scssphp/src/Block/NestedPropertyBlock.php',
+        'ScssPhp\\ScssPhp\\Block\\WhileBlock' => __DIR__ . '/..' . '/scssphp/scssphp/src/Block/WhileBlock.php',
         'ScssPhp\\ScssPhp\\Cache' => __DIR__ . '/..' . '/scssphp/scssphp/src/Cache.php',
         'ScssPhp\\ScssPhp\\Colors' => __DIR__ . '/..' . '/scssphp/scssphp/src/Colors.php',
         'ScssPhp\\ScssPhp\\CompilationResult' => __DIR__ . '/..' . '/scssphp/scssphp/src/CompilationResult.php',
@@ -132,7 +113,6 @@ class ComposerStaticInitea34d03bfe2e759d41b12c3b4a2ba9e4
         'ScssPhp\\ScssPhp\\ValueConverter' => __DIR__ . '/..' . '/scssphp/scssphp/src/ValueConverter.php',
         'ScssPhp\\ScssPhp\\Version' => __DIR__ . '/..' . '/scssphp/scssphp/src/Version.php',
         'ScssPhp\\ScssPhp\\Warn' => __DIR__ . '/..' . '/scssphp/scssphp/src/Warn.php',
-        'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
         'Symfony\\Component\\CssSelector\\CssSelectorConverter' => __DIR__ . '/..' . '/symfony/css-selector/CssSelectorConverter.php',
         'Symfony\\Component\\CssSelector\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/symfony/css-selector/Exception/ExceptionInterface.php',
         'Symfony\\Component\\CssSelector\\Exception\\ExpressionErrorException' => __DIR__ . '/..' . '/symfony/css-selector/Exception/ExpressionErrorException.php',
@@ -146,11 +126,13 @@ class ComposerStaticInitea34d03bfe2e759d41b12c3b4a2ba9e4
         'Symfony\\Component\\CssSelector\\Node\\ElementNode' => __DIR__ . '/..' . '/symfony/css-selector/Node/ElementNode.php',
         'Symfony\\Component\\CssSelector\\Node\\FunctionNode' => __DIR__ . '/..' . '/symfony/css-selector/Node/FunctionNode.php',
         'Symfony\\Component\\CssSelector\\Node\\HashNode' => __DIR__ . '/..' . '/symfony/css-selector/Node/HashNode.php',
+        'Symfony\\Component\\CssSelector\\Node\\MatchingNode' => __DIR__ . '/..' . '/symfony/css-selector/Node/MatchingNode.php',
         'Symfony\\Component\\CssSelector\\Node\\NegationNode' => __DIR__ . '/..' . '/symfony/css-selector/Node/NegationNode.php',
         'Symfony\\Component\\CssSelector\\Node\\NodeInterface' => __DIR__ . '/..' . '/symfony/css-selector/Node/NodeInterface.php',
         'Symfony\\Component\\CssSelector\\Node\\PseudoNode' => __DIR__ . '/..' . '/symfony/css-selector/Node/PseudoNode.php',
         'Symfony\\Component\\CssSelector\\Node\\SelectorNode' => __DIR__ . '/..' . '/symfony/css-selector/Node/SelectorNode.php',
         'Symfony\\Component\\CssSelector\\Node\\Specificity' => __DIR__ . '/..' . '/symfony/css-selector/Node/Specificity.php',
+        'Symfony\\Component\\CssSelector\\Node\\SpecificityAdjustmentNode' => __DIR__ . '/..' . '/symfony/css-selector/Node/SpecificityAdjustmentNode.php',
         'Symfony\\Component\\CssSelector\\Parser\\Handler\\CommentHandler' => __DIR__ . '/..' . '/symfony/css-selector/Parser/Handler/CommentHandler.php',
         'Symfony\\Component\\CssSelector\\Parser\\Handler\\HandlerInterface' => __DIR__ . '/..' . '/symfony/css-selector/Parser/Handler/HandlerInterface.php',
         'Symfony\\Component\\CssSelector\\Parser\\Handler\\HashHandler' => __DIR__ . '/..' . '/symfony/css-selector/Parser/Handler/HashHandler.php',
@@ -181,10 +163,6 @@ class ComposerStaticInitea34d03bfe2e759d41b12c3b4a2ba9e4
         'Symfony\\Component\\CssSelector\\XPath\\Translator' => __DIR__ . '/..' . '/symfony/css-selector/XPath/Translator.php',
         'Symfony\\Component\\CssSelector\\XPath\\TranslatorInterface' => __DIR__ . '/..' . '/symfony/css-selector/XPath/TranslatorInterface.php',
         'Symfony\\Component\\CssSelector\\XPath\\XPathExpr' => __DIR__ . '/..' . '/symfony/css-selector/XPath/XPathExpr.php',
-        'Symfony\\Polyfill\\Php80\\Php80' => __DIR__ . '/..' . '/symfony/polyfill-php80/Php80.php',
-        'Symfony\\Polyfill\\Php80\\PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/PhpToken.php',
-        'UnhandledMatchError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
-        'ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
         'voku\\helper\\AbstractDomParser' => __DIR__ . '/..' . '/voku/simple_html_dom/src/voku/helper/AbstractDomParser.php',
         'voku\\helper\\AbstractSimpleHtmlDom' => __DIR__ . '/..' . '/voku/simple_html_dom/src/voku/helper/AbstractSimpleHtmlDom.php',
         'voku\\helper\\AbstractSimpleHtmlDomNode' => __DIR__ . '/..' . '/voku/simple_html_dom/src/voku/helper/AbstractSimpleHtmlDomNode.php',
@@ -196,6 +174,7 @@ class ComposerStaticInitea34d03bfe2e759d41b12c3b4a2ba9e4
         'voku\\helper\\HtmlMin' => __DIR__ . '/..' . '/voku/html-min/src/voku/helper/HtmlMin.php',
         'voku\\helper\\HtmlMinDomObserverInterface' => __DIR__ . '/..' . '/voku/html-min/src/voku/helper/HtmlMinDomObserverInterface.php',
         'voku\\helper\\HtmlMinDomObserverOptimizeAttributes' => __DIR__ . '/..' . '/voku/html-min/src/voku/helper/HtmlMinDomObserverOptimizeAttributes.php',
+        'voku\\helper\\HtmlMinInterface' => __DIR__ . '/..' . '/voku/html-min/src/voku/helper/HtmlMinInterface.php',
         'voku\\helper\\SelectorConverter' => __DIR__ . '/..' . '/voku/simple_html_dom/src/voku/helper/SelectorConverter.php',
         'voku\\helper\\SimpleHtmlAttributes' => __DIR__ . '/..' . '/voku/simple_html_dom/src/voku/helper/SimpleHtmlAttributes.php',
         'voku\\helper\\SimpleHtmlAttributesInterface' => __DIR__ . '/..' . '/voku/simple_html_dom/src/voku/helper/SimpleHtmlAttributesInterface.php',
@@ -217,9 +196,9 @@ class ComposerStaticInitea34d03bfe2e759d41b12c3b4a2ba9e4
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitea34d03bfe2e759d41b12c3b4a2ba9e4::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitea34d03bfe2e759d41b12c3b4a2ba9e4::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitea34d03bfe2e759d41b12c3b4a2ba9e4::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitd0185ee0cc284daaa9d4b91fddcbdb3c::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitd0185ee0cc284daaa9d4b91fddcbdb3c::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitd0185ee0cc284daaa9d4b91fddcbdb3c::$classMap;
 
         }, null, ClassLoader::class);
     }

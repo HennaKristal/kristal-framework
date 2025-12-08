@@ -24,7 +24,7 @@ class FormRequests extends FormRequest
     {
         // $request variable contains all data sent by the form
         $themeController = new ThemeController();
-        $themeController->changeTheme($request["theme"]);
+        $themeController->changeTheme($request["theme-name"]);
     }
 
     // Form Request for changing language

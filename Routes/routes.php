@@ -42,22 +42,11 @@ class Routes extends Router
     // Variables are passed into the route the following way:
     // "example.com/route/variable1/variable2/..."
     // Just add more variables to accept them as well
-    function demoHandler($theme_name = "")
+    function demoHandler()
     {
-        // Create instance of theme controller, so we can change theme with it
-        $theme_controller = new ThemeController();
-
-        // Try to change the theme by calling theme controller which has a custom changeTheme() method
-        // Theme controller can be found and modified at App/Backend/Controllers/ folder
-        $themeFeedback = "";
-        if (!empty($theme_name))
-        {
-            $themeFeedback = $theme_controller->changeTheme($theme_name);
-        }
-
-        // Render content from App/Pages/demo.php and create $feedback variable that can be used in the template
+        // Render content from App/Pages/demo.php and create $message variable that can be used in the template
         $this->render("demo", [
-            "themeFeedback" => $themeFeedback,
+            "message" => "hello!",
         ]);
     }
 
