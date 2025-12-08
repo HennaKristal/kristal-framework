@@ -1,55 +1,55 @@
 <?xml version="1.0"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://framework-demo.hennakristal.com/en/</loc>
+    <loc>https://YOUR_WEBSITE_NAME/en/</loc>
     <lastmod>2025-12-08T02:07:27+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.00</priority>
   </url>
   <url>
-    <loc>https://framework-demo.hennakristal.com/fi/</loc>
+    <loc>https://YOUR_WEBSITE_NAME/fi/</loc>
     <lastmod>2025-12-08T02:07:27+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.00</priority>
   </url>
   <url>
-    <loc>https://framework-demo.hennakristal.com/sv/</loc>
+    <loc>https://YOUR_WEBSITE_NAME/sv/</loc>
     <lastmod>2025-12-08T02:07:27+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.00</priority>
   </url>
   <url>
-    <loc>https://framework-demo.hennakristal.com/en/home/</loc>
+    <loc>https://YOUR_WEBSITE_NAME/en/home/</loc>
     <lastmod>2025-12-08T02:07:27+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.00</priority>
   </url>
   <url>
-    <loc>https://framework-demo.hennakristal.com/fi/etusivu/</loc>
+    <loc>https://YOUR_WEBSITE_NAME/fi/etusivu/</loc>
     <lastmod>2025-12-08T02:07:27+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.00</priority>
   </url>
   <url>
-    <loc>https://framework-demo.hennakristal.com/sv/hem/</loc>
+    <loc>https://YOUR_WEBSITE_NAME/sv/hem/</loc>
     <lastmod>2025-12-08T02:07:27+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.00</priority>
   </url>
   <url>
-    <loc>https://framework-demo.hennakristal.com/en/demo/</loc>
+    <loc>https://YOUR_WEBSITE_NAME/en/demo/</loc>
     <lastmod>2025-12-08T02:07:27+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.00</priority>
   </url>
   <url>
-    <loc>https://framework-demo.hennakristal.com/fi/esittely/</loc>
+    <loc>https://YOUR_WEBSITE_NAME/fi/esittely/</loc>
     <lastmod>2025-12-08T02:07:27+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.00</priority>
   </url>
   <url>
-    <loc>https://framework-demo.hennakristal.com/sv/demo/</loc>
+    <loc>https://YOUR_WEBSITE_NAME/sv/demo/</loc>
     <lastmod>2025-12-08T02:07:27+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.00</priority>
