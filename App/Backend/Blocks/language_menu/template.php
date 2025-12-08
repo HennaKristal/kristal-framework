@@ -12,8 +12,8 @@
             <form method='post'>
                 <?php CSRF::create($atts['request'] . "-" . $language); ?>
                 <?php CSRF::request($atts['request']); ?>
-                <button type='submit' name='language' value='<?= $language; ?>' class='btn btn-link p-0 border-0 bg-transparent'>
-                    <img src="<?= image("Flags/$language.jpg"); ?>" class="change-language <?php if (Session::get("language") === $language) echo "active"; ?>" />
+                <button type='submit' name='language' value='<?php echo $language; ?>' class='btn btn-link p-0 border-0 bg-transparent'>
+                    <img src="<?php echo image("Flags/$language.jpg"); ?>" class="change-language <?php if (Session::get("language") === $language) echo "active"; ?>" />
                 </button>
             </form>
         </li>

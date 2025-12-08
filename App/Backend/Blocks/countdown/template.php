@@ -30,7 +30,7 @@
     
     <?php else: ?>
         
-        <span class="countdown-timer" ><?= $atts['expired']; ?></span>
+        <span class="countdown-timer" ><?php echo $atts['expired']; ?></span>
 
     <?php endif; ?>
 
