@@ -48,6 +48,12 @@ if (!PRODUCTION_MODE)
     {
         Backend\Core\SCSS_Compiler::initialize();
     }
+
+    // Compile JavaScript
+    if (AUTO_COMPILE_JS)
+    {
+        Backend\Core\JS_Compiler::initialize();
+    }
 }
 
 // Load routes

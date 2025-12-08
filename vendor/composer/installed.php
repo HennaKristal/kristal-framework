@@ -46,6 +46,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'tedivm/jshrink' => array(
+            'pretty_version' => 'v1.8.1',
+            'version' => '1.8.1.0',
+            'reference' => 'f76454d4c48ddae6354a2f0eeb16633d4e755c9a',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../tedivm/jshrink',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'voku/html-min' => array(
             'pretty_version' => '4.5.1',
             'version' => '4.5.1.0',

@@ -14,9 +14,10 @@
 
     "require": {
         "php": "^8.3",
-        "scssphp/scssphp": "1.13.0",
         "phpmailer/phpmailer": "7.0.1",
-        "voku/html-min": "4.5.1"
+        "voku/html-min": "4.5.1",
+        "tedivm/jshrink": "1.8.1",
+        "scssphp/scssphp": "1.13.0"
     },
 
     "autoload": {

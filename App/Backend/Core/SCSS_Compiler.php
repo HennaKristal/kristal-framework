@@ -3,7 +3,6 @@ defined("ACCESS") or exit("Access Denied");
 
 use ScssPhp\ScssPhp\Compiler;
 
-
 final class SCSS_Compiler
 {
     private static $glob_themes_folder = WEBROOT . "/App/Public/CSS/Themes/*.scss";

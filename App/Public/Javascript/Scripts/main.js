@@ -1,3 +1,1 @@
 console.log("Thanks for using Kristal Framework! (Message sent from /App/Public/Javascript/main.js)");
-/* Generated: 8.12.2025 13:24:52 */
-//# sourceMappingURL=main.js.map
