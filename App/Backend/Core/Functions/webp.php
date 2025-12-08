@@ -2,13 +2,12 @@
 
 function webp($file, $compression = "default")
 {
-    // Normalize file input
+    // Normalize input before passing to mode handlers
     if (strpos($file, "/") === 0)
     {
         $file = substr($file, 1);
     }
 
-    // Validate compression
     if (!is_numeric($compression))
     {
         $compression = WEBP_DEFAULT_QUALITY;
@@ -28,17 +27,43 @@ function webp($file, $compression = "default")
         }
     }
 
+    if (PRODUCTION_MODE === true)
+    {
+        return webpProduction($file, $compression);
+    }
+
+    return webpDevelopment($file, $compression);
+}
+
+
+function webpProduction($file, $compression)
+{
+    // Build the expected filename directly
+    $cleanName = preg_replace("/[^a-zA-Z0-9\/\.\-_]/", "", $file);
+    $cleanName = str_replace("/", "-", $cleanName);
+    $cleanName = preg_replace("/\.[a-zA-Z0-9]+$/", "", $cleanName);
+    $cleanName = $cleanName . "-" . $compression . ".webp";
+
+    return rtrim(BASE_URL, "/") . "/Cache/WebP/" . $cleanName;
+}
+
+
+function webpDevelopment($file, $compression)
+{
+    // Resolve folders
     $imageFolder = WEBROOT . "/App/Public/Images/";
     $webpFolder = WEBROOT . "/Cache/WebP/";
 
+    // Ensure output folder exists
     if (!is_dir($webpFolder))
     {
         mkdir($webpFolder, 0755, true);
     }
 
-    // Resolve full file path
+    // Resolve full path
     $filePath = $imageFolder . $file;
 
+    // Attempt alternative extensions
     if (!file_exists($filePath))
     {
         $matches = glob($filePath . ".*");
@@ -66,7 +91,7 @@ function webp($file, $compression = "default")
     $relativeName = substr($filePath, $position + strlen($searchFolder));
     $cleanName = str_replace("/", "-", $relativeName);
 
-    // Handle native webp
+    // Native webp
     if ($imageType === IMAGETYPE_WEBP)
     {
         $outputPath = $webpFolder . $cleanName;
@@ -80,17 +105,18 @@ function webp($file, $compression = "default")
         return rtrim(BASE_URL, "/") . "/Cache/WebP/" . $fileName;
     }
 
-    // Build output name for non-webp
+    // Build output
     $cleanName = preg_replace("/\.[a-zA-Z0-9]+$/", "", $cleanName);
     $outputPath = $webpFolder . $cleanName . "-" . $compression . ".webp";
 
+    // Cached version
     if (file_exists($outputPath))
     {
         $fileName = basename($outputPath);
         return rtrim(BASE_URL, "/") . "/Cache/WebP/" . $fileName;
     }
 
-    // Load image
+    // Load source
     if ($imageType === IMAGETYPE_PNG)
     {
         $image = imagecreatefrompng($filePath);
