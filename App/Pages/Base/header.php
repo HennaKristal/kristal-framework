@@ -1,21 +1,29 @@
 <!doctype html>
 <html lang="<?php echo Session::has('language') ? Session::get('language') : DEFAULT_LANGUAGE; ?>">
     <head>
-        
-        <!-- Metadata -->
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="generator" content="Kristal Framework" />
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="generator" content="Kristal Framework">
 
         <?php if (DISCOURAGE_SEARCH_ENGINES): ?>
             <meta name="robots" content="noindex, nofollow">
+        <?php else: ?>
+            <meta name="robots" content="index, follow">
         <?php endif; ?>
 
+        <!-- Page metadata -->
         <?php if (isset($kristal_metadata[$page]) || isset($kristal_metadata["*"])): ?>
-            <?php foreach ((isset($kristal_metadata[$page]) ? $kristal_metadata[$page] : $kristal_metadata["*"]) as $key => $value): ?>
-                <meta property="<?php echo htmlspecialchars($key) ?>" content="<?php echo htmlspecialchars($value) ?>" />
+            <?php foreach (isset($kristal_metadata[$page]) ? $kristal_metadata[$page] : $kristal_metadata["*"] as $key => $value): ?>
+                <?php if (strpos($key, "og:") === 0): ?>
+                    <meta property="<?php echo htmlspecialchars($key); ?>" content="<?php echo htmlspecialchars($value); ?>">
+                <?php else: ?>
+                    <meta name="<?php echo htmlspecialchars($key); ?>" content="<?php echo htmlspecialchars($value); ?>">
+                <?php endif; ?>
             <?php endforeach; ?>
         <?php endif; ?>
+
+        <!-- Canonical URL -->
+        <link rel="canonical" href="<?php echo BASE_URL; ?>">
         
         <!-- Styles -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">

@@ -26,7 +26,7 @@ define("BASE_URL", "https://example.com/");
 define("MAINTENANCE_MODE", false);
 
 // Substitute with a robust password (use sha256 for hashing the password)
-define("MAINTENANCE_PASSWORD", password_hash("________", PASSWORD_DEFAULT));
+define("MAINTENANCE_PASSWORD", "________");
 
 // Maintenance login attempts are limited to a specified number
 define("MAINTENANCE_LOCKOUT_LIMIT", 5);
@@ -72,26 +72,26 @@ define("DEBUG_IGNORE_STRICT", false);
 # --------------------------------------------------------------------------
 
 // Specify your database connections here
-define("DATABASES", serialize([
-    "primary" => (object) [
+define("DATABASES", [
+    "primary" => [
         "host" => "________",
         "database_name" => "________",
         "username" => "________",
         "password" => "________"
     ],
-    "secondary" => (object) [
+    "secondary" => [
         "host" => "________",
         "database_name" => "________",
         "username" => "________",
         "password" => "________"
     ],
-    "additional" => (object) [
+    "additional" => [
         "host" => "________",
         "database_name" => "________",
         "username" => "________",
         "password" => "________"
     ],
-]));
+]);
 
 
 
@@ -205,11 +205,11 @@ define("ENABLE_LANGUAGES", true);
 define("DEFAULT_LANGUAGE", "en");
 
 // List of all available languages
-define("AVAILABLE_LANGUAGES", serialize([
+define("AVAILABLE_LANGUAGES", [
     "en",
     "fi",
     "sv",
-]));
+]);
 
 
 
@@ -282,7 +282,7 @@ define("AUTO_COMPILE_JS", true);
 define("PRINT_COMPILE_DATE_JS", true);
 
 // Tell the framework how do you want your js files to be bundled and minified
-define("JS_BUNDLES", serialize([
+define("JS_BUNDLES", [
     "core.js" => [
         "Core/form.js",
         "Core/tooltips.js",
@@ -295,7 +295,7 @@ define("JS_BUNDLES", serialize([
     "main.js" => [
         "Scripts/main.js",
     ],
-]));
+]);
 
 
 
@@ -305,51 +305,63 @@ define("JS_BUNDLES", serialize([
 # Page metadata configurations
 # --------------------------------------------------------------------------
 // This tell the header file how to set the page's metadata
-define("METADATA", serialize([
+define("METADATA", [
 
     // Metadata for home page
-    "home" => (object) [
-        "type" => "website",                    // Define the website type for search engines
-        "author" => "________",                 // Assign the author name for search engine recognition
-        "publisher" => "________",              // Designate the publisher name for search engine recognition
-        "url" => BASE_URL,                      // Declare the canonical URL of your website
-        "title" => "________",                  // Set the page title for display in browser tabs
-        "og:title" => "________",               // Define the page title for visibility in social media search engines
-        "description" => "________",            // Describe the page's content for search engine optimization
-        "og:description" => "________",         // Provide a description to assist social media search engines in identifying page content
-        "keywords" => "Key, Words, Here",       // List keywords to aid search engines in categorizing the page content
-        "robots" => "all",                      // Utilize 'none' to block search engine access or 'all' to grant full access
+    "home" => [
+        "title" => "________",
+        "description" => "________",
+        "author" => "________",
+        "keywords" => "________",
+        "twitter:card" => "summary_large_image",
+        "twitter:title" => "________",
+        "twitter:description" => "________",
+        "twitter:image" => BASE_URL . "Public/Images/kristal_framework_logo.png",
+        "og:type" => "website",
+        "og:title" => "________",
+        "og:description" => "________",
+        "og:url" => BASE_URL,
+        "og:site_name" => "________",
+        "og:image" => BASE_URL . "Public/Images/kristal_framework_logo.png",
     ],
 
     // Metadata from '/demo' page
-    "demo" => (object) [
-        "type" => "website",
-        "author" => "________",
-        "publisher" => "________",
-        "url" => BASE_URL,
+    "demo" => [
         "title" => "________",
-        "og:title" => "________",
         "description" => "________",
+        "author" => "________",
+        "keywords" => "________",
+        "twitter:card" => "summary_large_image",
+        "twitter:title" => "________",
+        "twitter:description" => "________",
+        "twitter:image" => BASE_URL . "Public/Images/kristal_framework_logo.png",
+        "og:type" => "website",
+        "og:title" => "________",
         "og:description" => "________",
-        "keywords" => "Key, Words, Here",
-        "robots" => "all",
+        "og:url" => BASE_URL,
+        "og:site_name" => "________",
+        "og:image" => BASE_URL . "Public/Images/kristal_framework_logo.png",
     ],
 
     // Metadata for pages without predefined specifications
-    "*" => (object) [
-        "type" => "website",
-        "author" => "________",
-        "publisher" => "________",
-        "url" => BASE_URL,
+    "*" => [
         "title" => "________",
-        "og:title" => "________",
         "description" => "________",
+        "author" => "________",
+        "keywords" => "________",
+        "twitter:card" => "summary_large_image",
+        "twitter:title" => "________",
+        "twitter:description" => "________",
+        "twitter:image" => BASE_URL . "Public/Images/kristal_framework_logo.png",
+        "og:type" => "website",
+        "og:title" => "________",
         "og:description" => "________",
-        "keywords" => "Key, Words, Here",
-        "robots" => "all",
+        "og:url" => BASE_URL,
+        "og:site_name" => "________",
+        "og:image" => BASE_URL . "Public/Images/kristal_framework_logo.png",
     ],
 
-]));
+]);
 
 
 

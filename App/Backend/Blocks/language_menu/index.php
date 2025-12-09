@@ -11,7 +11,7 @@
 // Give default values to attributes
 $atts = array_merge(array(
     'request' => '',
-    'languages' => unserialize(AVAILABLE_LANGUAGES),
+    'languages' => AVAILABLE_LANGUAGES,
 ), $atts);
 
 // Validation

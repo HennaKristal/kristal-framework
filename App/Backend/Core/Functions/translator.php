@@ -3,7 +3,7 @@
 // Set language for translator
 function setAppLocale($language)
 {
-    if (in_array($language, unserialize(AVAILABLE_LANGUAGES), true) && $language != getAppLocale())
+    if (in_array($language, AVAILABLE_LANGUAGES, true) && $language != getAppLocale())
     {
         Session::add("language", $language);
     }

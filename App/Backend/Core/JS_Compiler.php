@@ -11,7 +11,7 @@ final class JS_Compiler
 
     public static function initialize(): void
     {
-        $bundles = unserialize(JS_BUNDLES);
+        $bundles = JS_BUNDLES;
 
         foreach ($bundles as $bundleName => $files) {
             self::processBundle($bundleName, $files);

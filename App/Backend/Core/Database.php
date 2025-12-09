@@ -16,7 +16,7 @@ class Database
     // Create connection to the database
     public function __construct($params = array("database" => "primary"))
     {
-        $databases = unserialize(DATABASES);
+        $databases = DATABASES;
 
         // Make sure database information is set
         if (empty($databases[$params["database"]]))
@@ -35,9 +35,9 @@ class Database
         {
             // Create connection
             $this->connection = new PDO(
-                "mysql:host=" . $databases[$params["database"]]->host . ";dbname=" . $databases[$params["database"]]->database_name . ";",
-                $databases[$params["database"]]->username,
-                $databases[$params["database"]]->password,
+                "mysql:host=" . $databases[$params["database"]]["host"] . ";dbname=" . $databases[$params["database"]]["database_name"] . ";",
+                $databases[$params["database"]]["username"],
+                $databases[$params["database"]]["password"],
                 [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_EMULATE_PREPARES => false]
             );
         }

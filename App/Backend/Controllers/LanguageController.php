@@ -5,7 +5,7 @@ class LanguageController
 {
     public function changeLanguage($language)
     {
-        if (in_array($language, unserialize(AVAILABLE_LANGUAGES)) && $language != getAppLocale())
+        if (in_array($language, AVAILABLE_LANGUAGES) && $language != getAppLocale())
         {
             setAppLocale($language);
             redirect(route(""));

@@ -28,7 +28,7 @@ class Router
     {
         if (ENABLE_LANGUAGES)
         {
-            $available_languages = unserialize(AVAILABLE_LANGUAGES);
+            $available_languages = AVAILABLE_LANGUAGES;
 
             foreach ($available_languages as $language)
             {
@@ -110,7 +110,7 @@ class Router
         if (ENABLE_LANGUAGES)
         {
             // Get Available languages and turn them to lower case
-            $available_languages = unserialize(AVAILABLE_LANGUAGES);
+            $available_languages = AVAILABLE_LANGUAGES;
             $available_languages = array_map('strtolower', $available_languages);
 
             // Get language and page from URL
@@ -222,7 +222,7 @@ class Router
         }
         
         // Include metadata from config.php
-        $kristal_metadata = unserialize(METADATA);
+        $kristal_metadata = METADATA;
 
         // Start HTML Minification
         if (MINIFY_HTML)
