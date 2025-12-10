@@ -5,13 +5,13 @@
 # Framework configurations
 # --------------------------------------------------------------------------
 
-// Optimizes your application for production (disable for development, enable for production)
+// Enable this in production to prevent development features from running
 define("PRODUCTION_MODE", false);
 
-// Website domain name
+// Primary domain name of the website
 define("DOMAIN", "example.com");
 
-// Base URL of your website (ensure to append a "/" at the end of the URL)
+// Public base URL of the website. Must include a trailing slash
 define("BASE_URL", "https://example.com/");
 
 
@@ -22,16 +22,19 @@ define("BASE_URL", "https://example.com/");
 # Maintenance configurations
 # --------------------------------------------------------------------------
 
-// Activates a maintenance page for visitors
+// When enabled, visitors see the maintenance page instead of the site
 define("MAINTENANCE_MODE", false);
 
-// Substitute with a robust password (use sha256 for hashing the password)
+// Displays a login form on the maintenance page if enabled
+define("ENABLE_MAINTENANCE_LOGIN", false);
+
+// Password that grants access during maintenance
 define("MAINTENANCE_PASSWORD", "________");
 
-// Maintenance login attempts are limited to a specified number
+// Number of incorrect maintenance logins allowed before lockout
 define("MAINTENANCE_LOCKOUT_LIMIT", 5);
 
-// Login attempts reset after waiting a defined number of seconds
+// Duration of the lockout period in seconds after too many failed attempts
 define("MAINTENANCE_LOCKOUT_CLEAR_TIME", 900);
 
 
@@ -42,25 +45,25 @@ define("MAINTENANCE_LOCKOUT_CLEAR_TIME", 900);
 # Error reporting configurations
 # --------------------------------------------------------------------------
 
-// Determines the visibility of debug messages in frontend (can not be displayed in production mode)
+// Determines the visibility of debug and error messages in frontend
 define("ENABLE_DEBUG_DISPLAY", true);
 
-// Determines whether debug messages are recorded in a log file
+// Determines whether debug and error messages are recorded in a log file
 define("ENABLE_DEBUG_LOG", true);
 
-// Defines the file path for logging debug messages (please keep this outside of html root)
+// Defines the file path for logging debug and error messages (please keep this outside of html root)
 define("DEBUG_LOG_PATH", "./debug.log");
 
-// When enabled, PHP notices will not be displayed or logged (can not be displayed in production mode)
+// When enabled, PHP notices will not be displayed or logged
 define("DEBUG_IGNORE_WARNINGS", false);
 
-// When enabled, PHP deprecated notices will not be displayed or logged (can not be displayed in production mode)
+// When enabled, PHP deprecated notices will not be displayed or logged
 define("DEBUG_IGNORE_NOTICES", false);
 
-// When enabled, PHP warnings will not be displayed or logged (can not be displayed in production mode)
+// When enabled, PHP warnings will not be displayed or logged
 define("DEBUG_IGNORE_DEPRECATED", false);
 
-// When enabled, PHP strict standards notices will not be displayed or logged (can not be displayed in production mode)
+// When enabled, PHP strict standards notices will not be displayed or logged
 define("DEBUG_IGNORE_STRICT", false);
 
 
@@ -71,7 +74,7 @@ define("DEBUG_IGNORE_STRICT", false);
 # Database configurations
 # --------------------------------------------------------------------------
 
-// Specify your database connections here
+// Specify your database connections
 define("DATABASES", [
     "primary" => [
         "host" => "________",
@@ -127,9 +130,11 @@ define("MAILER_PORT", 25);
 # reCAPTCHA
 # --------------------------------------------------------------------------
 
+// reCAPTCHA v2 API keys
 define("RECAPTCHA_V2_SITE_KEY", "xxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 define("RECAPTCHA_V2_SITE_SECRET", "xxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 
+// reCAPTCHA v3 API keys
 define("RECAPTCHA_V3_SITE_KEY", "xxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 define("RECAPTCHA_V3_SITE_SECRET", "xxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 
@@ -144,7 +149,7 @@ define("RECAPTCHA_V3_SITE_SECRET", "xxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 // Replace with a securely generated string (30-50 characters recommended)
 define("SESSION_NAME", "________");
 
-// Session expires after x seconds
+// Session expires after x seconds (0 = when browser closed)
 define("SESSION_LIFETIME", 0);
 
 // Session expires after x seconds if user doesn't perform any actions
@@ -153,7 +158,7 @@ define("SESSION_AFK_TIMEOUT", 1800);
 // Control cross-site session behavior. Recommended values: "Strict" or "Lax"
 define("SESSION_SAMESITE", "Strict");
 
-// Regenerate CSRF tokens on each page request for heightened security rather than solely on form submission
+// Regenerate CSRF tokens on each page request for heightened security
 define("REGENERATE_CSRF_ON_PAGE_REFRESH", false);
 
 
@@ -244,7 +249,7 @@ define("WEBP_DEFAULT_QUALITY", 70);
 # HTML configurations
 # --------------------------------------------------------------------------
 
-// Condense HTML into a single line when activated
+// Condense HTML into a single line when activated (adds ~15ms to execution time, use only when truely needed)
 define("MINIFY_HTML", false);
 
 
@@ -258,7 +263,7 @@ define("MINIFY_HTML", false);
 // Automatically recompile SCSS files upon modifications and page reload
 define("AUTO_COMPILE_SCSS", true);
 
-// Define the SCSS compilation mode, choose between 'expanded' or 'compressed'
+// Define the SCSS compilation mode, choose between 'expanded' for readability and 'compressed' for optimization
 define("COMPILED_CSS_TYPE", "compressed");
 
 // Set a default theme if Session::get('theme') is undefined. If you don't use any themes then assign a default name for the compilation target of your SCSS files

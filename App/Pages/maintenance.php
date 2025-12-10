@@ -47,27 +47,29 @@
         </div>
 
         <!-- Authentication -->
-        <div class="container authentication-container">
-            <h2><?php echo translate("Authentication"); ?></h2>
-            <form method="post">
+        <?php if (ENABLE_MAINTENANCE_LOGIN): ?>
+            <div class="container authentication-container">
+                <h2><?php echo translate("Authentication"); ?></h2>
+                <form method="post">
 
-                <div class="mb-3">
-                    <input type="password" class="form-control" name="maintenance-password" id="maintenance-password" placeholder="Password" required>
-                </div>
+                    <div class="mb-3">
+                        <input type="password" class="form-control" name="maintenance-password" id="maintenance-password" placeholder="Password" required>
+                    </div>
 
-                <button type="submit" class="btn btn-primary"><?php echo translate("Sign In"); ?></button>
+                    <button type="submit" class="btn btn-primary"><?php echo translate("Sign In"); ?></button>
 
-                <?php if ($authenticationAttemptLimitReached) : ?>
-                    <p id="feedback" style="color: red;">
-                        <span><?php echo translate("Too many login attempts, please wait %s before you are allowed to try again.", $authenticationLockoutLabel); ?></span>
-                    </p>
-                <?php elseif ($authenticationFailed) : ?>
-                    <p id="feedback" style="color: red;"><?php echo translate("Failed to authenticate."); ?></p>
-                <?php else: ?>
-                    <p id="feedback" style="padding: 12px;"></p>
-                <?php endif; ?>
-            </form>
-        </div>
+                    <?php if ($authenticationAttemptLimitReached) : ?>
+                        <p id="feedback" style="color: red;">
+                            <span><?php echo translate("Too many login attempts, please wait %s before you are allowed to try again.", $authenticationLockoutLabel); ?></span>
+                        </p>
+                    <?php elseif ($authenticationFailed) : ?>
+                        <p id="feedback" style="color: red;"><?php echo translate("Failed to authenticate."); ?></p>
+                    <?php else: ?>
+                        <p id="feedback" style="padding: 12px;"></p>
+                    <?php endif; ?>
+                </form>
+            </div>
+        <?php endif; ?>
         
         <!-- Social links -->
         <div class="social-icons">

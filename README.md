@@ -14,13 +14,9 @@ The framework is released under the MIT License, allowing anyone to freely use, 
 
 ## Server Requirements
 * Web Server: Apache or LiteSpeed with .htaccess support
-* PHP: Tested only with 8.3, other version may require changes to composer packages
+* PHP: version 8.3
+* PHP Extensions: imagick and pdo
 * Composer: Required for managing backend dependencies
-
-
-## Database Requirements
-* PDO PHP Extension: Ensure it is enabled and functional.
-* Database Engine: MySQL or MariaDB is preferred (other databases might work, but compatibility is not guaranteed).
 
 
 ## Installing

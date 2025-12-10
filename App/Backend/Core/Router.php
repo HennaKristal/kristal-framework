@@ -299,65 +299,68 @@ class Router
         if (Session::has("maintenance_access_granted"))
             return;
 
-        $authenticationFailed = false;
-        $authenticationAttemptLimitReached = false;
-        $authenticationLockoutLabel = "";
-        $loginAttempts = Session::get("maintenance_login_attempts", 1);
-        $lockoutStartedAt = Session::get("maintenance_lockout_started_at", null);
-
-        // Check have we reached login attempt count
-        if ($loginAttempts >= MAINTENANCE_LOCKOUT_LIMIT)
+        if (ENABLE_MAINTENANCE_LOGIN)
         {
-            $authenticationAttemptLimitReached = true;
-
-            if ($lockoutStartedAt === null)
-            {
-                $lockoutStartedAt = time();
-                Session::add("maintenance_lockout_started_at", $lockoutStartedAt);
-            }
-        }
-
-        // Handle lockout countdown
-        if ($authenticationAttemptLimitReached)
-        {
-            $remainingLockoutSeconds = MAINTENANCE_LOCKOUT_CLEAR_TIME - (time() - $lockoutStartedAt);
+            $authenticationFailed = false;
+            $authenticationAttemptLimitReached = false;
+            $authenticationLockoutLabel = "";
+            $loginAttempts = Session::get("maintenance_login_attempts", 1);
+            $lockoutStartedAt = Session::get("maintenance_lockout_started_at", null);
     
-            if ($remainingLockoutSeconds > 0)
+            // Check have we reached login attempt count
+            if ($loginAttempts >= MAINTENANCE_LOCKOUT_LIMIT)
             {
-                if ($remainingLockoutSeconds > 60)
+                $authenticationAttemptLimitReached = true;
+    
+                if ($lockoutStartedAt === null)
                 {
-                    $authenticationLockoutLabel = floor($remainingLockoutSeconds / 60) . " min";
+                    $lockoutStartedAt = time();
+                    Session::add("maintenance_lockout_started_at", $lockoutStartedAt);
+                }
+            }
+    
+            // Handle lockout countdown
+            if ($authenticationAttemptLimitReached)
+            {
+                $remainingLockoutSeconds = MAINTENANCE_LOCKOUT_CLEAR_TIME - (time() - $lockoutStartedAt);
+        
+                if ($remainingLockoutSeconds > 0)
+                {
+                    if ($remainingLockoutSeconds > 60)
+                    {
+                        $authenticationLockoutLabel = floor($remainingLockoutSeconds / 60) . " min";
+                    }
+                    else
+                    {
+                        $authenticationLockoutLabel = $remainingLockoutSeconds . " s";
+                    }
                 }
                 else
                 {
-                    $authenticationLockoutLabel = $remainingLockoutSeconds . " s";
+                    $loginAttempts = 0;
+                    $authenticationAttemptLimitReached = false;
+                    Session::remove("maintenance_failed_attempts");
+                    Session::remove("maintenance_lockout_started_at");
                 }
             }
-            else
+    
+            // Handle authentication request
+            if (!$authenticationAttemptLimitReached && $_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["maintenance-password"]))
             {
-                $loginAttempts = 0;
-                $authenticationAttemptLimitReached = false;
-                Session::remove("maintenance_failed_attempts");
-                Session::remove("maintenance_lockout_started_at");
+                if ($_POST["maintenance-password"] === MAINTENANCE_PASSWORD)
+                {
+                    Session::add("maintenance_access_granted", "Granted");
+                    return;
+                }
+                else
+                {
+                    $authenticationFailed = true;
+                    $loginAttempts++;
+                    Session::add("maintenance_login_attempts", $loginAttempts);
+                }
             }
         }
-
-        // Handle authentication request
-        if (!$authenticationAttemptLimitReached && $_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["maintenance-password"]))
-        {
-            if (password_verify($_POST["maintenance-password"], MAINTENANCE_PASSWORD))
-            {
-                Session::add("maintenance_access_granted", "Granted");
-                return;
-            }
-            else
-            {
-                $authenticationFailed = true;
-                $loginAttempts++;
-                Session::add("maintenance_login_attempts", $loginAttempts);
-            }
-        }
-
+        
         // Render maintenance page
         $maintenancePagePath = WEBROOT . "/App/Pages/maintenance.php";
     

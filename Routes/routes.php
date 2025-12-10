@@ -1,4 +1,6 @@
-<?php defined("ACCESS") or exit("Access Denied");
+<?php
+declare(strict_types=1);
+defined("ACCESS") or exit("Access Denied");
 
 use Backend\Core\Router;
 use Backend\Controllers\ThemeController;
@@ -48,7 +50,7 @@ class Routes extends Router
             "message" => "hello!",
         ]);
     }
-
+    
     function pageNotFoundHandler()
     {
         // Render content from App/Pages/404.php
