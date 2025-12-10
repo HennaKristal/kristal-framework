@@ -1,4 +1,4 @@
-<?php namespace Backend\Controllers;
+<?php namespace Backend\Core;
 defined("ACCESS") or exit("Access Denied");
 
 use Backend\Core\FormRequest;
@@ -46,3 +46,6 @@ class FormRequests extends FormRequest
         // ...
     }
 }
+
+// Initialize form requests
+new FormRequests();

@@ -1,7 +1,6 @@
 <?php namespace Backend\Core;
 defined("ACCESS") or exit("Access Denied");
 
-use Backend\Controllers\FormRequests;
 use Backend\Core\PHPJS;
 use voku\helper\HtmlMin;
 
@@ -12,12 +11,6 @@ class Router
     private $rendered_view = "";
     private $content_last_modified_time = "";
     private $ignore_maintenance_routes = array();
-
-    protected function __construct()
-    {
-        // Handle form requests
-        new FormRequests();
-    }
 
     protected function addRoute($route_name, $handler)
     {
@@ -159,7 +152,7 @@ class Router
 
         // Get modified dates of sitemap and routes
         $sitemap_last_mod_time = file_exists("sitemap.xml") ? filemtime("sitemap.xml") : 0;
-        $this->content_last_modified_time = filemtime('Routes/routes.php');
+        $this->content_last_modified_time = filemtime(WEBROOT . '/Routes/Routes.php');
 
         // Get the latest modified date from pages folder
         foreach (glob(WEBROOT . '/App/Pages/*.php') as $file)

@@ -58,5 +58,6 @@ if (!PRODUCTION_MODE)
     }
 }
 
-// Load routes
-require_once WEBROOT . "/Routes/routes.php";
+// Load form requests and routes
+require_once WEBROOT . "/Routes/FormRequests.php";
+require_once WEBROOT . "/Routes/Routes.php";
