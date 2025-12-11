@@ -1,4 +1,5 @@
-<?php namespace Backend\Core;
+<?php declare(strict_types=1); 
+namespace Backend\Core;
 defined("ACCESS") or exit("Access Denied");
 
 
@@ -159,6 +160,11 @@ class Session
     public static function get($key, $default_value = null)
     {
         return (isset($_SESSION[$key])) ? $_SESSION[$key] : $default_value;
+    }
+
+    public static function getAll()
+    {
+        return $_SESSION;
     }
 
     // Check if session is already active

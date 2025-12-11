@@ -1,6 +1,5 @@
 <?php include "Partials/navigation.php"; ?>
 
-
 <div class="container main-content">
     <h1><?php echo translate("Kristal Framework"); ?></h1>
     <p><?php echo translate("Version 1.0, Developed by Henna Kristal. Happy Coding."); ?></p>

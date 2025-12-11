@@ -26,15 +26,13 @@
 
     <div class="theme-selection-div">
         <form action='' method='post'>
-            <?php CSRF::create("change_theme_form"); ?>
-            <?php CSRF::request("change_theme"); ?>
+            <?php CSRF::create("change_theme_dark", "change_theme"); ?>
             <input type='hidden' name='theme-name' value='dark'>
             <input type='submit' class='btn btn-dark' value='<?php echo translate("Activate dark theme"); ?>'>
         </form>
 
         <form action='' method='post'>
-            <?php CSRF::create("change_theme_form"); ?>
-            <?php CSRF::request("change_theme"); ?>
+            <?php CSRF::create("change_theme_light", "change_theme"); ?>
             <input type='hidden' name='theme-name' value='light'>
             <input type='submit' class='btn btn-light' value='<?php echo translate("Activate light theme"); ?>'>
         </form>

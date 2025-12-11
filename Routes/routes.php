@@ -1,8 +1,7 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types=1); 
+namespace Backend\Core;
 defined("ACCESS") or exit("Access Denied");
 
-use Backend\Core\Router;
 use Backend\Controllers\ThemeController;
 
 class Routes extends Router
@@ -11,9 +10,6 @@ class Routes extends Router
     {
         // Set handler for home page
         parent::setHomepageHandler("homepageHandler");
-        parent::addRoute("en/home", "homepageHandler");
-        parent::addRoute("fi/etusivu", "homepageHandler");
-        parent::addRoute("sv/hem", "homepageHandler");
 
         // Register other routes
         parent::addRoute("en/demo", "demoHandler");
@@ -58,6 +54,3 @@ class Routes extends Router
         $this->render("404");
     }
 }
-
-// Initialize routes
-new Routes();

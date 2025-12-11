@@ -17,7 +17,7 @@
             <!-- Navbar links -->
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" page="frontpage.php" href="<?php echo route(strtolower(translate("Home"))); ?>"><?php echo translate("Home"); ?></a>
+                    <a class="nav-link" page="frontpage.php" href="<?php echo route(strtolower("")); ?>"><?php echo translate("Home"); ?></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" page="demo.php" href="<?php echo route(strtolower(translate("Demo"))); ?>"><?php echo translate("Demo"); ?></a>

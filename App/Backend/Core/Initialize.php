@@ -61,3 +61,9 @@ if (!PRODUCTION_MODE)
 // Load form requests and routes
 require_once WEBROOT . "/Routes/FormRequests.php";
 require_once WEBROOT . "/Routes/Routes.php";
+
+// Initialize form requests
+new Backend\Core\FormRequests();
+
+// Initialize routes
+new Backend\Core\Routes();
