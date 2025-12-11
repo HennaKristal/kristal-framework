@@ -76,15 +76,21 @@ class Session
         
         session_name(SESSION_NAME);
 
+        if (DOMAIN !== "") {
+            ini_set('session.cookie_domain', DOMAIN);
+        }
+
         ini_set('session.cookie_lifetime', SESSION_LIFETIME);
         ini_set('session.cookie_path', '/');
-        ini_set('session.cookie_domain', DOMAIN);
         ini_set('session.cookie_secure', '1');
         ini_set('session.cookie_httponly', '1');
         ini_set('session.cookie_samesite', COOKIE_SAMESITE);
+        ini_set('session.use_strict_mode', '1');
 
         session_start();
 
+        self::regenerateSessionIdPeriodically();
+        
         // Check session duration
         self::afkTimeout(SESSION_AFK_TIMEOUT);
 
@@ -102,10 +108,55 @@ class Session
     }
 
 
+    private static function regenerateSessionIdPeriodically()
+    {
+        // If regeneration is disabled, skip
+        if (SESSION_REGENERATE_ID_TIME === 0)
+            return;
+
+        $lastRegeneration = self::get("last_id_regeneration_time");
+
+        // If no regeneration has been tracked yet, set it now
+        if ($lastRegeneration === null)
+        {
+            self::add("last_id_regeneration_time", time());
+            return;
+        }
+
+        // If enough time has passed, regenerate
+        if (time() - (int)$lastRegeneration >= SESSION_REGENERATE_ID_TIME)
+        {
+            debug("session id regenerated");
+            session_regenerate_id(true);
+            self::add("last_id_regeneration_time", time());
+        }
+    }
+
+
     public static function end()
     {
+        // Remove all session variables
         self::removeAll();
-        session_destroy();
+    
+        // Destroy session data on server
+        if (session_status() === PHP_SESSION_ACTIVE)
+            session_destroy();
+    
+        // Destroy session cookie in browser
+        if (ini_get("session.use_cookies"))
+        {
+            $parameters = session_get_cookie_params();
+    
+            setcookie(
+                session_name(),
+                "",
+                time() - 3600,
+                $parameters["path"],
+                $parameters["domain"],
+                $parameters["secure"],
+                $parameters["httponly"]
+            );
+        }
     }
 
 

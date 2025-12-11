@@ -152,6 +152,9 @@ define("SESSION_NAME", "________");
 // Session expires after x seconds (0 = when browser closed)
 define("SESSION_LIFETIME", 0);
 
+// Session ID is regenerated every x seconds (0 to always keep same ID)
+define("SESSION_REGENERATE_ID_TIME", 180);
+
 // Session expires after x seconds if user doesn't perform any actions
 define("SESSION_AFK_TIMEOUT", 1800);
 
