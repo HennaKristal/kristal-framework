@@ -6,14 +6,22 @@
 function page($file)
 {
     $file = ensurePHPExtension($file);
-    $path = WEBROOT . "/App/Pages/" . $file;
 
-    return file_exists($path) ? $path : false;
+    $basePath = WEBROOT . "/App/Pages/"; 
+    $realPath = realpath($basePath . $file);
+
+    if ($realPath === false)
+        return false;
+
+    if (strpos($realPath, $basePath) !== 0)
+        return false;
+
+    return $realPath;
 }
 
 function pageExists($file)
 {
-    return file_exists(WEBROOT . "/App/Pages/" . ensurePHPExtension($file));
+    return page($file) !== false;
 }
 
 

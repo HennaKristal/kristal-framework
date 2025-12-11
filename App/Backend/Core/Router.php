@@ -22,7 +22,7 @@ class Router
         // Display maintenance if needed
         if (MAINTENANCE_MODE)
         {
-            $ignoreMaintenance = in_array($page, $this->ignoreMaintenanceRoutes);
+            $ignoreMaintenance = in_array($page, $this->ignoreMaintenanceRoutes, true);
 
             if (!$ignoreMaintenance && !Session::has("maintenance_access_granted"))
             {
@@ -155,12 +155,12 @@ class Router
         {
             if (PRODUCTION_MODE)
             {
-                debuglog("Route: '" . $url_request['page'] . "' has handler '" . $this->registeredRoutes[$url_request['page']] . ", butthishandler function is not available.");
+                debuglog("Route: '" . $page . "' has handler '" . $page . ", butthishandler function is not available.");
                 exit();
             }
             else
             {
-                exit("Route: '" . $url_request['page'] . "' has handler '" . $this->registeredRoutes[$url_request['page']] . ", butthishandler function is not available.");
+                exit("Route: '" . $page . "' has handler '" . $page . ", butthishandler function is not available.");
             }
         }
         include_once page("Base/header.php");

@@ -51,7 +51,7 @@
             <div class="container authentication-container">
                 <h2><?php echo translate("Authentication"); ?></h2>
                 <form method="post">
-
+                    
                     <div class="mb-3">
                         <input type="password" class="form-control" name="maintenance-password" id="maintenance-password" placeholder="Password" required>
                     </div>
