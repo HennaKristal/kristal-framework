@@ -46,7 +46,7 @@ define("ENABLE_DEBUG_DISPLAY", true);
 define("ENABLE_DEBUG_LOG", true);
 
 // Defines the file path for logging debug and error messages (please keep this outside of html root)
-define("DEBUG_LOG_PATH", "./debug.log");
+define("DEBUG_LOG_PATH", "./storage/logs/debug.log");
 
 // When enabled, PHP notices will not be displayed or logged
 define("DEBUG_IGNORE_WARNINGS", false);
