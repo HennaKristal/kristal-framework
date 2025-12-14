@@ -1,4 +1,4 @@
-<?php
+<?php defined("ACCESS") or exit("Access Denied");
 
 function sanitize_file(string $value): string
 {

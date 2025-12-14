@@ -18,9 +18,7 @@ class Database
         // Make sure database information is set
         if (empty($databases[$params["database"]]))
         {
-            $message = PRODUCTION_MODE ? "Database configuration error." : "Database configuration error. Database (" . $params["database"] . ") was empty, please double check your config file.";
-            debuglog("Database configuration error. Database (" . $params["database"] . ") was empty, please double check your config file.");
-            exit($message);
+            kristal_fatalExit("Database configuration error. Database (" . $params["database"] . ") was empty, please double check your config file.");
         }
 
         try
@@ -37,12 +35,7 @@ class Database
         }
         catch (PDOException $e)
         {
-            if (PRODUCTION_MODE)
-            {
-                exit("Failed to connect to database.");
-            }
-
-            exit($e->getMessage());
+            kristal_fatalExit($e->getMessage());
         }
 
         $this->resetArguments();
@@ -111,7 +104,7 @@ class Database
 
         if ($table === null)
         {
-            $this->fatal("Fatal Error: you are trying to delete a table using dropTable() without specifying a table.");
+            kristal_fatalExit("Fatal Error: you are trying to delete a table using dropTable() without specifying a table.");
         }
 
         $this->assertSafeIdentifier($table);
@@ -124,7 +117,7 @@ class Database
 
         if ($table === null)
         {
-            $this->fatal("Fatal Error: you are trying to delete a table using dropTable() without specifying a table.");
+            kristal_fatalExit("Fatal Error: you are trying to delete a table using dropTable() without specifying a table.");
         }
 
         $this->assertSafeIdentifier($table);
@@ -158,7 +151,7 @@ class Database
     {
         if (!preg_match('/^[a-zA-Z0-9_]+$/', $value))
         {
-            $this->fatal("Invalid SQL identifier: {$value}");
+            kristal_fatalExit("Invalid SQL identifier: {$value}");
         }
     }
     
@@ -166,14 +159,8 @@ class Database
     {
         if (!preg_match('/^[a-zA-Z0-9_\.]+$/', $value))
         {
-            $this->fatal("Invalid SQL identifier: {$value}");
+            kristal_fatalExit("Invalid SQL identifier: {$value}");
         }
-    }
-    
-    protected function fatal(string $message): void
-    {
-        debuglog($message);
-        exit(PRODUCTION_MODE ? "Fatal database error. Please contact site admin about this error." : $message);
     }
 
     protected function normalizeOperator(string $operator): string
@@ -183,9 +170,7 @@ class Database
 
         if (!in_array($operator, $allowed, true))
         {
-            $message = PRODUCTION_MODE ? "Fatal database error. Please contact site admin about this error." : "Invalid SQL operator: {$operator}";
-            debuglog("Invalid SQL operator: {$operator}");
-            exit($message);
+            kristal_fatalExit("Invalid SQL operator: {$operator}");
         }
 
         return $operator;
@@ -478,7 +463,7 @@ class Database
 
         if (empty($columns))
         {
-            $this->fatal("No valid columns provided for insert.");
+            kristal_fatalExit("No valid columns provided for insert.");
         }
     
         $cols = implode(', ', $columns);
@@ -512,7 +497,7 @@ class Database
 
         if (empty($sets))
         {
-            $this->fatal("No valid columns provided for update.");
+            kristal_fatalExit("No valid columns provided for update.");
         }
     
         $sql = "UPDATE {$this->table} SET " . implode(', ', $sets) . " WHERE {$this->arguments['where']}";

@@ -3,11 +3,11 @@
 // ------------------------------------------------------------------------------------------------
 // Debug output for variables
 // ------------------------------------------------------------------------------------------------
-function debug($value, $name = null)
+function debug(mixed $value, string $name = null): void
 {
     if (ENABLE_DEBUG_DISPLAY && !PRODUCTION_MODE)
     {
-        require PATH_CORE . "functions/debug/templates/debug-output.php";
+        require PATH_CORE . "templates/debug-output.php";
     }
 }
 
@@ -15,7 +15,7 @@ function debug($value, $name = null)
 // ------------------------------------------------------------------------------------------------
 // Logging
 // ------------------------------------------------------------------------------------------------
-function debuglog($message, $severity = "Debug")
+function debuglog(mixed $message, string $severity = "Debug"): void
 {
     if (!ENABLE_DEBUG_LOG)
         return;

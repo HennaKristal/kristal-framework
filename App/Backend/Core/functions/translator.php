@@ -1,7 +1,7 @@
 <?php defined("ACCESS") or exit("Access Denied");
 
 // Set language for translator
-function setAppLocale($language)
+function setAppLocale(string $language): void
 {
     if (in_array($language, AVAILABLE_LANGUAGES, true) && $language != getAppLocale())
     {
@@ -10,13 +10,13 @@ function setAppLocale($language)
 }
 
 // Get translator's language
-function getAppLocale()
+function getAppLocale(): string
 {
     return Session::has("language") ? Session::get("language") : DEFAULT_LANGUAGE;
 }
 
 // Translate
-function translate($key, $variables = [])
+function translate(string $key, array $variables = []): string
 {
     // Make sure $variables is an array
     if (!is_array($variables))
@@ -40,7 +40,7 @@ function translate($key, $variables = [])
             }
             else
             {
-                exit("Missing translation file at App/media/translations/translations.php");
+                kristal_fatalExit("Translation for text '$key' failed because text was not found in App/media/translations/translations.php file");
             }
         }
 

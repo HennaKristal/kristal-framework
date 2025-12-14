@@ -34,8 +34,7 @@ class Router
         $requestedMethod = isset($this->registeredRoutes[$route]) ? [$this, $this->registeredRoutes[$route]] :  [$this, $this->defaultRouteHandler];
         if (!method_exists($this, $requestedMethod[1]))
         {
-            $message = PRODUCTION_MODE ? "Route does not have a handler named '{$requestedMethod[1]}' or it's not available." : "";
-            exit($message);
+            kristal_fatalExit("Route does not have a handler named '{$requestedMethod[1]}' or it's not available.");
         }
 
         // Call the correct route
@@ -150,15 +149,7 @@ class Router
         // Include header
         if (!file_exists(page("base/header.php")))
         {
-            if (PRODUCTION_MODE)
-            {
-                debuglog("Route: '" . $page . "' has handler '" . $page . ", but this handler function is not available.");
-                exit();
-            }
-            else
-            {
-                exit("Route: '" . $page . "' has handler '" . $page . ", but this handler function is not available.");
-            }
+            kristal_fatalExit("Route: '" . $page . "' has handler '" . $page . ", but this handler function is not available.");
         }
         include_once page("base/header.php");
 
@@ -168,14 +159,7 @@ class Router
         // Include the requested page
         if (!file_exists(page($page)))
         {
-            if (PRODUCTION_MODE)
-            {
-                debuglog("Tried to render page: " . $page . ", but template was not found at " . page($page) . ".");
-            }
-            else
-            {
-                exit("Tried to render page: " . $page . ", but template was not found at " . page($page) . ".");
-            }
+            kristal_fatalExit("Tried to render page: " . $page . ", but template was not found at " . page($page) . ".");
         }
         else
         {
@@ -188,14 +172,7 @@ class Router
         // Render footer
         if (!file_exists(page("base/footer.php")))
         {
-            if (PRODUCTION_MODE)
-            {
-                debuglog("Failed to build, " . page("base/footer.php") . " was not found.");
-            }
-            else
-            {
-                exit("Failed to build, " . page("base/footer.php") . " was not found.");
-            }
+            kristal_fatalExit("Failed to build, " . page("base/footer.php") . " was not found.");
         }
         else
         {
@@ -278,14 +255,7 @@ class Router
     
         if (!file_exists($maintenancePagePath))
         {
-            if (PRODUCTION_MODE)
-            {
-                exit("Site is under maintenance");
-            }
-            else
-            {
-                exit("Maintenance page is missing. It should be located at " . $maintenancePagePath);
-            }
+            kristal_fatalExit("Maintenance page is missing. It should be located at " . $maintenancePagePath, "Site is under maintenance");
         }
 
         include $maintenancePagePath;

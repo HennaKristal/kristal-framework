@@ -16,7 +16,7 @@ else
 {
     if (PRODUCTION_MODE)
     {
-        exit("Fatal error.");
+        exit("A critical error has occurred. Please contact the site administrator.");
     }
     else
     {
@@ -27,8 +27,8 @@ else
 // Load core files
 require_once PATH_CORE . "functions/sanitize.php";
 require_once PATH_CORE . "functions/escape.php";
-require_once PATH_CORE . "functions/debug/errors.php";
-require_once PATH_CORE . "functions/debug/debug.php";
+require_once PATH_CORE . "functions/errors.php";
+require_once PATH_CORE . "functions/debug.php";
 require_once PATH_CORE . "functions/cookies.php";
 
 // Initialize session

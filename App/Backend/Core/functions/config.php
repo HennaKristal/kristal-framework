@@ -1,6 +1,6 @@
 <?php defined("ACCESS") or exit("Access Denied");
 
-$kristal_mandatory_constants = [
+$kristalMandatoryConstants = [
     "PRODUCTION_MODE",
     "MAINTENANCE_MODE",
     "MAINTENANCE_PASSWORD",
@@ -54,19 +54,15 @@ $kristal_mandatory_constants = [
 
 
 // Make sure constants exist
-foreach ($kristal_mandatory_constants as $constant)
+foreach ($kristalMandatoryConstants as $constant)
 {
     if (!defined($constant))
     {
-        exit("Mandatory configuration variable $constant is not set, please create this constant to the project's config.php file.");
+        $message = PRODUCTION_MODE ? "A critical error has occurred. Please contact the site administrator." : "Mandatory configuration variable $constant is not set, please create this constant to the project's config.php file.";
+        debuglog($message);
+        exit($message);
     }
 }
 
 // Set default timezone
 date_default_timezone_set(TIMEZONE);
-
-
-
-
-
-

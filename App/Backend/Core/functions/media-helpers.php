@@ -1,12 +1,12 @@
-<?php
+<?php defined("ACCESS") or exit("Access Denied");
 
-function image($file) { return kristal_getAssetURL("images", $file); }
-function css($file) { return kristal_getAssetURL("css", $file); }
-function js($file) { return kristal_getAssetURL("javascript", $file); }
-function download($file) { return kristal_getAssetURL("downloads", $file); }
-function audio($file) { return kristal_getAssetURL("audio", $file); }
+function image(string $file) { return kristal_getAssetURL("images", $file); }
+function css(string $file) { return kristal_getAssetURL("css", $file); }
+function js(string $file) { return kristal_getAssetURL("javascript", $file); }
+function download(string $file) { return kristal_getAssetURL("downloads", $file); }
+function audio(string $file) { return kristal_getAssetURL("audio", $file); }
 
-function kristal_getAssetURL($folder, $file)
+function kristal_getAssetURL(string $folder, string $file): string
 {
     // Remove leading slash if present
     if (strpos($file, "/") === 0)
@@ -46,14 +46,13 @@ function kristal_getAssetURL($folder, $file)
 }
 
 
+function imagePath(string $file) { return kristal_getAssetPath("images", $file); }
+function cssPath(string $file) { return kristal_getAssetPath("css", $file); }
+function jsPath(string $file) { return kristal_getAssetPath("javascript", $file); }
+function downloadPath(string $file) { return kristal_getAssetPath("downloads", $file); }
+function audioPath(string $file) { return kristal_getAssetPath("audio", $file); }
 
-function imagePath($file) { return kristal_getAssetPath("images", $file); }
-function cssPath($file) { return kristal_getAssetPath("css", $file); }
-function jsPath($file) { return kristal_getAssetPath("javascript", $file); }
-function downloadPath($file) { return kristal_getAssetPath("downloads", $file); }
-function audioPath($file) { return kristal_getAssetPath("audio", $file); }
-
-function kristal_getAssetPath($folder, $file)
+function kristal_getAssetPath(string $folder, string $file): string
 {
     $filePath = PATH_ROOT . "/App/media/" . $folder . "/" . $file;
 

@@ -45,7 +45,7 @@ function kristal_configureErrorReporting(): void
 // ------------------------------------------------------------------------------------------------
 // Error handler
 // ------------------------------------------------------------------------------------------------
-function kristal_errorHandler($type, $message, $file, $line): void
+function kristal_errorHandler(string $type, string $message, string $file, int $line): void
 {
     $label = "Error";
 
@@ -77,13 +77,13 @@ function kristal_errorHandler($type, $message, $file, $line): void
 // ------------------------------------------------------------------------------------------------
 // Debug output for warnings and non-fatal errors
 // ------------------------------------------------------------------------------------------------
-function kristal_errorOutput($label, $message, $file, $line): void
+function kristal_errorOutput(string $label, string $message, string $file, int $line): void
 {
     debuglog($message . " in " . $file . " on line " . $line, $label);
 
     if (!PRODUCTION_MODE)
     {
-        require PATH_CORE . "functions/debug/templates/warning-output.php";
+        require PATH_CORE . "templates/warning-output.php";
     }
 }
 
@@ -118,11 +118,11 @@ function kristal_shutDownHandler(): void
 
 function kristal_productionFatalErrorOutput(): void
 {
-    require PATH_CORE . "functions/debug/templates/production-fatal-error-output.php";
+    require PATH_CORE . "templates/production-fatal-error-output.php";
 }
 
 
-function kristal_fatalErrorOutput($message, $file, $line): void
+function kristal_fatalErrorOutput(string $message, string $file, int $line): void
 {
     $lines = @file($file);
     
@@ -132,5 +132,19 @@ function kristal_fatalErrorOutput($message, $file, $line): void
         $end = min(count($lines), $line + 10);
     }
 
-    require PATH_CORE . "functions/debug/templates/fatal-error-output.php";
+    require PATH_CORE . "templates/fatal-error-output.php";
+}
+
+
+function kristal_fatalExit(string $message, string $productionMessage = "A critical error has occurred. Please contact the site administrator."): void
+{
+    debuglog($message);
+
+    if (PRODUCTION_MODE)
+    {
+        $message = $productionMessage;
+    }
+
+    require PATH_CORE . "templates/fatal-exit-output.php";
+    exit();
 }

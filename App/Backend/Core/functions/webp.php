@@ -1,6 +1,6 @@
-<?php
+<?php defined("ACCESS") or exit("Access Denied");
 
-function webp($file, $compression = "default")
+function webp(string $file, int $compression = -1)
 {
     // Normalize input before passing to mode handlers
     if (strpos($file, "/") === 0)
@@ -8,7 +8,7 @@ function webp($file, $compression = "default")
         $file = substr($file, 1);
     }
 
-    if (!is_numeric($compression))
+    if (!is_numeric($compression) || $compression < 0)
     {
         $compression = WEBP_DEFAULT_QUALITY;
     }
@@ -36,7 +36,7 @@ function webp($file, $compression = "default")
 }
 
 
-function webpProduction($file, $compression)
+function webpProduction(string $file, int $compression)
 {
     // Build the expected filename directly
     $cleanName = preg_replace("/[^a-zA-Z0-9\/\.\-_]/", "", $file);
@@ -48,7 +48,7 @@ function webpProduction($file, $compression)
 }
 
 
-function webpDevelopment($file, $compression)
+function webpDevelopment(string $file, int $compression)
 {
     // Ensure output folder exists
     if (!is_dir(PATH_WEBP))

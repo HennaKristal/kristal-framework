@@ -31,7 +31,7 @@ final class JS_Compiler
 
             if (!is_file($filePath))
             {
-                exit("JS_Compiler Error: Failed to load JS file '{$filePath}'.");
+                kristal_fatalExit("JS_Compiler Error: Failed to load JS file '{$filePath}'.");
             }
 
             $resolvedFiles[] = $filePath;

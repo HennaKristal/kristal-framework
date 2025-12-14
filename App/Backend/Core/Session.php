@@ -51,7 +51,7 @@ class Session
             }
             else
             {
-                exit("Please update your session key from the default value to a unique value in config.php");
+                kristal_fatalExit("Please update your session key from the default value to a unique value in config.php");
             }
         }
         

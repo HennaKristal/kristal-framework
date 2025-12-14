@@ -3,7 +3,7 @@
 // ------------------------------------------------------------------------------------------------
 // Page Helpers
 // ------------------------------------------------------------------------------------------------
-function page($file)
+function page(string $file): string
 {
     $file = ensurePHPExtension($file);
     $realPath = realpath(PATH_TEMPLATES . $file);
@@ -17,7 +17,7 @@ function page($file)
     return $realPath;
 }
 
-function pageExists($file)
+function pageExists(string $file): bool
 {
     return page($file) !== false;
 }
@@ -26,7 +26,7 @@ function pageExists($file)
 // ------------------------------------------------------------------------------------------------
 // Routing and Redirect Helpers
 // ------------------------------------------------------------------------------------------------
-function route($page = "")
+function route(string $page = ""): string
 {
     if (ENABLE_LANGUAGES)
     {
@@ -36,7 +36,7 @@ function route($page = "")
     return URL_BASE . $page;
 }
 
-function redirect($target = null)
+function redirect(string $target = null): void
 {
     // Redirect to given page
     if (!empty($target))
@@ -55,7 +55,7 @@ function redirect($target = null)
     refreshPage();
 }
 
-function redirectBack($fallback = null)
+function redirectBack(?string $fallback = null): void
 {
     // Redirect back to previous page
     if (isset($_SERVER["HTTP_REFERER"]))
@@ -74,7 +74,7 @@ function redirectBack($fallback = null)
     refreshPage();
 }
 
-function refreshPage()
+function refreshPage(): void
 {
     header("Refresh:0");
     exit;
@@ -84,22 +84,22 @@ function refreshPage()
 // ------------------------------------------------------------------------------------------------
 // File Extension Helpers
 // ------------------------------------------------------------------------------------------------
-function ensurePHPExtension($file)
+function ensurePHPExtension(string $file): string
 {
     return substr($file, -4) === ".php" ? $file : $file . ".php";
 }
 
-function ensureJSExtension($file)
+function ensureJSExtension(string $file): string
 {
     return substr($file, -3) === ".js" ? $file : $file . ".js";
 }
 
-function ensureCSSExtension($file)
+function ensureCSSExtension(string $file): string
 {
     return substr($file, -4) === ".css" ? $file : $file . ".css";
 }
 
-function ensureSCSSExtension($file)
+function ensureSCSSExtension(string $file): string
 {
     return substr($file, -5) === ".scss" ? $file : $file . ".scss";
 }
