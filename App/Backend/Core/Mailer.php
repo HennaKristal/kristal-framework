@@ -1,4 +1,5 @@
-<?php namespace Backend\Core;
+<?php declare(strict_types=1);
+namespace Backend\Core;
 defined("ACCESS") or exit("Access Denied");
 
 use PHPMailer\PHPMailer\PHPMailer;
@@ -6,41 +7,30 @@ use PHPMailer\PHPMailer\Exception;
 
 class Mailer
 {
-    private $mailer;
-    private static $email_template_path = WEBROOT . "/App/Emails/";
-
+    private PHPMailer $mailer;
 
     public function __construct()
     {
-        try
-        {
-            $this->mailer = new PHPMailer(true);
-            $this->mailer->isSMTP();
-            $this->mailer->isHTML(true);
-            $this->mailer->SMTPAuth = true;
-            $this->mailer->CharSet = "UTF-8";
-            $this->mailer->SMTPSecure = MAILER_PROTOCOL;
-            $this->mailer->Port = MAILER_PORT;
-            $this->mailer->Host = MAILER_HOST;
-            $this->mailer->Username = MAILER_EMAIL;
-            $this->mailer->Password = MAILER_PASSWORD;
-        }
-        catch (Exception $e)
-        {
-            return false;
-        }
+        $this->mailer = new PHPMailer(true);
+        $this->mailer->isSMTP();
+        $this->mailer->isHTML(true);
+        $this->mailer->SMTPAuth = true;
+        $this->mailer->CharSet = "UTF-8";
+        $this->mailer->SMTPSecure = MAILER_PROTOCOL;
+        $this->mailer->Port = MAILER_PORT;
+        $this->mailer->Host = MAILER_HOST;
+        $this->mailer->Username = MAILER_EMAIL;
+        $this->mailer->Password = MAILER_PASSWORD;
     }
 
-
-    private function setFromEmail()
+    private function setFromEmail(): void
     {
         $this->mailer->setFrom(MAILER_EMAIL, MAILER_NAME);
     }
 
-
-    public function setReplyToEmail($email, $name = "")
+    public function setReplyToEmail(string $email, string $name = ""): void
     {
-        if (empty($name))
+        if ($name === "")
         {
             $name = $email;
         }
@@ -48,13 +38,15 @@ class Mailer
         $this->mailer->addReplyTo($email, $name);
     }
 
-    
-    public function send($receivers, $title, $content, array $variables = null)
+    public function send(string|array $receivers, string $title, string $content, ?array $variables = null): bool
     {
-        $this->setFromEmail();
+        $this->mailer->clearAllRecipients();
 
         try
         {
+            $this->setFromEmail();
+
+            // Set email receivers
             if (is_array($receivers))
             {
                 foreach ($receivers as $receiver)
@@ -67,37 +59,45 @@ class Mailer
                 $this->mailer->addAddress($receivers);
             }
 
-            // Make sure email content is in php form
-            $content = ensurePHPExtension($content);
-            
-            // Get email template
-            $content_template = file_get_contents(self::$email_template_path . $content);
+            // Get email temnplate
+            $templateFile = PATH_TEMPLATES . "emails/" . ensurePHPExtension($content);
+
+            if (!is_file($templateFile))
+            {
+                debuglog("Email template not found: {$templateFile}", "warning");
+                return false;
+            }
+
+            $body = file_get_contents($templateFile);
+
+            if ($body === false)
+                return false;
 
             // Include variables passed to email
             if (!empty($variables))
             {
-                $search = [];
-                $replace = [];
                 foreach ($variables as $key => $value)
                 {
-                    $search[] = "{{ $key }}";
-                    $replace[] = htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8");
+                    $body = str_replace("{{ " . $key . " }}", esc_html((string)$value), $body);
                 }
-                $content_template = str_replace($search, $replace, $content_template);
             }
 
             // Send mail
             $this->mailer->Subject = $title;
-            $this->mailer->Body = $content_template;
+            $this->mailer->Body = $body;
             $this->mailer->send();
-            
-            // Clear recipients for next send
-            $this->mailer->clearAddresses();
             return true;
         }
         catch (Exception $e)
         {
+            debuglog("Mailer error: {$exception->getMessage()}", "warning");
             return false;
+        }
+        finally
+        {
+            $this->mailer->clearAllRecipients();
+            $this->mailer->clearReplyTos();
+            $this->mailer->clearAddresses();
         }
     }
 }

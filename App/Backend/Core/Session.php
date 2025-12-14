@@ -1,65 +1,46 @@
-<?php declare(strict_types=1); 
+<?php declare(strict_types=1);
 namespace Backend\Core;
 defined("ACCESS") or exit("Access Denied");
 
-
 class Session
 {
-    public static function initialize()
+    public static function initialize(): void
     {
         self::start();
     }
 
-
-    public static function start()
+    public static function start(): void
     {
         // Start session if it is not yet active
         if (!self::isActive())
         {
-            self::startSession(self::getUsersUniqueIdentity());
+            self::startSession(self::getUniqueIdentity());
         }
     }
 
-
-    public static function getClientIPAddress()
+    public static function getClientIPAddress(): string
     {
-        $IP_address = 'unknown';
+        $remoteAddress = $_SERVER["REMOTE_ADDR"] ?? "";
 
-        $keys = array('HTTP_X_REAL_IP', 'HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR');
-        foreach ($keys as $key) 
+        if (filter_var($remoteAddress, FILTER_VALIDATE_IP))
         {
-            if (isset($_SERVER[$key]))
-            {
-                $ip_list = explode(',', $_SERVER[$key]);
-                foreach ($ip_list as $ip) 
-                {
-                    $ip = trim($ip);
-                    if (filter_var($ip, FILTER_VALIDATE_IP))
-                    {
-                        $IP_address = $ip;
-                        return $IP_address;
-                    }
-                }
-            }
+            return $remoteAddress;
         }
-      
-        return $IP_address;
+    
+        return "unknown";
     }
 
-
-    public static function getUserAgentHash()
+    public static function getUserAgent(): string
     {
         return $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
     }
 
-
-    public static function getUsersUniqueIdentity()
+    public static function getUniqueIdentity(): string
     {
-        return hash('sha256', self::getUserAgentHash());
+        return hash('sha256', self::getUserAgent());
     }
 
-
-    public static function startSession($visitor_identity)
+    private static function startSession(string $visitorIdentity): void
     {
         if (SESSION_NAME == "________")
         {
@@ -76,7 +57,8 @@ class Session
         
         session_name(SESSION_NAME);
 
-        if (DOMAIN !== "") {
+        if (DOMAIN !== "")
+        {
             ini_set('session.cookie_domain', DOMAIN);
         }
 
@@ -97,18 +79,17 @@ class Session
         if (empty(self::get("visitor_identity")))
         {
             // Set user identity if not yet set
-            self::add("visitor_identity", $visitor_identity);
+            self::add("visitor_identity", $visitorIdentity);
             session_regenerate_id(true);
         }
-        else if (self::get("visitor_identity") !== $visitor_identity)
+        else if (self::get("visitor_identity") !== $visitorIdentity)
         {
             // Restart if user's IP address doesn't match the original one
             self::restart();
         }
     }
 
-
-    private static function regenerateSessionIdPeriodically()
+    private static function regenerateSessionIdPeriodically(): void
     {
         // If regeneration is disabled, skip
         if (SESSION_REGENERATE_ID_TIME === 0)
@@ -126,14 +107,12 @@ class Session
         // If enough time has passed, regenerate
         if (time() - (int)$lastRegeneration >= SESSION_REGENERATE_ID_TIME)
         {
-            debug("session id regenerated");
             session_regenerate_id(true);
             self::add("last_id_regeneration_time", time());
         }
     }
 
-
-    public static function end()
+    public static function end(): void
     {
         // Remove all session variables
         self::removeAll();
@@ -159,31 +138,27 @@ class Session
         }
     }
 
-
-    public static function restart()
+    public static function restart(): void
     {
         self::end();
         self::start();
     }
 
-
     // Add variables to session
-    public static function add($identifier, $value)
+    public static function add(string $identifier, $value): void
     {
         $_SESSION[$identifier] = $value;
         return;
     }
 
-
     // Check does session has variable
-    public static function has($key)
+    public static function has(string $key): bool
     {
         return (isset($_SESSION[$key])) ? true : false;
     }
 
-
     // Remove variables from session
-    public static function remove($key)
+    public static function remove(string $key): void
     {
         // Remove single variable
         if (!is_array($key))
@@ -199,27 +174,25 @@ class Session
         }
     }
 
-
     // Remove every variable from session
-    public static function removeAll()
+    public static function removeAll(): void
     {
         session_unset();
     }
 
-
     // Get variables from session
-    public static function get($key, $default_value = null)
+    public static function get(string $key, $default = null): mixed
     {
-        return (isset($_SESSION[$key])) ? $_SESSION[$key] : $default_value;
+        return (isset($_SESSION[$key])) ? $_SESSION[$key] : $default;
     }
 
-    public static function getAll()
+    public static function getAll(): array
     {
         return $_SESSION;
     }
 
     // Check if session is already active
-    private static function isActive()
+    private static function isActive(): bool
     {
         $serverInterface = php_sapi_name();
 
@@ -231,22 +204,22 @@ class Session
     }
 
     // End Session if user isn't active for x seconds (specified in the config.php)
-    private static function afkTimeout($duration)
+    private static function afkTimeout(int $duration): void
     {
         // Get previous time afk_timeout was set
-        $previous_afk_timeout = self::get("afk_timeout");
+        $timeout = self::get("afk_timeout");
 
         // Update the new afk_timeout
         self::add("afk_timeout", time());
 
         // Nothing to do if there was not check for previous afk_timeout
-        if (!isset($previous_afk_timeout))
+        if (!isset($timeout))
         {
             return;
         }
 
         // Check has the user been afk longer than the allowed duration
-        if (time() - (int)$previous_afk_timeout > $duration)
+        if (time() - (int)$timeout > $duration)
         {
             self::restart();
         }

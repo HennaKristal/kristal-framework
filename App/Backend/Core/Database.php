@@ -1,94 +1,85 @@
-<?php namespace Backend\Core;
+<?php declare(strict_types=1);
+namespace Backend\Core;
 defined("ACCESS") or exit("Access Denied");
 
 use \PDO;
 use \PDOException;
 
-
 class Database
 {
-    private $connection;
-    private $table_name;
-    private $arguments = array();
-    private $secured_inputs = array();
+    protected PDO $connection;
+    protected array $arguments = [];
+    protected array $securedInputs = [];
 
-
-    // Create connection to the database
-    public function __construct($params = array("database" => "primary"))
+    public function __construct(array $params = array("database" => "primary"))
     {
         $databases = DATABASES;
 
         // Make sure database information is set
         if (empty($databases[$params["database"]]))
         {
-            if (PRODUCTION_MODE)
-            {
-                exit("Database configuration error.");
-            }
-            else
-            {
-                exit("Database configuration error. Database (" . $params["database"] . ") was empty, please double check your config file.");
-            }
+            $message = PRODUCTION_MODE ? "Database configuration error." : "Database configuration error. Database (" . $params["database"] . ") was empty, please double check your config file.";
+            debuglog("Database configuration error. Database (" . $params["database"] . ") was empty, please double check your config file.");
+            exit($message);
         }
 
         try
         {
+            $config = $databases[$params["database"]];
+
             // Create connection
             $this->connection = new PDO(
-                "mysql:host=" . $databases[$params["database"]]["host"] . ";dbname=" . $databases[$params["database"]]["database_name"] . ";",
-                $databases[$params["database"]]["username"],
-                $databases[$params["database"]]["password"],
+                "mysql:host={$config['host']};dbname={$config['database_name']};charset=utf8mb4",
+                $config['username'],
+                $config['password'],
                 [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_EMULATE_PREPARES => false]
             );
         }
         catch (PDOException $e)
         {
-            exit("Failed to Connect to database.");
-        }
-
-        $this->arguments["where"] = "";
-        $this->arguments["select"] = "";
-        $this->arguments["insert"] = "";
-        $this->arguments["update"] = "";
-        $this->arguments["orderBy"] = "";
-        $this->arguments["limit"] = "";
-        $this->arguments["offset"] = "";
-    }
-
-
-    // Check do we need to create a new table
-    protected function confirmTable($engine = "InnoDB", $char_set = "utf8")
-    {
-        if (!$this->table)
-        {
             if (PRODUCTION_MODE)
             {
-                exit("Database configuration error.");
+                exit("Failed to connect to database.");
             }
-            else
-            {
-                exit("Entity " . get_class($this) . " does not have a table name.");
-            }
+
+            exit($e->getMessage());
         }
-        
-        if ($this->doesTableExist($this->table) === false)
-        {
-            $this->createTable($this->table, $this->primary_key, $this->columns, $engine, $char_set);
-        }
+
+        $this->resetArguments();
     }
 
 
-    // Check does table exist
-    public function doesTableExist($table = null)
+    /* ===================================================================== */
+    /*                              Schema                                   */
+    /* ===================================================================== */
+    protected function confirmTable(string $engine = "InnoDB", string $charset = "utf8mb4"): void
     {
-        // Use entity table if table is not specified
-        if ($table === null) { $table = $this->table; }
-        if ($table === null) { return false; }
+        $this->assertSafeIdentifier($this->table);
+
+        if (!$this->doesTableExist($this->table))
+        {
+            $this->createTable(
+                $this->table,
+                $this->primary_key,
+                $this->columns,
+                $engine,
+                $charset
+            );
+        }
+    }
+
+    public function doesTableExist(?string $table = null): bool
+    {
+        $table ??= $this->table;
+
+        if ($table === null) {
+            return false;
+        }
 
         // Iterate through the tables and check if the specified table exists
-        foreach ($this->getTables() as $tableArray)
+        foreach ($this->getTables() as $row)
         {
-            if (in_array($table, $tableArray))
+            if (in_array($table, $row, true))
             {
                 return true;
             }
@@ -97,427 +88,325 @@ class Database
         return false;
     }
 
-
-    // Create table
-    protected function createTable($table, $primary_key, array $columns, $engine = "InnoDB", $char_set = "utf8")
+    protected function createTable(string $table, string $primaryKey, array $columns, string $engine, string $charset): void
     {
-        $query = "create table if not exists $table (";
+        $this->assertSafeIdentifier($table);
+        $this->assertSafeIdentifier($primaryKey);
 
-        foreach ($columns as $key => $value)
+        $sql = "CREATE TABLE IF NOT EXISTS {$table} (";
+
+        foreach ($columns as $name => $definition)
         {
-            $query .= "$key $value,";
+            $this->assertSafeIdentifier($name);
+            $sql .= "{$name} {$definition},";
         }
 
-        $query .= "PRIMARY KEY ($primary_key)) ENGINE=$engine AUTO_INCREMENT=1 DEFAULT CHARSET=$char_set;";
-
-        // Check for errors
-        $this->connection->setAttribute(PDO::ATTR_EMULATE_PREPARES, false); 
-        $statement = $this->connection->prepare($query);
-
-        if (!$statement)
-        {
-            if (PRODUCTION_MODE)
-            {
-                exit("Fatal database error. Please contact site admin about this error.");
-            }
-            else
-            {
-                exit("Invalid mysql structure at $table entity class.");
-            }
-        } 
-
-        $statement->execute();
+        $sql .= "PRIMARY KEY ({$primaryKey})) ENGINE={$engine} AUTO_INCREMENT=1 DEFAULT CHARSET={$charset};";
+        $this->connection->exec($sql);
     }
 
-
-    public function dropTable($table = null)
+    public function dropTable(?string $table = null): void
     {
-        if ($table === null)
-            $table = $this->table;
+        $table ??= $this->table;
 
         if ($table === null)
         {
-            if (PRODUCTION_MODE)
-            {
-                exit("Fatal database error. Please contact site admin about this error.");
-            }
-            else
-            {
-                exit("Fatal Error: you are trying to delete a table using dropTable() without specifying a table."); 
-            }
+            $this->fatal("Fatal Error: you are trying to delete a table using dropTable() without specifying a table.");
         }
 
-        return $this->connection->prepare("drop table $table;")->execute();
+        $this->assertSafeIdentifier($table);
+        $this->connection->exec("DROP TABLE {$table}");
     }
 
-
-    public function dropTableCascade($table = null)
+    public function dropTableCascade(?string $table = null): void
     {
+        $table ??= $this->table;
+
         if ($table === null)
-            $table = $this->table;
-
-        if ($table === null) 
         {
-            if (PRODUCTION_MODE)
-            {
-                exit("Fatal database error. Please contact site admin about this error.");
-            }
-            else
-            {
-                exit("Fatal Error: you are trying to delete a table using dropTable() without specifying a table."); 
-            }
+            $this->fatal("Fatal Error: you are trying to delete a table using dropTable() without specifying a table.");
         }
 
-        return $this->connection->prepare("drop table $table CASCADE;")->execute();
+        $this->assertSafeIdentifier($table);
+        $this->connection->exec("DROP TABLE {$table} CASCADE");
+    }
+
+    public function getTables(): object
+    {
+        return $this->fetchAll('SHOW TABLES');
     }
 
 
-    public function getTables()
+    /* ===================================================================== */
+    /*                               Internals                               */
+    /* ===================================================================== */
+   protected function resetArguments(): void
     {
-        return $this->fetchAll("show tables;");
+        $this->securedInputs = [];
+        $this->arguments = [
+            'where'   => '',
+            'select'  => '',
+            'insert'  => '',
+            'update'  => '',
+            'orderBy' => '',
+            'limit'   => '',
+            'offset'  => '',
+        ];
     }
 
-
-    private function clearQuery()
+    protected function assertSafeIdentifier(string $value): void
     {
-        $this->table_name = "";
-        $this->secured_inputs = array();
-        $this->arguments = array();
-        $this->arguments["where"] = "";
-        $this->arguments["select"] = "";
-        $this->arguments["insert"] = "";
-        $this->arguments["update"] = "";
-        $this->arguments["orderBy"] = "";
-        $this->arguments["limit"] = "";
-        $this->arguments["offset"] = "";
-    }
-
-
-    protected function databaseBackup()
-    {
-        $backup = "-- Database Backup Created at " . date(DATE_FORMAT . " " . TIME_FORMAT);
-        $tables = $this->getTables();
-
-        foreach ($tables as $table)
+        if (!preg_match('/^[a-zA-Z0-9_]+$/', $value))
         {
-            $table_name = reset($table);
+            $this->fatal("Invalid SQL identifier: {$value}");
+        }
+    }
+    
+    protected function assertSafeQualifiedIdentifier(string $value): void
+    {
+        if (!preg_match('/^[a-zA-Z0-9_\.]+$/', $value))
+        {
+            $this->fatal("Invalid SQL identifier: {$value}");
+        }
+    }
+    
+    protected function fatal(string $message): void
+    {
+        debuglog($message);
+        exit(PRODUCTION_MODE ? "Fatal database error. Please contact site admin about this error." : $message);
+    }
 
-            // Delete table
-            $backup .= "\n\n\nDROP TABLE " . $table_name . ";\n";
+    protected function normalizeOperator(string $operator): string
+    {
+        $operator = strtoupper($operator);
+        $allowed = ['=', '!=', '<', '>', '<=', '>=', 'LIKE'];
 
-            // Create the table again
-            $create = $this->fetch("show create table " . $table_name);
-            $backup .= $create["Create Table"] . ";\n";
-
-            // Insert statements
-            $content = $this->fetchAll("select * from " . $table_name);
-
-            foreach ($content as $row)
-            {
-                $fields = "";
-                $values = "";
-
-                foreach ($row as $key => $value)
-                {
-                    $fields .= $key . ", ";
-                    $values .= (is_numeric($value)) ? "$value, " : "'$value', ";
-                }
-
-                $fields = rtrim($fields, ', ');
-                $values = rtrim($values, ', ');
-
-                $backup .= "\ninsert into " . $table_name . "($fields) values ($values);";
-            }
+        if (!in_array($operator, $allowed, true))
+        {
+            $message = PRODUCTION_MODE ? "Fatal database error. Please contact site admin about this error." : "Invalid SQL operator: {$operator}";
+            debuglog("Invalid SQL operator: {$operator}");
+            exit($message);
         }
 
-        return $backup;
+        return $operator;
     }
 
-
-    public function close()
+    public function close(): void
     {
-        $this->connection = null;
+        unset($this->connection);
     }
 
 
-
-
-
-/*=====================================================================================================================================================================*/
-
-
-
-
-
-    public function execute($query, array $secured_inputs = array())
+    /* ==================================================================== */
+    /*                     Query builder initialization                     */
+    /* ==================================================================== */
+    public function table()
     {
-        return $this->connection->prepare($query)->execute($secured_inputs);
+        return $this;
     }
 
 
-    public function fetch($query, array $secured_inputs = array(), $type = "array")
+    /* ==================================================================== */
+    /*                                Select                                */
+    /* ==================================================================== */
+    public function select(array|string $columns): static
+    {
+        $this->arguments['select'] = '';
+
+        if (is_string($columns))
+        {
+            $this->arguments['select'] = $columns;
+            return $this;
+        }
+
+        $safe = [];
+
+        foreach ($columns as $column)
+        {
+            if (!preg_match('/^[a-zA-Z0-9_\.]+$/', $column))
+                continue;
+
+            $safe[] = $column;
+        }
+
+        $this->arguments['select'] = $safe ? implode(', ', $safe) : '*';
+        return $this;
+    }
+
+
+    /* =================================================================== */
+    /*                                Where                                */
+    /* =================================================================== */
+    private function baseWhere(string $connector, string $sql, array $bindings = []): void
+    {
+        if (!empty($this->arguments['where'])) {
+            $this->arguments['where'] .= " $connector ";
+        }
+    
+        $this->arguments['where'] .= $sql;
+    
+        foreach ($bindings as $key => $value) {
+            $this->securedInputs[$key] = $value;
+        }
+    }
+    
+    public function where(string $field, mixed $value, string $operator = "="): static
+    {
+        $this->assertSafeQualifiedIdentifier($field);
+        $operator = $this->normalizeOperator($operator);
+
+        $param = 'param_' . uniqid();
+        $this->baseWhere('and', "$field $operator :$param", [$param => $value]);
+        return $this;
+    }
+    
+    public function orWhere(string $field, mixed $value, string $operator = "="): static
+    {
+        $this->assertSafeQualifiedIdentifier($field);
+        $operator = $this->normalizeOperator($operator);
+ 
+        $param = 'param_' . uniqid();
+        $this->baseWhere('or', "$field $operator :$param", [$param => $value]);
+        return $this;
+    }
+    
+    public function whereLike(string $field, string $value): static
+    {
+        return $this->where($field, "%$value%", 'LIKE');
+    }
+    
+    public function whereStartsWith(string $field, string $value): static
+    {
+        return $this->where($field, "$value%", 'LIKE');
+    }
+    
+    public function whereEndsWith(string $field, string $value): static
+    {
+        return $this->where($field, "%$value", 'LIKE');
+    }
+    
+    public function whereIn(string $field, array $values): static
+    {
+        if (empty($values))
+            return $this;
+    
+        $this->assertSafeQualifiedIdentifier($field);
+
+        $placeholders = [];
+        $bindings = [];
+    
+        foreach ($values as $value) {
+            $key = 'param_' . uniqid();
+            $placeholders[] = ":$key";
+            $bindings[$key] = $value;
+        }
+    
+        $sql = "$field IN (" . implode(',', $placeholders) . ")";
+    
+        $this->baseWhere('and', $sql, $bindings);
+        return $this;
+    }
+    
+    public function whereBetween(string $field, mixed $min, mixed $max, bool $not = false): static
+    {
+        $this->assertSafeQualifiedIdentifier($field);
+
+        $p1 = 'param_' . uniqid();
+        $p2 = 'param_' . uniqid();
+        $sql = $not ? "$field NOT BETWEEN :$p1 AND :$p2" : "$field BETWEEN :$p1 AND :$p2";
+        $this->baseWhere('and', $sql, [$p1 => $min, $p2 => $max]);
+        return $this;
+    }
+    
+    public function whereNull(string $field): static
+    {
+        $this->assertSafeQualifiedIdentifier($field);
+
+        $this->baseWhere('and', "$field IS NULL");
+        return $this;
+    }
+    
+    public function whereNotNull(string $field): static
+    {
+        $this->assertSafeQualifiedIdentifier($field);
+
+        $this->baseWhere('and', "$field IS NOT NULL");
+        return $this;
+    }
+
+
+    /* ==================================================================== */
+    /*                              Additionals                             */
+    /* ==================================================================== */
+    public function limit(int $value): static
+    {
+        if ($value > 0)
+        {
+            $this->arguments["limit"] = "limit $value";
+        }
+
+        return $this;
+    }
+
+    public function offset(int $value): static
+    {
+        if ($value >= 0)
+        {
+            $this->arguments["offset"] = "offset $value";
+        }
+
+        return $this;
+    }
+
+    public function orderBy(string $column, string $direction = "asc"): static
+    {
+        $direction = strToLower($direction);
+
+        if ($direction !== 'asc' && $direction !== 'desc')
+        {
+            $direction = 'asc';
+        }
+
+        // Whitelist protection
+        $this->assertSafeQualifiedIdentifier($column);
+
+        $this->arguments['orderBy'] = "order by $column $direction";
+        return $this;
+    }
+
+
+    /* ==================================================================== */
+    /*                                Actions                               */
+    /* ==================================================================== */
+    public function execute(string $query, array $securedInputs = []): void
+    {
+        $this->connection->prepare($query)->execute($securedInputs);
+    }
+
+    public function fetch(string $query, array $securedInputs = []): object
     {
         $statement = $this->connection->prepare($query);
-        $statement->execute($secured_inputs);
-        return ($type !== "array") ? (object) $statement->fetch(\PDO::FETCH_ASSOC) : $statement->fetch(\PDO::FETCH_ASSOC);
+        $statement->execute($securedInputs);
+    
+        $row = $statement->fetch(\PDO::FETCH_ASSOC);
+        return $row === false ? new \stdClass() : (object) $row;
     }
 
-
-    public function fetchAll($query, array $secured_inputs = null, $type = "array")
+    public function fetchAll(string $query, array $securedInputs = []): object
     {
         $statement = $this->connection->prepare($query);
-        $statement->execute($secured_inputs);
-        return ($type !== "array") ? (object) $statement->fetchAll(\PDO::FETCH_ASSOC) : $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $statement->execute($securedInputs);
+    
+        return (object) $statement->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-
-    public function table($args = null)
+    private function baseGet(): \PDOStatement
     {
-        $this->table_name = ($args !== null) ? $args : $this->table;
-        return $this;
-    }
+        $query = "select * from {$this->table}";
 
-
-    public function select($args)
-    {
-        if (is_array($args))
-        {
-            foreach ($args as $field)
-            {
-                $this->arguments["select"] .= "$field, ";
-            }
-
-            // Remove last ', ' from select string
-            $this->arguments["select"] = substr($this->arguments["select"], 0, -2);
-        }
-        else
-        {
-            $this->arguments["select"] = $args;
-        }
-
-        return $this;
-    }
-
-
-    private function baseWhere($connector, $field, $operator, $value = null)
-    {
-        // Add connector (and | or) if where statement is not empty
-        if (!empty($this->arguments["where"]))
-        {
-            $this->arguments["where"] .= " $connector ";
-        }
-
-        if ($value !== null)
-        {
-            // Add % to the beginning of the comparison value
-            if (strtolower($operator) == "like" || strtolower($operator) == "not like" || strtolower($operator) == "starts with" || strtolower($operator) == "starts")
-            {
-                if (substr($value, 0, 1) !== "%")
-                {
-                    $value = "%" . $value;
-                }
-            }
-
-            // Add % to the end of the comparison value
-            if (strtolower($operator) == "like" || strtolower($operator) == "not like" || strtolower($operator) == "ends with" || strtolower($operator) == "ends to" || strtolower($operator) == "ends")
-            {
-                if (substr($value, -1) !== "%")
-                {
-                    $value .= "%";
-                }
-            }
-        }
-        else
-        {
-            // If $c is null we can default comparison to = 
-            $value = $operator;
-            $operator = "=";
-        }
-
-        // Create unique id for secure input parameter and expand where statement
-        $unique_string = 'param_' . uniqid();
-        $this->arguments["where"] .= "$field $operator :$unique_string";
-        $this->secured_inputs[$unique_string] = $value;
-    }
-
-
-    public function where($field, $operator, $value = null)
-    {
-        $this->baseWhere("and", $field, $operator, $value);
-        return $this;
-    }
-
-
-    public function orWhere($field, $operator, $value = null)
-    {
-        $this->baseWhere("or", $field, $operator, $value);
-        return $this;
-    }
-
-
-    public function whereBetween($field, $min, $max)
-    {
-        $this->arguments["where"] .= " and ( 1 = 1";
-        $this->where($field, ">=", $min);
-        $this->where($field, "<=", $max);
-        $this->arguments["where"] .= ")";
-        return $this;
-    }
-
-
-    public function orWhereBetween($field, $min, $max)
-    {
-        $this->arguments["where"] .= " or ( 1 = 1";
-        $this->where($field, ">=", $min);
-        $this->where($field, "<=", $max);
-        $this->arguments["where"] .= ")";
-        return $this;
-    }
-
-
-    public function whereNotBetween($field, $min, $max)
-    {
-        $this->arguments["where"] .= " and ( 1 = 1";
-        $this->where($field, "<=", $min);
-        $this->where($field, ">=", $max);
-        $this->arguments["where"] .= ")";
-        return $this;
-    }
-
-
-    public function orWhereNotBetween($field, $min, $max)
-    {
-        $this->arguments["where"] .= " or ( 1 = 1";
-        $this->where($field, "<=", $min);
-        $this->where($field, ">=", $max);
-        $this->arguments["where"] .= ")";
-        return $this;
-    }
-
-
-    private function baseWhereIn($connector, $key, array $values_array)
-    {
-        // Add connector to where statement if it is not empty
-        if (!empty($this->arguments["where"]))
-        {
-            $this->arguments["where"] .= " $connector ";
-        }
-
-        $this->arguments["where"] .= "$key in (";
-
-        foreach ($values_array as $value)
-        {
-            $this->arguments["where"] .= "'$value',";
-        }
-
-        $this->arguments["where"] = substr($this->arguments["where"], 0, -1);
-        $this->arguments["where"] .= ")";
-    }
-
-
-    public function whereIn($key, array $values_array)
-    {
-        $this->baseWhereIn("and", $key, $values_array);
-        return $this;
-    }
-
-
-    public function orWhereIn($key, array $values_array)
-    {
-        $this->baseWhereIn("or", $key, $values_array);
-        return $this;
-    }
-
-
-    public function whereInOr($array_in, $array_or)
-    {
-        $this->arguments["where"] .= " and ( 1 = 1";
-
-        foreach ($array_in as $key => $values_array)
-        {
-            $this->baseWhereIn("and", $key, $values_array);
-        }
-        foreach ($array_or as $key => $values_array)
-        {
-            $this->baseWhereIn("or", $key, $values_array);
-        }
-
-        $this->arguments["where"] .= ")";
-        return $this;
-    }
-
-
-    private function baseWhereNull($connector, $key, $is_null)
-    {
-        if (!empty($this->arguments["where"]))
-        {
-            $this->arguments["where"] .= " $connector ";
-        }
-
-        $this->arguments["where"] .= "$key is ". ($is_null ? "" : "not")  ." NULL";
-    }
-
-
-    public function whereNull($key)
-    {
-        $this->baseWhereNull("and", $key, true);
-        return $this;
-    }
-
-
-    public function orWhereNull($key)
-    {
-        $this->baseWhereNull("or", $key, true);
-        return $this;
-    }
-
-
-    public function whereNotNull($key)
-    {
-        $this->baseWhereNull("and", $key, false);
-        return $this;
-    }
-
-
-    public function orWhereNotNull($key)
-    {
-        $this->baseWhereNull("or", $key, false);
-        return $this;
-    }
-
-
-    public function orderBy($arg, $order = "asc")
-    {
-        if ($order !== "asc" && $order !== "desc")
-        {
-            $order = "asc";
-        }
-
-        $this->arguments["orderBy"] = "order by $arg $order";
-        return $this;
-    }
-
-
-    public function limit($arg)
-    {
-        $this->arguments["limit"] = "limit $arg";
-        return $this;
-    }
-
-
-    public function offset($arg)
-    {
-        $this->arguments["offset"] = "offset $arg";
-        return $this;
-    }
-
-
-    private function baseGet()
-    {
-        $query = "select * from $this->table_name";
         if ($this->arguments["select"])
         {
-            $query = "select {$this->arguments['select']} from $this->table_name";
+            $query = "select {$this->arguments['select']} from {$this->table}";
         }
         if ($this->arguments["where"])
         {
@@ -525,175 +414,125 @@ class Database
         }
         if ($this->arguments["orderBy"])
         {
-            $query .= " {$this->arguments["orderBy"]}";
+            $query .= " {$this->arguments['orderBy']}";
         }
         if ($this->arguments["limit"])
         {
-            $query .= " {$this->arguments["limit"]}";
+            $query .= " {$this->arguments['limit']}";
         }
         if ($this->arguments["offset"])
         {
-            $query .= " {$this->arguments["offset"]}";
+            $query .= " {$this->arguments['offset']}";
         }
+
         $query .= ";";
 
         $statement = $this->connection->prepare($query);
-        if (!$statement) return false;
-        $statement->execute($this->secured_inputs);
-        $this->clearQuery();
+        $statement->execute($this->securedInputs);
+        $this->resetArguments();
         return $statement;
     }
 
-    public function get($type = "array")
+    public function get(): object
     {
         $statement = $this->baseGet();
-        if (!$statement) {
-            return ($type === "array") ? [] : (object)[];
-        }
-
-        if ($type === "array") {
-            return $statement->fetch(\PDO::FETCH_ASSOC) ?: [];
-        }
-
-        return $statement->fetch(\PDO::FETCH_OBJ) ?: (object)[];
+        return (object) $statement->fetchAll(\PDO::FETCH_OBJ);
     }
+
+    public function getFirst(): object
+    {
+        $this->limit(1);
+        $statement = $this->baseGet();
+        $row = $statement->fetch(\PDO::FETCH_OBJ);
+        return $row === false ? (object)[] : $row;
+    }
+
+    public function getValue(string $value): mixed
+    {
+        $this->assertSafeIdentifier($value);
+        $this->limit(1);
+        $statement = $this->baseGet();
+        $row = $statement->fetch(\PDO::FETCH_ASSOC);
+        return $row[$value] ?? null;
+    }
+
+    public function insert(array $data): bool
+    {
+        if (empty($data))
+            return false;
+
+        $columns = [];
+        $placeholders = [];
+        $bindings = [];
     
-    public function getAll($type = "array")
-    {
-        $statement = $this->baseGet();
-        if (!$statement) return false;
+        foreach ($data as $column => $value) 
+        {
+            if (!preg_match('/^[a-zA-Z0-9_]+$/', $column))
+                continue;
 
-        if ($type !== "array")
-        {
-           return (object) $statement->fetchAll(\PDO::FETCH_OBJ);
+            $param = 'param_' . uniqid();
+            $columns[] = $column;
+            $placeholders[] = ":$param";
+            $bindings[$param] = $value;
         }
-        else
+
+        if (empty($columns))
         {
-          return  $statement->fetchAll(\PDO::FETCH_ASSOC);
+            $this->fatal("No valid columns provided for insert.");
         }
+    
+        $cols = implode(', ', $columns);
+        $vals = implode(', ', $placeholders);
+
+        $sql = "INSERT INTO {$this->table} ($cols) VALUES ($vals)";
+    
+        $this->connection->prepare($sql)->execute($bindings);
+        $this->resetArguments();
+    
+        return true;
     }
 
-
-    public function value($value)
+    public function update(array $data): bool
     {
-        $statement = $this->baseGet();
-        $fetch = $statement->fetch(\PDO::FETCH_ASSOC);
-        return $fetch[$value];
+        if (empty($data))
+            return false;
+    
+        $sets = [];
+        $bindings = [];
+    
+        foreach ($data as $column => $value)
+        {
+            if (!preg_match('/^[a-zA-Z0-9_]+$/', $column))
+                continue;
+
+            $param = 'param_' . uniqid();
+            $sets[] = "$column = :$param";
+            $bindings[$param] = $value;
+        }
+
+        if (empty($sets))
+        {
+            $this->fatal("No valid columns provided for update.");
+        }
+    
+        $sql = "UPDATE {$this->table} SET " . implode(', ', $sets) . " WHERE {$this->arguments['where']}";
+    
+        $this->connection->prepare($sql)->execute(array_merge($bindings, $this->securedInputs));
+        $this->resetArguments();
+        return true;
     }
 
-
-    public function values($value, $type = "array")
+    public function delete(): bool
     {
-        $statement = $this->baseGet();
-        $fetch = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        $values = array();
+        $sql = "DELETE FROM {$this->table}";
 
-        foreach ($fetch as $data)
+        if (!empty($this->arguments['where']))
         {
-            array_push($values, $data[$value]);
+            $sql .= " WHERE {$this->arguments['where']}";
         }
 
-        return ($$type !== "array") ? (object) $values : $values;
-    }
-
-
-    public function count()
-    {
-        if (empty($this->arguments['where']))
-        {
-            $count = $this->fetch("select count(*) from $this->table_name");
-        }
-        else
-        {
-            $count = $this->fetch("select count(*) from $this->table_name where {$this->arguments['where']}", $this->secured_inputs);
-        }
-        
-        $this->clearQuery();
-        return (int)$count["count(*)"];
-    }
-
-
-    public function doesExist($field, $value = null)
-    {
-        if (is_array($field) && $value === null)
-        {
-            $query = $this->select("1");
-
-            foreach ($field as $key => $value)
-            {
-                $query = $query->where($key, $value);
-            }
-
-            return $query->get();
-        }
-        else
-        {
-            return $this->select("1")->where($field, $value)->get();
-        }
-    }
-
-
-    public function insert(array $values)
-    {
-        // Create string of all the insert values
-        foreach ($values as $value)
-        {
-            $unique_string = 'param_' . uniqid();
-            $this->arguments["insert"] .= ":$unique_string, ";
-            $this->secured_inputs[$unique_string] = $value;
-        }
-
-        // Remove ', ' from the end of the string
-        $this->arguments["insert"] = substr($this->arguments["insert"], 0, -2);
-
-        // Create insert statement
-        $query = "insert into $this->table_name values ({$this->arguments["insert"]});";
-
-        // Execute statement
-        $result = $this->connection->prepare($query)->execute($this->secured_inputs);
-        $this->clearQuery();
-        return $result;
-    }
-
-
-    public function update(array $args)
-    {
-        // Create string of all the update values
-        foreach ($args as $key => $value)
-        {
-            $unique_string = 'param_' . uniqid();
-            $this->arguments["update"] .= "$key = :$unique_string, ";
-            $this->secured_inputs[$unique_string] = $value;
-        }
-
-        // Remove ', ' from the end of the string
-        $this->arguments["update"] = substr($this->arguments["update"], 0, -2);
-
-        // Create update statement
-        $query = "update $this->table_name set {$this->arguments["update"]}";
-        if ($this->arguments["where"])
-        {
-            $query .= " where {$this->arguments['where']}";
-        }
-        $query .= ";";
-
-        // Execute statement
-        $result = $this->connection->prepare($query)->execute($this->secured_inputs);
-        $this->clearQuery();
-        return $result;
-    }
-
-
-    public function delete()
-    {
-        $query = "delete from $this->table_name where ";
-
-        // Add where condition
-        $query .= ($this->arguments["where"]) ? "{$this->arguments['where']};" : "1 = 1;" ;
-
-        // Execute statement
-        $result = $this->connection->prepare($query)->execute($this->secured_inputs);
-        $this->clearQuery();
-        return $result;
+        $this->connection->prepare($sql)->execute($this->securedInputs);
+        $this->resetArguments();
+        return true;
     }
 }

@@ -6,9 +6,6 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'voku\\helper\\' => array($vendorDir . '/voku/simple_html_dom/src/voku/helper'),
-    'voku\\' => array($vendorDir . '/voku/html-min/src/voku'),
-    'Symfony\\Component\\CssSelector\\' => array($vendorDir . '/symfony/css-selector'),
     'ScssPhp\\ScssPhp\\' => array($vendorDir . '/scssphp/scssphp/src'),
     'PHPMailer\\PHPMailer\\' => array($vendorDir . '/phpmailer/phpmailer/src'),
     'Backend\\' => array($baseDir . '/App/Backend'),

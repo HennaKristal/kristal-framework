@@ -5,7 +5,6 @@ defined("ACCESS") or exit("Access Denied");
 class SiteMapper
 {
     private string $sitemapPath;
-    private string $pageFolder;
     private array $registeredRoutes;
     private string $lastRenderedURL;
     private string $lastRenderedTemplate;
@@ -15,8 +14,7 @@ class SiteMapper
     {
         $this->registeredRoutes = $routes;
         $this->lastRenderedTemplate = $lastRenderedTemplate;
-        $this->sitemapPath = WEBROOT . "/sitemap.xml";
-        $this->pageFolder = WEBROOT . "/App/Pages/";
+        $this->sitemapPath = PATH_ROOT . "sitemap.xml";
 
         // Synchronize sitemap if it already exists
         if (file_exists($this->sitemapPath))
@@ -31,7 +29,6 @@ class SiteMapper
         $this->createSitemap($this->sitemapPath);
     }
 
-
     private function createSitemap(): void
     {
         $sitemap = new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>');
@@ -39,7 +36,7 @@ class SiteMapper
         foreach ($this->registeredRoutes as $route => $handler)
         {
             $url = $sitemap->addChild('url');
-            $url->addChild('loc', htmlspecialchars(BASE_URL . $route));
+            $url->addChild('loc', esc_url(URL_BASE . $route));
             $url->addChild('lastmod', date('c'));
         }
         
@@ -71,7 +68,7 @@ class SiteMapper
         // Add missing routes
         foreach ($this->registeredRoutes as $route => $handler)
         {
-            $loc = htmlspecialchars(BASE_URL . $route);
+            $loc = esc_url(URL_BASE . $route);
     
             if (!isset($existingEntries[$loc]))
             {
@@ -85,7 +82,7 @@ class SiteMapper
         // Delete old depricated entries
         foreach ($existingEntries as $loc => $entry)
         {
-            $route = str_replace(BASE_URL, "", $loc);
+            $route = str_replace(URL_BASE, "", $loc);
     
             if (!isset($this->registeredRoutes[$route]))
             {
@@ -96,12 +93,12 @@ class SiteMapper
         }
     
         // Update lastRenderedTemplate timestamp
-        $templatePath = $this->pageFolder . $this->lastRenderedTemplate;
+        $templatePath = PATH_TEMPLATES . $this->lastRenderedTemplate;
 
         if (file_exists($templatePath))
         {
             $pageLastModified = filemtime($templatePath);
-            $renderedRouteLoc = htmlspecialchars(BASE_URL . $this->lastRenderedURL);
+            $renderedRouteLoc = esc_url(URL_BASE . $this->lastRenderedURL);
         
             foreach ($sitemap->url as $entry)
             {

@@ -2,8 +2,6 @@
 
 $kristal_mandatory_constants = [
     "PRODUCTION_MODE",
-    "DOMAIN",
-    "BASE_URL",
     "MAINTENANCE_MODE",
     "MAINTENANCE_PASSWORD",
     "MAINTENANCE_LOCKOUT_LIMIT",
@@ -54,6 +52,7 @@ $kristal_mandatory_constants = [
     "METADATA",
 ];
 
+
 // Make sure constants exist
 foreach ($kristal_mandatory_constants as $constant)
 {
@@ -65,3 +64,9 @@ foreach ($kristal_mandatory_constants as $constant)
 
 // Set default timezone
 date_default_timezone_set(TIMEZONE);
+
+
+
+
+
+

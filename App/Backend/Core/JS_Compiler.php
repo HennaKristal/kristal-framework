@@ -1,4 +1,5 @@
-<?php namespace Backend\Core;
+<?php declare(strict_types=1);
+namespace Backend\Core;
 defined("ACCESS") or exit("Access Denied");
 
 use JShrink\Minifier;
@@ -6,70 +7,57 @@ use Exception;
 
 final class JS_Compiler
 {
-    private static $root = WEBROOT . "/App/Public/Javascript/";
-
-
     public static function initialize(): void
     {
-        $bundles = JS_BUNDLES;
-
-        foreach ($bundles as $bundleName => $files) {
+        foreach (JS_BUNDLES as $bundleName => $files)
+        {
             self::processBundle($bundleName, $files);
         }
     }
 
     private static function processBundle(string $bundleName, array $files): void
     {
-        $bundleName = self::$root . ensureJSExtension($bundleName);
-        $bundleSourceMap = $bundleName . '.map';
+        $bundlePath = PATH_JS . ensureJSExtension($bundleName);
+        $sourceMapPath = $bundlePath . '.map';
         
-        $lastCompileTime = file_exists($bundleName) ? filemtime($bundleName) : 0;
+        $lastCompileTime = file_exists($bundlePath) ? filemtime($bundlePath) : 0;
         $shouldCompile = false;
         $resolvedFiles = [];
 
         // Check has there been newer changes since last compilation
         foreach ($files as $file)
         {
-            $file = self::$root . ensureJSExtension($file);
+            $filePath = PATH_JS . ensureJSExtension($file);
 
-            if (!file_exists($file))
+            if (!is_file($filePath))
             {
-                if (PRODUCTION_MODE)
-                {
-                    debuglog("Failed to load JS script: '{$filename}'", "warning");
-                }
-                else
-                {
-                    exit("JS_Compiler Error: Failed to load JS file '{$filename}'.");
-                }
-
-                continue;
+                exit("JS_Compiler Error: Failed to load JS file '{$filePath}'.");
             }
 
-            $resolvedFiles[] = $file;
+            $resolvedFiles[] = $filePath;
 
-            if (filemtime($file) > $lastCompileTime)
+            if (filemtime($filePath) > $lastCompileTime)
             {
                 $shouldCompile = true;
             }
         }
 
-        // Early exit if nothing to compile
+        // Return if nothing to compile
         if (!$shouldCompile || empty($resolvedFiles))
         {
             return;
         }
 
         // Build Bundle
-        self::buildBundle($resolvedFiles, $bundleName, $bundleSourceMap);
+        self::buildBundle($resolvedFiles, $bundlePath, $sourceMapPath);
     }
 
-    private static function buildBundle(array $files, string $bundleName, string $bundleSourceMap): void
+    private static function buildBundle(array $files, string $bundlePath, string $bundleSourceMap): void
     {
         $bundleContent = "";
         $mapData = [
             "version" => 3,
-            "file" => basename($bundleName),
+            "file" => basename($bundlePath),
             "sources" => [],
             "names" => [],
             "mappings" => ""
@@ -78,10 +66,12 @@ final class JS_Compiler
         foreach ($files as $filePath)
         {
             $content = file_get_contents($filePath);
-            if ($content === false) continue;
+
+            if ($content === false)
+                continue;
 
             // Normalize path for sourcemap
-            $mapData["sources"][] = str_replace(self::$root, "", $filePath);
+            $mapData["sources"][] = str_replace(PATH_JS, "", $filePath);
 
             try
             {
@@ -90,6 +80,7 @@ final class JS_Compiler
             catch (Exception $e)
             {
                 debuglog("Javascript minification error: {$e->getMessage()}", "warning");
+                $minified = $content;
             }
 
             $bundleContent .= $minified . "\n";
@@ -105,7 +96,7 @@ final class JS_Compiler
         $bundleContent .= "//# sourceMappingURL=" . basename($bundleSourceMap) . "\n";
 
         // Atomic Write
-        file_put_contents($bundleName, $bundleContent);
+        file_put_contents($bundlePath, $bundleContent);
         file_put_contents($bundleSourceMap, json_encode($mapData, JSON_UNESCAPED_SLASHES));
     }
 }

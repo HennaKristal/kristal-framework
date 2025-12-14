@@ -8,12 +8,6 @@
 // Enable this in production to prevent development features from running
 define("PRODUCTION_MODE", false);
 
-// Primary domain name of the website
-define("DOMAIN", "example.com");
-
-// Public base URL of the website. Must include a trailing slash
-define("BASE_URL", "https://example.com/");
-
 
 
 
@@ -159,7 +153,7 @@ define("SESSION_REGENERATE_ID_TIME", 180);
 define("SESSION_AFK_TIMEOUT", 1800);
 
 // Control cross-site session behavior. Recommended values: "Strict" or "Lax"
-define("SESSION_SAMESITE", "Strict");
+define("SESSION_SAMESITE", "Lax");
 
 // Regenerate CSRF tokens on each page request for heightened security
 define("REGENERATE_CSRF_ON_PAGE_REFRESH", false);
@@ -179,7 +173,7 @@ define("COOKIE_NAME", "________");
 define("COOKIE_LIFETIME", 86400);
 
 // Control cross-site cookie behavior. Recommended values: "Strict" or "Lax"
-define("COOKIE_SAMESITE", "Strict");
+define("COOKIE_SAMESITE", "Lax");
 
 
 
@@ -249,17 +243,6 @@ define("WEBP_DEFAULT_QUALITY", 70);
 
 
 # --------------------------------------------------------------------------
-# HTML configurations
-# --------------------------------------------------------------------------
-
-// Condense HTML into a single line when activated (adds ~15ms to execution time, use only when truely needed)
-define("MINIFY_HTML", false);
-
-
-
-
-
-# --------------------------------------------------------------------------
 # SCSS configurations (does not work when in production mode)
 # --------------------------------------------------------------------------
 
@@ -292,16 +275,16 @@ define("PRINT_COMPILE_DATE_JS", true);
 // Tell the framework how do you want your js files to be bundled and minified
 define("JS_BUNDLES", [
     "core.js" => [
-        "Core/form.js",
-        "Core/tooltips.js",
-        "Core/translator.js",
-        "Core/animator.js",
+        "core/form.js",
+        "core/tooltips.js",
+        "core/translator.js",
+        "core/animator.js",
     ],
     "maintenance.js" => [
-        "Scripts/maintenance.js",
+        "scripts/maintenance.js",
     ],
     "main.js" => [
-        "Scripts/main.js",
+        "scripts/main.js",
     ],
 ]);
 
@@ -324,13 +307,13 @@ define("METADATA", [
         "twitter:card" => "summary_large_image",
         "twitter:title" => "________",
         "twitter:description" => "________",
-        "twitter:image" => BASE_URL . "Public/Images/kristal_framework_logo.png",
+        "twitter:image" => URL_IMAGES . "kristal_framework_logo.png",
         "og:type" => "website",
         "og:title" => "________",
         "og:description" => "________",
-        "og:url" => BASE_URL,
+        "og:url" => URL_BASE,
         "og:site_name" => "________",
-        "og:image" => BASE_URL . "Public/Images/kristal_framework_logo.png",
+        "og:image" => URL_IMAGES . "kristal_framework_logo.png",
     ],
 
     // Metadata from '/demo' page
@@ -342,13 +325,13 @@ define("METADATA", [
         "twitter:card" => "summary_large_image",
         "twitter:title" => "________",
         "twitter:description" => "________",
-        "twitter:image" => BASE_URL . "Public/Images/kristal_framework_logo.png",
+        "twitter:image" => URL_IMAGES . "kristal_framework_logo.png",
         "og:type" => "website",
         "og:title" => "________",
         "og:description" => "________",
-        "og:url" => BASE_URL,
+        "og:url" => URL_BASE,
         "og:site_name" => "________",
-        "og:image" => BASE_URL . "Public/Images/kristal_framework_logo.png",
+        "og:image" => URL_IMAGES . "kristal_framework_logo.png",
     ],
 
     // Metadata for pages without predefined specifications
@@ -360,13 +343,13 @@ define("METADATA", [
         "twitter:card" => "summary_large_image",
         "twitter:title" => "________",
         "twitter:description" => "________",
-        "twitter:image" => BASE_URL . "Public/Images/kristal_framework_logo.png",
+        "twitter:image" => URL_IMAGES . "kristal_framework_logo.png",
         "og:type" => "website",
         "og:title" => "________",
         "og:description" => "________",
-        "og:url" => BASE_URL,
+        "og:url" => URL_BASE,
         "og:site_name" => "________",
-        "og:image" => BASE_URL . "Public/Images/kristal_framework_logo.png",
+        "og:image" => URL_IMAGES . "kristal_framework_logo.png",
     ],
 
 ]);

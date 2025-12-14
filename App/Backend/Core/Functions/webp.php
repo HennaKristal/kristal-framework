@@ -44,24 +44,20 @@ function webpProduction($file, $compression)
     $cleanName = preg_replace("/\.[a-zA-Z0-9]+$/", "", $cleanName);
     $cleanName = $cleanName . "-" . $compression . ".webp";
 
-    return rtrim(BASE_URL, "/") . "/Cache/WebP/" . $cleanName;
+    return URL_BASE . "cache/webp/" . $cleanName;
 }
 
 
 function webpDevelopment($file, $compression)
 {
-    // Resolve folders
-    $imageFolder = WEBROOT . "/App/Public/Images/";
-    $webpFolder = WEBROOT . "/Cache/WebP/";
-
     // Ensure output folder exists
-    if (!is_dir($webpFolder))
+    if (!is_dir(PATH_WEBP))
     {
-        mkdir($webpFolder, 0755, true);
+        mkdir(PATH_WEBP, 0755, true);
     }
 
     // Resolve full path
-    $filePath = $imageFolder . $file;
+    $filePath = PATH_IMAGES . $file;
 
     // Attempt alternative extensions
     if (!file_exists($filePath))
@@ -80,7 +76,7 @@ function webpDevelopment($file, $compression)
     $imageType = exif_imagetype($filePath);
 
     // Resolve relative name
-    $searchFolder = "/App/Public/Images/";
+    $searchFolder = "/App/media/images/";
     $position = strpos($filePath, $searchFolder);
 
     if ($position === false)
@@ -98,7 +94,7 @@ function webpDevelopment($file, $compression)
         $cleanName = preg_replace("/\.[a-zA-Z0-9]+$/", "", $cleanName);
 
         // Output should match naming rules: name-quality.webp
-        $outputPath = $webpFolder . $cleanName . "-" . $compression . ".webp";
+        $outputPath = PATH_WEBP . $cleanName . "-" . $compression . ".webp";
 
         // Use cached version if available
         if (!file_exists($outputPath))
@@ -107,18 +103,18 @@ function webpDevelopment($file, $compression)
         }
 
         $fileName = basename($outputPath);
-        return rtrim(BASE_URL, "/") . "/Cache/WebP/" . $fileName;
+        return URL_BASE . "cache/webp/" . $fileName;
     }
 
     // Build output
     $cleanName = preg_replace("/\.[a-zA-Z0-9]+$/", "", $cleanName);
-    $outputPath = $webpFolder . $cleanName . "-" . $compression . ".webp";
+    $outputPath = PATH_WEBP . $cleanName . "-" . $compression . ".webp";
 
     // Cached version
     if (file_exists($outputPath))
     {
         $fileName = basename($outputPath);
-        return rtrim(BASE_URL, "/") . "/Cache/WebP/" . $fileName;
+        return URL_BASE . "cache/webp/" . $fileName;
     }
 
     // Load source
@@ -140,5 +136,5 @@ function webpDevelopment($file, $compression)
     imagedestroy($image);
 
     $fileName = basename($outputPath);
-    return rtrim(BASE_URL, "/") . "/Cache/WebP/" . $fileName;
+    return URL_BASE . "cache/webp/" . $fileName;
 }

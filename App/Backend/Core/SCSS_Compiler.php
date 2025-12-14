@@ -1,17 +1,19 @@
-<?php namespace Backend\Core;
+<?php declare(strict_types=1);
+namespace Backend\Core;
 defined("ACCESS") or exit("Access Denied");
 
 use ScssPhp\ScssPhp\Compiler;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 final class SCSS_Compiler
 {
-    private static $glob_themes_folder = WEBROOT . "/App/Public/CSS/Themes/*.scss";
-    private static $glob_compiled_css_folder = WEBROOT . "/App/Public/CSS/*.css";
-    private static $compiled_css_folder_path = WEBROOT . "/App/Public/CSS/";
-    private static $scss_folder_path = WEBROOT . "/App/Public/CSS/SCSS/";
+    private static string $compiledCssFolderPath= PATH_CSS;
+    private static string $globCompiledCssFolder = PATH_CSS . "*.css";
+    private static string $globThemesFolder = PATH_CSS . "themes/*.scss";
+    private static string $scssFolderPath = PATH_CSS . "scss/";
 
-
-    public static function initialize()
+    public static function initialize(): void
     {
         $compiler = new Compiler();
     
@@ -22,49 +24,45 @@ final class SCSS_Compiler
         if (self::shouldCompile())
         {
             self::compile($compiler);
+
         }
     }
 
-
-    private static function shouldCompile()
+    private static function shouldCompile(): bool
     {
-        $latest_compiled_css_time = 0;
+        $latestCompiledTime = 0;
+        $compiledFiles = glob(self::$globCompiledCssFolder);
 
-        // Determine the most recently modified time of compiled CSS files
-        foreach (glob(self::$glob_compiled_css_folder) as $file)
+        if (empty($compiledFiles))
+            return true;
+
+        // Determine time when CSS was last compiled
+        foreach ($compiledFiles as $file)
         {
-            $file_time = filemtime($file);
-
-            if ($file_time > $latest_compiled_css_time)
+            $time = filemtime($file);
+            if ($time > $latestCompiledTime)
             {
-                $latest_compiled_css_time = $file_time;
+                $latestCompiledTime = $time;
             }
         }
 
-        // Check if any theme file is newer than the latest compiled CSS
-        foreach (glob(self::$glob_themes_folder) as $theme)
+        // Check if any theme file was modified after CSS compilation time
+        foreach (glob(self::$globThemesFolder) as $theme)
         {
-            if (filemtime($theme) > $latest_compiled_css_time)
+            if (filemtime($theme) > $latestCompiledTime)
             {
                 return true;
             }
         }
 
-        // Check against the default theme
-        $defaultThemeTime = file_exists(self::$compiled_css_folder_path . ensureCSSExtension(DEFAULT_THEME)) ? filemtime(self::$compiled_css_folder_path . ensureCSSExtension(DEFAULT_THEME)) : 0;
-        if ($defaultThemeTime > $latest_compiled_css_time)
-        {
-            return true;
-        }
-
         // Check recursively if any SCSS file is newer than the latest compiled CSS
-        $directory = new \RecursiveDirectoryIterator(self::$scss_folder_path);
-        $iterator = new \RecursiveIteratorIterator($directory);
+        $directory = new RecursiveDirectoryIterator(self::$scssFolderPath);
+        $iterator = new RecursiveIteratorIterator($directory);
         foreach ($iterator as $file)
         {
             if ($file->isFile() && strtolower($file->getExtension()) === 'scss')
             {
-                if (filemtime($file->getRealPath()) > $latest_compiled_css_time)
+                if ($file->getMTime() > $latestCompiledTime)
                 {
                     return true;
                 }
@@ -74,11 +72,10 @@ final class SCSS_Compiler
         return false;
     }
 
-
-    private static function compile($compiler)
+    private static function compile($compiler): void
     {
-        // Determine if there are any themes
-        $themes = glob(self::$glob_themes_folder);
+        // Check if there are any themes
+        $themes = glob(self::$globThemesFolder);
 
         // Compile without theme
         if (empty($themes))
@@ -87,48 +84,48 @@ final class SCSS_Compiler
             return;
         }
 
-        // Compile with each theme
+        // Compile each theme
         foreach ($themes as $theme)
         {
-            $theme_name = strtolower(str_replace(".scss", "", basename($theme)));
-            self::compileOutput($compiler, $theme_name, $theme);
+            $themeName = strtolower(pathinfo($theme, PATHINFO_FILENAME));
+            self::compileOutput($compiler, $themeName, $theme);
         }
     }
 
-
-    private static function compileOutput($compiler, $output_name, $theme_file = null)
+    private static function compileOutput(Compiler $compiler, string $outputName, ?string $themeFile = null): void
     {
         $scss = "";
-    
+        $files = [];
+
         // Add theme variables if a theme file is provided
-        if (isset($theme_file))
+        if ($themeFile !== null && is_file($themeFile))
         {
-            $scss .= file_get_contents($theme_file);
+            $scss .= file_get_contents($themeFile);
         }
-    
+
         // Iterate through each file in the directory and its subdirectories
-        $directory = new \RecursiveDirectoryIterator(self::$scss_folder_path);
-        $iterator = new \RecursiveIteratorIterator($directory);
+        $directory = new RecursiveDirectoryIterator(self::$scssFolderPath);
+        $iterator = new RecursiveIteratorIterator($directory);
         foreach ($iterator as $file)
         {
-            if ($file->isFile() && strtolower($file->getExtension()) === 'scss')
+            if ($file->isFile() && $file->getExtension() === "scss")
             {
                 $scss .= file_get_contents($file->getRealPath());
             }
         }
     
         // Compile sass files
-        $compiled_css = $compiler->compileString($scss)->getCSS();
+        $compiledCss = $compiler->compileString($scss)->getCss();
     
         // Add comment when file was last modified
         if (PRINT_COMPILE_DATE_CSS)
         {
-            $compiled_css .= "\n\n/* Generated at: " . date(DATE_FORMAT . " " . TIME_FORMAT) . " */";
+            $compiledCss .= "\n/* Generated at: " . date(DATE_FORMAT . " " . TIME_FORMAT) . " */";
         }
         
-        $compiled_css .= "\n";
+        $compiledCss .= "\n";
     
         // Create css files from compiled sass
-        file_put_contents(self::$compiled_css_folder_path . ensureCSSExtension($output_name), $compiled_css);
+        file_put_contents(self::$compiledCssFolderPath. ensureCSSExtension($outputName), $compiledCss);
     }
 }

@@ -29,18 +29,18 @@ function translate($key, $variables = [])
 
     if ($translations === null)
     {
-        $path = WEBROOT . '/App/Public/Translations/translations.php';
+        $path = PATH_TRANSLATIONS . 'translations.php';
     
         if (!file_exists($path))
         {
             if (PRODUCTION_MODE)
             {
-                debuglog("Translation for text '$key' failed because text was not found in App/Public/Translations/translations.php file");
+                debuglog("Translation for text '$key' failed because text was not found in App/media/translations/translations.php file");
                 return vsprintf($key, $variables);
             }
             else
             {
-                exit("Missing translation file at App/Public/Translations/translations.php");
+                exit("Missing translation file at App/media/translations/translations.php");
             }
         }
 
@@ -59,7 +59,7 @@ function translate($key, $variables = [])
     // Return original string if no translation was found
     if (!array_key_exists($key, $translations))
     {
-        debuglog("Translation for text '$key' failed because text was not found in App/Public/Translations/translations.php file");
+        debuglog("Translation for text '$key' failed because text was not found in App/media/translations/translations.php file");
         return vsprintf($key, $variables);
     }
 

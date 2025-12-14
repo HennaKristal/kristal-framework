@@ -4,11 +4,15 @@
 define("ACCESS", "Granted");
 
 // Load configurations
-require_once WEBROOT . "/Config/config.php";
-require_once WEBROOT . "/App/Backend/Core/Functions/config.php";
+require_once PATH_CONFIG . "config.php";
+require_once PATH_CORE . "functions/config.php";
 
 // Load composer autoload.php
-if (!file_exists(WEBROOT . "/vendor/autoload.php"))
+if (file_exists(PATH_ROOT . "vendor/autoload.php"))
+{
+    require_once PATH_ROOT . "vendor/autoload.php";
+}
+else
 {
     if (PRODUCTION_MODE)
     {
@@ -21,15 +25,11 @@ if (!file_exists(WEBROOT . "/vendor/autoload.php"))
 }
 
 // Load core files
-require_once WEBROOT . "/vendor/autoload.php";
-require_once WEBROOT . "/App/Backend/Core/Debug/errors.php";
-require_once WEBROOT . "/App/Backend/Core/Debug/debug.php";
-require_once WEBROOT . "/App/Backend/Core/Functions/assetHelper.php";
-require_once WEBROOT . "/App/Backend/Core/Functions/webp.php";
-require_once WEBROOT . "/App/Backend/Core/Functions/utilities.php";
-require_once WEBROOT . "/App/Backend/Core/Functions/cookies.php";
-require_once WEBROOT . "/App/Backend/Core/Functions/translator.php";
-require_once WEBROOT . "/App/Backend/Cron/cron.php";
+require_once PATH_CORE . "functions/sanitize.php";
+require_once PATH_CORE . "functions/escape.php";
+require_once PATH_CORE . "functions/debug/errors.php";
+require_once PATH_CORE . "functions/debug/debug.php";
+require_once PATH_CORE . "functions/cookies.php";
 
 // Initialize session
 class_alias("Backend\Core\Session", "Session");
@@ -41,6 +41,12 @@ class_alias("Backend\Core\CSRF", "CSRF");
 // Initialize Blocks
 class_alias("Backend\Core\Block", "Block");
 Block::initialize();
+
+// Load utility files
+require_once PATH_CORE . "functions/utility-helpers.php";
+require_once PATH_CORE . "functions/media-helpers.php";
+require_once PATH_CORE . "functions/webp.php";
+require_once PATH_CORE . "functions/translator.php";
 
 // Compile SCSS and JavaScript
 if (!PRODUCTION_MODE)
@@ -59,11 +65,11 @@ if (!PRODUCTION_MODE)
 }
 
 // Load form requests and routes
-require_once WEBROOT . "/Routes/FormRequests.php";
-require_once WEBROOT . "/Routes/Routes.php";
+require_once PATH_BACKEND . "Routes/FormRequests.php";
+require_once PATH_BACKEND . "Routes/Routes.php";
 
 // Initialize form requests
-new Backend\Core\FormRequests();
+new Backend\Routes\FormRequests();
 
 // Initialize routes
-new Backend\Core\Routes();
+new Backend\Routes\Routes();

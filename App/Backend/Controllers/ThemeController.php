@@ -1,16 +1,17 @@
-<?php namespace Backend\Controllers;
+<?php declare(strict_types=1); 
+namespace Backend\Controllers;
 defined("ACCESS") or exit("Access Denied");
 
 use Backend\Core\Session;
 
 class ThemeController
 {
-    public function changeTheme($theme)
+    public function changeTheme(string $theme): string
     {
-        $theme = sanitizeFileName(trim($theme)) . '.css';
+        $theme = sanitize_file(trim($theme)) . '.css';
 
         // Check if the theme file exists
-        if (!file_exists(WEBROOT . "/App/Public/CSS/" . $theme))
+        if (!file_exists(PATH_CSS . $theme))
         {
             return translate("Tried to activate theme called %s, but theme didn't exist.", [$theme]);
         }
