@@ -36,10 +36,10 @@
         <script src="<?php echo js("main.js"); ?>"></script>
 
         <!-- Page title -->
-        <?php if (!empty($kristal_metadata[$page]->title)): ?>
-            <title><?php echo esc_html($kristal_metadata[$page]->title); ?></title>
-        <?php elseif (!empty($kristal_metadata["*"]->title)): ?>
-            <title><?php echo esc_html($kristal_metadata["*"]->title); ?></title>
+        <?php if (!empty($kristal_metadata[$page]["title"])): ?>
+            <title><?php echo esc_html($kristal_metadata[$page]["title"]); ?></title>
+        <?php elseif (!empty($kristal_metadata["*"]["title"])): ?>
+            <title><?php echo esc_html($kristal_metadata["*"]["title"]); ?></title>
         <?php else: ?>
             <title><?php echo URL_BASE . $page; ?></title>
         <?php endif; ?>
