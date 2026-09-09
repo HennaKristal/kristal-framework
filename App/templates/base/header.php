@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="<?php echo Session::has('language') ? Session::get('language') : DEFAULT_LANGUAGE; ?>">
+<html lang="<?php echo esc_html(getAppLocale()); ?>">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -23,7 +23,7 @@
         <?php endif; ?>
 
         <!-- Canonical URL -->
-        <link rel="canonical" href="<?php echo URL_BASE; ?>">
+        <link rel="canonical" href="<?php echo esc_url(URL_BASE . ltrim(parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH) ?: "", "/")); ?>">
         
         <!-- Styles -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
@@ -41,7 +41,7 @@
         <?php elseif (!empty($kristal_metadata["*"]["title"])): ?>
             <title><?php echo esc_html($kristal_metadata["*"]["title"]); ?></title>
         <?php else: ?>
-            <title><?php echo URL_BASE . $page; ?></title>
+            <title><?php echo esc_html(URL_BASE . $page); ?></title>
         <?php endif; ?>
 
         <!-- Website icon -->
