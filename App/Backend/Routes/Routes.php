@@ -42,7 +42,7 @@ class Routes extends Router
     {
         // Render content from /App/templates/demo.php and create $message variable that can be used in the template
         $this->render("demo", [
-            "message" => esc_html($message),
+            "message" => $message,
         ]);
     }
 
@@ -51,6 +51,7 @@ class Routes extends Router
     {
         // Render content from /App/templates/404.php
         // You could also render home page here
+        http_response_code(404);
         $this->render("404");
     }
 }

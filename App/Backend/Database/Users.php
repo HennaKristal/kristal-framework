@@ -88,8 +88,8 @@ class User extends Entity
 
     protected array $columns = [
         'id' => 'int(11) unsigned AUTO_INCREMENT',
-        'username' => 'varchar(' . USERNAME_MAX_LENGTH . ')',
-        'email' => 'varchar(' . EMAIL_MAX_LENGTH . ')',
+        'username' => 'varchar(100)',
+        'email' => 'varchar(200) NOT NULL UNIQUE',
         'password_hash' => 'varchar(255)',
     ];
 
