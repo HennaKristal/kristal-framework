@@ -45,9 +45,8 @@ define("ENABLE_DEBUG_DISPLAY", true);
 // Determines whether debug and error messages are recorded in a log file
 define("ENABLE_DEBUG_LOG", true);
 
-// Absolute log path. The bundled directory denies HTTP access via .htaccess.
-// For production, prefer a writable location outside the document root.
-define("DEBUG_LOG_PATH", PATH_ROOT . "storage/logs/debug.log");
+// Defines the file path for logging debug and error messages (please keep this outside of html root)
+define("DEBUG_LOG_PATH", "./storage/logs/debug.log");
 
 // When enabled, PHP warnings will not be displayed or logged
 define("DEBUG_IGNORE_WARNINGS", false);
