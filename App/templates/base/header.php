@@ -24,7 +24,7 @@
 
         <!-- Canonical URL -->
         <link rel="canonical" href="<?php echo esc_url(URL_BASE . ltrim(parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH) ?: "", "/")); ?>">
-        
+
         <!-- Styles -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="<?php echo css(Session::has("theme") ? Session::get("theme") : DEFAULT_THEME); ?>">
@@ -45,7 +45,7 @@
         <?php endif; ?>
 
         <!-- Website icon -->
-        <link rel="icon" type="image/gif" href="<?php echo webp("kristal_framework_alt_icon.png"); ?>" />
+        <link rel="icon" type="image/gif" href="<?php echo webp("kristal_framework_icon.png"); ?>" />
 
     </head>
     <body>

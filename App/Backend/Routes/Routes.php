@@ -1,4 +1,4 @@
-<?php declare(strict_types=1); 
+<?php declare(strict_types=1);
 namespace Backend\Routes;
 defined("ACCESS") or exit("Access Denied");
 
@@ -42,11 +42,11 @@ class Routes extends Router
     {
         // Render content from /App/templates/demo.php and create $message variable that can be used in the template
         $this->render("demo", [
-            "message" => $message,
+            "message" => esc_html($message),
         ]);
     }
 
-    
+
     public function pageNotFoundHandler(): void
     {
         // Render content from /App/templates/404.php
